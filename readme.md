@@ -1,6 +1,10 @@
 # Art of Node
 ## An introduction to Node.js
 
+This document is intended for readers who know at least a little bit of a scripting language like JavaScript, Ruby, Python, Perl, etc. If you aren't a programmer yet then it is probably easier to start by reading [JavaScript for Cats](http://jsforcats.com/). :cat2:
+
+It is also currently a work in progress. If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/).
+
 ## Table of contents
 
 - [Understanding node](#understanding)
@@ -13,9 +17,9 @@
 
 ## Understanding node
 
-Node.js is an open source project designed to help you write JavaScript programs that talk to networks, file systems or other I/O (input/output) sources. That's it! It is just a simple and stable I/O platform that you are encouraged to build modules on top of.
+Node.js is an open source project designed to help you write JavaScript programs that talk to networks, file systems or other I/O (input/output, reading/writing) sources. That's it! It is just a simple and stable I/O platform that you are encouraged to build modules on top of.
 
-Here is a diagram of an application that I made with node:
+What are some examples of I/O? Here is a diagram of an application that I made with node that shows many I/O sources:
 
 ![server diagram](server-diagram.png)
 
