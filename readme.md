@@ -1,9 +1,9 @@
-# Art of Node
+# The Art of Node
 ## An introduction to Node.js
 
 This document is intended for readers who know at least a little bit of a scripting language like JavaScript, Ruby, Python, Perl, etc. If you aren't a programmer yet then it is probably easier to start by reading [JavaScript for Cats](http://jsforcats.com/). :cat2:
 
-It is also currently a work in progress. If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/).
+It is also currently a work in progress. If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/) so that I can write more!
 
 ## Table of contents
 
@@ -101,7 +101,7 @@ function addOne() {
   fs.readFile('./number.txt', function doneReading(err, fileContents) {
     myNumber = parseInt(fileContents)
     myNumber++
-  }
+  })
 }
 
 addOne()
@@ -172,7 +172,6 @@ When this code gets executed, `a` will immediately start running, then a minute 
 TODO
 
 ## Streams
-
 
 Early on in the project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
 
