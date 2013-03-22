@@ -119,7 +119,7 @@ The reason we got `undefined` above is that nowhere in our code exists logic tha
 
 If you have some code that you want to be able to execute over and over again or at a later time the first step is to put that code inside a function. Then you can call the function whenever you want to run your code. It helps to give your functions descriptive names.
 
-Callbacks are just functions that get executed at some later time. The key to understanding callbacks is to realize that we use callbacks to declare **when** we want something to happen, not **where**. First you split your code up into functions, and then use callbacks to declare which functions are dependent on other functions.
+Callbacks are just functions that get executed at some later time. The key to understanding callbacks is to realize that callbacks are used to declare **when** you want something to happen, not **where**. The top-to-bottom order that you delcare callbacks does not necessarily matter. First you split your code up into functions, and then use callbacks to declare if a function depends on another function finishing.
 
 The `fs.readFile` method is provided by node and is asynchronous happens to take a long time to finish. Consider what it does: it has to go to the operating system, which in turn has to go to the file system, which lives on a hard drive that may or may not be spinning at thousands of revolutions per minute. Then it has to use a laser to read data and send it back up through the layers back into your javascript program. You give `readFile` a function (known as a callback) that it will call after it has retrieved the data from the file system. It puts the data it retrieved into a javascript variable and calls your function (callback) with that variable, in this case the variable is called `fileContents` because it contains the contents of the file that was read. 
 
@@ -160,6 +160,18 @@ To break down this example even more, here is a timeline of events that happen w
 Perhaps the most confusing part of programming with callbacks is how functions are just objects that be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
 
 You may have heard the terms 'evented programming' or 'event loop'. They refer to the way that `readFile` is implemented. Node first dispatches the `readFile` operation and then waits for `readFile` to send it an event that it has completed. While it is waiting node can go check on other things. Inside node there is a list of things that are dispatched but haven't reported back yet, so node loops over the list again and again checking to see if they are finished. After they finished they get 'processed', e.g. any callbacks that depended on them finishing will get invoked.
+
+Here is a pseudocode version of the above example:
+
+```js
+function addOne(thenRunThisFunction) {
+  waitAMinute(function waitedAMinute() {
+    thenRunThisFunction()
+  })
+}
+
+addOne(function thisGetsRunAfterAddOneFinishes() {})
+```
 
 Imagine you had 3 async functions `a`, `b` and `c`. Each one takes 1 minute to run and after it finishes it calls a callback (that gets passed in the first argument). If you wanted to tell node 'start running a, then run b after a finishes, and then run c after b finishes' it would look like this:
 
