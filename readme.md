@@ -28,7 +28,7 @@ If you don't understand all of the different things in the diagram it is complet
 Usually building these kinds of systems is either:
 
 - difficult to code but yields super fast results (like writing your web servers from scratch in C)
-- easy to code but not very speedy (like when someone tries to upload a 5GB file and your server crashes)
+- easy to code but not very speedy/robust (like when someone tries to upload a 5GB file and your server crashes)
 
 Node's goal is to strike a balance between these two: relatively easy to understand and use and fast enough for most use cases.
 
@@ -72,11 +72,13 @@ Node has a relatively small core group of modules (commonly referred to as 'node
 
 In addition to `fs` and network modules there are a number of other base modules in node core. There is a module for asynchronously resolving DNS queries called `dns`, a module for getting OS specific information like the tmpdir location called `os`, a module for allocating binary chunks of memory called `buffer`, some modules for parsing urls and paths (`url, `querystring`, `path`), etc. Most if not all of the modules in node core are there to support nodes main use case: writing fast programs that talk to file systems or networks.
 
-The aforementioned patterns that are used in node core are: callbacks, events, streams and modules.
+The aforementioned patterns that are used in node core are: callbacks, events, streams and modules. If you learn how these four things work then you will be able to go into any module in node core and have a basic understanding about how to interface with it.
 
 ## Callbacks
 
-Callbacks are just functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
+This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just a particularly useful way to use JavaScript functions.
+
+Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
 
 The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example:
 
@@ -117,7 +119,13 @@ The reason we got `undefined` above is that nowhere in our code exists logic tha
 
 If you have some code that you want to be able to execute over and over again or at a later time the first step is to put that code inside a function. Then you can call the function whenever you want to run your code. It helps to give your functions descriptive names.
 
-Callbacks are just functions that get executed at some later time. Let's put our `console.log` statement into a function and pass it in as a callback.
+Callbacks are just functions that get executed at some later time. The key to understanding callbacks is to realize that we use callbacks to declare **when** we want something to happen, not **where**. First you split your code up into functions, and then use callbacks to declare which functions are dependent on other functions.
+
+The `fs.readFile` method is provided by node and is asynchronous happens to take a long time to finish. Consider what it does: it has to go to the operating system, which in turn has to go to the file system, which lives on a hard drive that may or may not be spinning at thousands of revolutions per minute. Then it has to use a laser to read data and send it back up through the layers back into your javascript program. You give `readFile` a function (known as a callback) that it will call after it has retrieved the data from the file system. It puts the data it retrieved into a javascript variable and calls your function (callback) with that variable, in this case the variable is called `fileContents` because it contains the contents of the file that was read. 
+
+Think of the restaurant example at the beginning of this tutorial. At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your cheeseburger is done.
+
+Let's put our `console.log` statement into a function and pass it in as a callback.
 
 ```js
 var fs = require('fs')
