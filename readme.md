@@ -72,9 +72,11 @@ Firstly I would recommend that you get node installed on your computer. The easi
 
 Node has a relatively small core group of modules (commonly referred to as 'node core') that are presented as the public API that you are intended to write programs with. Fundamentally node is a tool used for managing I/O across file systems and networks, and it leaves other more fancy functionality up to third party modules. For working with file systems there is the `fs` module and for networks there are modules like `net` (TCP), `http`, `dgram` (UDP).
 
+![core modules](node-core-modules.png)
+
 In addition to `fs` and network modules there are a number of other base modules in node core. There is a module for asynchronously resolving DNS queries called `dns`, a module for getting OS specific information like the tmpdir location called `os`, a module for allocating binary chunks of memory called `buffer`, some modules for parsing urls and paths (`url`, `querystring`, `path`), etc. Most if not all of the modules in node core are there to support nodes main use case: writing fast programs that talk to file systems or networks.
 
-The aforementioned patterns that are used in node core are: callbacks, events, streams and modules. If you learn how these four things work then you will be able to go into any module in node core and have a basic understanding about how to interface with it.
+Node handles I/O with: callbacks, events, streams and modules. If you learn how these four things work then you will be able to go into any module in node core and have a basic understanding about how to interface with it.
 
 ## Callbacks
 
