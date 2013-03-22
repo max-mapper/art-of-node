@@ -94,7 +94,7 @@ The code here defines a function and then on the next line calls that function, 
 Let's suppose that we want to instead store our number in a file called `number.txt`:
 
 ```js
-var fs = require('fs')
+var fs = require('fs') // require is a special function provided by node
 var myNumber = undefined // we dont know what the number is yet since it is stored in a file
 
 function addOne() {
