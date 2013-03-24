@@ -5,6 +5,8 @@ This document is intended for readers who know at least a little bit of a script
 
 It is also currently a work in progress. If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/) so that I can write more!
 
+[![donate](donate.png)](https://www.gittip.com/maxogden/)
+
 ## Table of contents
 
 - [Understanding node](#understanding)
@@ -286,3 +288,11 @@ TODO
 ## Real-time apps
 
 TODO
+
+## License
+
+![CCBYSA](CCBYSA.png)
+Creative Commons Share Alike (do whatever, just attribute me)
+http://creativecommons.org/licenses/by-sa/2.0/
+
+Donate icon is from the [http://thenounproject.com/noun/donate/#icon-No285](Noun Project)
