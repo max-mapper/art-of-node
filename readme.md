@@ -392,13 +392,13 @@ Node uses threads internally to make things fast but doesn't expose them to the 
 
 ## Real-time apps
 
-TODO
+TODO - this section will have a non-contrived, functioning application with a web UI whose architecture will be dissected and discussed.
 
 ## License
 
-![CCBYSA](CCBYSA.png)
+![CCBY](CCBY.png)
 
-Creative Commons Share Alike (do whatever, just attribute me)
-http://creativecommons.org/licenses/by-sa/2.0/
+Creative Commons Attribution License (do whatever, just attribute me)
+http://creativecommons.org/licenses/by/2.0/
 
 Donate icon is from the [http://thenounproject.com/noun/donate/#icon-No285](Noun Project)
