@@ -1,9 +1,12 @@
 # The Art of Node
 ## An introduction to Node.js
 
-This document is intended for readers who know at least a little bit of a scripting language like JavaScript, Ruby, Python, Perl, etc. If you aren't a programmer yet then it is probably easier to start by reading [JavaScript for Cats](http://jsforcats.com/). :cat2:
+This document is intended for readers who know at least a little bit of a couple of things:
 
-It is also currently a work in progress. If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/) so that I can write more!
+- a scripting language like JavaScript, Ruby, Python, Perl, etc. If you aren't a programmer yet then it is probably easier to start by reading [JavaScript for Cats](http://jsforcats.com/). :cat2:
+- git and github. These are the open source collaboration tools that people in the node community use to share modules. You just need to know the basics. Here are three great intro tutorials: [http://skli.se/2012/09/22/introduction-to-git/](1), [http://zachbruggeman.me/github-for-cats/](2), [http://opensourcerer.diy.org/](3)
+
+This short book is a work in progress + I don't have a job right now (if I did I wouldn't have the time to write this). If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/) so that I can write more!
 
 [![donate](donate.png)](https://www.gittip.com/maxogden/)
 
@@ -15,6 +18,7 @@ It is also currently a work in progress. If you like it then please consider don
 - [Events](#events) (not written yet)
 - [Streams](#streams) (not written yet)
 - [Modules and NPM](#modules) (not written yet)
+- [Going with the grain](#going-with-the-grain) (not written yet)
 - [Real-time apps](#realtime) (not written yet)
 
 ## Understanding node
@@ -41,7 +45,7 @@ Node isn't either of the following:
   
 Instead, node is somewhere in the middle. It is:
 
-  - Relatively easy to understand and use
+  - Designed to be simple and therefore relatively easy to understand and use
   - Useful for I/O based programs that need to be fast and/or handle lots of connections
   
 At a lower level, node can be described as a tool for writing two major types of programs: 
@@ -64,17 +68,11 @@ Here are some fun things made easy with node thanks to its non-blocking nature:
   - Write IRC chat bots
   - Create [walking biped robots](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
-Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](http://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
-
-There are a number of web frameworks built on top of node (framework meaning a bundle of solutions that attempts to address some high level problem like modeling business logic). Frameworks can be useful in certain situations but this guide will instead focus on simpler, more universal concepts.
-
 ## Core modules
 
 Firstly I would recommend that you get node installed on your computer. The easiest way is to visit [nodejs.org](http://nodejs.org) and click `Install`. 
 
-Node has a relatively small core group of modules (commonly referred to as 'node core') that are presented as the public API that you are intended to write programs with. Fundamentally node is a tool used for managing I/O across file systems and networks, and it leaves other more fancy functionality up to third party modules. For working with file systems there is the `fs` module and for networks there are modules like `net` (TCP), `http`, `dgram` (UDP).
-
-![core modules](node-core-modules.png)
+Node has a small core group of modules (commonly referred to as 'node core') that are presented as the public API that you are intended to write programs with. For working with file systems there is the `fs` module and for networks there are modules like `net` (TCP), `http`, `dgram` (UDP).
 
 In addition to `fs` and network modules there are a number of other base modules in node core. There is a module for asynchronously resolving DNS queries called `dns`, a module for getting OS specific information like the tmpdir location called `os`, a module for allocating binary chunks of memory called `buffer`, some modules for parsing urls and paths (`url`, `querystring`, `path`), etc. Most if not all of the modules in node core are there to support nodes main use case: writing fast programs that talk to file systems or networks.
 
@@ -191,6 +189,56 @@ a(function() {
 
 When this code gets executed, `a` will immediately start running, then a minute later it will finish and call `b`, then a minute later it will finish and call `c` and finally 3 minutes later node will stop running since there would be nothing more to do. There are definitely more elegant ways to write the above example, but the point is that if you have code that has to wait for some other async code to finish then you express that dependency by putting your code in functions that get passed around as callbacks.
 
+The design of node requires you to think non-linearly. Consider this list of operations:
+
+```
+read a file
+process that file
+```
+
+If you were to naively turn this into pseudocode you would end up with this:
+
+```
+var file = readFile()
+processFile(file)
+```
+
+This kind of linear (step-by-step, in order) code is isn't the way that node works. If this code were to get executed then `readFile` and `processFile` would both get executed at the same exact time. This doesn't make sense since `readFile` will take a while to complete. Instead you need to express that `processFile` depends on `readFile` finishing. This is exactly what callbacks are for! And because of the way that JavaScript works you can write this dependency many different ways:
+
+```js
+var fs = require('fs')
+fs.readFile('movie.mp4', finishedReading)
+
+function finishedReading(error, movieData) {
+  if (error) return console.error(error)
+  // do something with the movieData
+}
+```
+
+But you could also structure your code like this and it would still work:
+
+```js
+var fs = require('fs')
+
+function finishedReading(error, movieData) {
+  if (error) return console.error(error)
+  // do something with the movieData
+}
+
+fs.readFile('movie.mp4', finishedReading)
+```
+
+Or even like this:
+
+```js
+var fs = require('fs')
+
+fs.readFile('movie.mp4', function finishedReading(error, movieData) {
+  if (error) return console.error(error)
+  // do something with the movieData
+})
+```
+
 ## Events
 
 In node if you require the [events](http://nodejs.org/api/events.html) module you can use the so-called 'event emitter' that node itself uses for all of its APIs that emit things.
@@ -284,6 +332,30 @@ THE REST IS TODO
 ## Modules
 
 TODO
+
+## Going with the grain
+
+Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](http://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
+
+### What is outside of node's scope?
+
+Fundamentally node is just a tool used for managing I/O across file systems and networks, and it leaves other more fancy functionality up to third party modules. Here are some things that are outside the scope of node:
+
+#### Web frameworks
+
+There are a number of web frameworks built on top of node (framework meaning a bundle of solutions that attempts to address some high level problem like modeling business logic), but node is not a web framework. Web frameworks that are written using node don't always make the same kind of decisions about adding complexity, abstractions and tradeoffs that node does and may have other priorities.
+
+#### Language syntax
+
+Node uses JavaScript and doesn't change anything about it. Felix Geisendörfer has a pretty good write-up of the 'node style' [here](https://github.com/felixge/node-style-guide).
+
+#### Language abstraction
+
+When possible node will use the simplest possible way of accomplishing something. The 'fancier' you make your JavaScript the more complexity and tradeoffs you introduce. Programming is hard, especially in JS where there are 1000 solutions to every problem! It is for this reason that node tries to always pick the simplest, most universal option. If you are solving a problem that calls for a complex solution and you are unsatisfied with the 'vanilla JS solutions' that node implements, you are free to solve it inside your app or module using whichever abstractions you prefer.
+
+#### Threads/fibers/non-event-based concurrency solutions
+
+If you don't know what these things mean then you will likely have an easier time learning node. Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
 
 ## Real-time apps
 
