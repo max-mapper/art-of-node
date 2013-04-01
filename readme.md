@@ -376,6 +376,8 @@ This adds complexity, and not everyone wants that. Instead of two separate funct
 - When there is an error, pass it as the first argument
 - The rest of the arguments can be used for anything (usually data or responses since most stuff in node is reading or writing things)
 
+Hence, the node callback style:
+
 ```js
 fs.readFile('movie.mp4', function(err, data) {
   // handle error, do stuff with data
