@@ -327,7 +327,7 @@ Early on in the project the file system and network APIs had their own separate 
 
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
 
-THE REST IS TODO
+THE REST IS TODO, in the meantime read the [streams handbook](https://github.com/substack/stream-handbook#introduction)
 
 ## Modules
 
@@ -353,9 +353,40 @@ Node uses JavaScript and doesn't change anything about it. Felix Geisendörfer h
 
 When possible node will use the simplest possible way of accomplishing something. The 'fancier' you make your JavaScript the more complexity and tradeoffs you introduce. Programming is hard, especially in JS where there are 1000 solutions to every problem! It is for this reason that node tries to always pick the simplest, most universal option. If you are solving a problem that calls for a complex solution and you are unsatisfied with the 'vanilla JS solutions' that node implements, you are free to solve it inside your app or module using whichever abstractions you prefer.
 
+A great example of this is node's use of callbacks. Early on node experimented with a feature called 'promises' that added a number of features to make async code appear more linear. It was taken out of node core for a few reasons:
+
+- they are more complex than callbacks
+- they can be implemented in userland (distributed on npm as third party modules)
+
+Consider one of the most universal and basic things that node does: reading a file. When you read a file you want to know when errors happen, like when your hard drive dies in the middle of your read. If node had promises everyone would have to branch their code like this:
+
+```js
+fs.readFile('movie.mp4')
+  .then(function(data) {
+    // do stuff with data
+  })
+  .error(function(error) {
+    // handle error
+  })
+```
+
+This adds complexity, and not everyone wants that. Instead of two separate functions node just uses a single callback function. Here are the rules:
+
+- When there is no error pass null as the first argument
+- When there is an error, pass it as the first argument
+- The rest of the arguments can be used for anything (usually data or responses since most stuff in node is reading or writing things)
+
+```js
+fs.readFile('movie.mp4', function(err, data) {
+  // handle error, do stuff with data
+})
+```
+
 #### Threads/fibers/non-event-based concurrency solutions
 
-If you don't know what these things mean then you will likely have an easier time learning node. Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
+Note: If you don't know what these things mean then you will likely have an easier time learning node, since unlearning things is just as much work as learning things.
+
+Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
 
 ## Real-time apps
 
