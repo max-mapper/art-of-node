@@ -12,7 +12,7 @@ Este corto libro es un trabajo en progeso + No tengo trabajo en este momento (si
 
 ## Tabla de contenidos
 
-- [Entendiendo node](#entendiendo)
+- [Entendiendo node](#entendiendo-node)
 - [Core modules](#core-modules)
 - [Callbacks](#callbacks)
 - [Events](#events) (not written yet)
