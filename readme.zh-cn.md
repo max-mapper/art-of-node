@@ -34,11 +34,11 @@ This short book is a work in progress + I don't have a job right now (if I did I
 
 Node.js is an open source project designed to help you write JavaScript programs that talk to networks, file systems or other I/O (input/output, reading/writing) sources. That's it! It is just a simple and stable I/O platform that you are encouraged to build modules on top of.
 
-Node.js是一个开源项目，目的是让你通过编写JavaScript的程序进行网络、文件系统或其他输入/输出端口（I/O）的沟通。就这些！它只是一个简单和稳定的输入/输出平台，你可以编写模块并且盖在这个平台上。
+Node.js是一个开源项目，目的是让你通过编写JavaScript的程序进行网络、文件系统或其他输入/输出源（I/O）的沟通。就这些！它只是一个简单和稳定的输入/输出平台，你可以在这个平台上开发模块。
 
 What are some examples of I/O? Here is a diagram of an application that I made with node that shows many I/O sources:
 
-有没有输入/输出的例子？ 我这里有一张图，上面是我用Node.js制作的程序，你可以看到上面有很多输入/输出端口：
+有没有输入/输出的例子？ 我这里有一张图，上面是我用Node.js制作的程序，你可以看到上面有很多输入/输出源：
 
 ![server diagram](server-diagram.png)
 
@@ -99,16 +99,21 @@ What is an "I/O based program"? Here are some common I/O sources:
   - HTTP/WebSocket的链接（从用户的Web应用程序）
   - Files (image resizer, video editor, internet radio)
   - 文件档（图像尺寸伸缩软件、视频编辑软件、网络收音机）
-  
-> TODO: 把I/O sources翻译为输入/输出源，而不是输入/输出端口。修改之前的。
 
 Node does I/O in a way that is [asynchronous](http://en.wikipedia.org/wiki/Asynchronous_I/O) which lets it handle lots of different things simultaneously. For example, if you go down to a fast food joint and order a cheeseburger they will immediately take your order and then make you wait around until the cheeseburger is ready. In the meantime they can take other orders and start cooking cheeseburgers for other people. Imagine if you had to wait at the register for your cheeseburger, blocking all other people in line from ordering while they cooked your burger! This is called **blocking I/O** because all I/O (cooking cheeseburgers) happens one at a time. Node, on the other hand, is **non-blocking**, which means it can cook many cheeseburgers at once.
 
+Node能够[异步处理](http://en.wikipedia.org/wiki/Asynchronous_I/O)多个不同种类的输入/输出源。比如说，假设你来到快餐店，你向店员要了一个芝士汉堡，他们会马上为你下单和准备汉堡。然后，他们会要求你在旁边等汉堡完成。在你等待这段时间，他们可以接受其他订单和帮其他人准备汉堡。试想下，如果你站在柜台前面，一直等到你的芝士汉堡完成，那么你就阻碍了后面的人下订单，厨师也不能帮其他人准备汉堡！我们称这个为**阻塞I/O （blocking I/O）**，因为一次只能处理一个输入/输出操作（厨师一次只能准备一个汉堡）。Node，不是这样的，它是**非阻塞**性质，就是说它能一次准备很多汉堡。
+
 Here are some fun things made easy with node thanks to its non-blocking nature:
+
+多谢Node非阻塞的性质，让我们可以容易的制作以下的有趣东西：
   
   - Control [flying quadcopters](http://nodecopter.com)
+  - 控制[Quadcopters飞行](http://nodecopter.com)
   - Write IRC chat bots
+  - 编写IRC谈天机器人
   - Create [walking biped robots](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
+  - 制作一个[双脚走路的机器人](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
 ## Core modules
 
