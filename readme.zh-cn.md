@@ -14,7 +14,7 @@ This short book is a work in progress + I don't have a job right now (if I did I
 
 ## 目录
 
-- [Understanding node](#node-1)
+- [了解Node](#node-1)
 - [Core modules](#core-modules)
 - [Callbacks](#callbacks)
 - [Events](#events) (not written yet)
@@ -44,8 +44,6 @@ Node不是以下两样东西：
 
   - 不是Web框架 （不像Rails或Django，尽管它可以被用来使这样的事情）
   - 不是编程语言（Node是使用JavaScript编程，它没有自己的编程语言）
-  
-Instead, node is somewhere in the middle. It is:
 
 相反，Node是：
 
