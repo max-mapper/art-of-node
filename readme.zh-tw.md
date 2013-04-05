@@ -1,18 +1,20 @@
-# The Art of Node
-## An introduction to Node.js
+# Node的藝術
+## Node.js入門
 
-This document is intended for readers who know at least a little bit of a couple of things:
+本文檔會假定讀者至少懂一點以下的兩樣東西：
 
-- a scripting language like JavaScript, Ruby, Python, Perl, etc. If you aren't a programmer yet then it is probably easier to start by reading [JavaScript for Cats](http://jsforcats.com/). :cat2:
-- git and github. These are the open source collaboration tools that people in the node community use to share modules. You just need to know the basics. Here are three great intro tutorials: [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
+- 懂得一種編程語言。如：JavaScript，Ruby，Python，Perl或其他編程語言。如果你還不是程序員，你不懂編程語言，你可以閱讀[JavaScript for Cats](http://jsforcats.com/)。:cat2:
+- git和github。這是一個開源的協作工具，Node社區的用戶使用git共享模塊。你需要懂得基本操作就能了。這裏有三篇很好的入門教程：[1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
 
 This short book is a work in progress + I don't have a job right now (if I did I wouldn't have the time to write this). If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/) so that I can write more!
 
+> 譯者: 上面這段我沒有翻譯，因爲我希望保持原文。上面作者提到，目前他還沒找到工作。如果你喜歡這個文檔，希望你可以通過[gittip](https://www.gittip.com/maxogden/)樂捐給作者。這樣作者纔能夠寫更多。
+
 [![donate](donate.png)](https://www.gittip.com/maxogden/)
 
-## Table of contents
+## 目錄
 
-- [Understanding node](#understanding)
+- [Understanding node](#node-1)
 - [Core modules](#core-modules)
 - [Callbacks](#callbacks)
 - [Events](#events) (not written yet)
@@ -21,52 +23,54 @@ This short book is a work in progress + I don't have a job right now (if I did I
 - [Going with the grain](#going-with-the-grain)
 - [Real-time apps](#realtime) (not written yet)
 
-## Understanding node
+## 瞭解Node
 
-Node.js is an open source project designed to help you write JavaScript programs that talk to networks, file systems or other I/O (input/output, reading/writing) sources. That's it! It is just a simple and stable I/O platform that you are encouraged to build modules on top of.
+Node.js是一個開源項目，目的是讓你通過編寫JavaScript的程序進行網絡、文件系統或其他I/O源的溝通。就這些！它只是一個簡單而穩定的輸入/輸出平臺，你可以在這個平臺上架構模塊。
 
-What are some examples of I/O? Here is a diagram of an application that I made with node that shows many I/O sources:
+有沒有I/O出的例子？ 我這裏有一張圖，上面是我用Node.js製作的程序，你可以看到上面有很多I/O源：
 
 ![server diagram](server-diagram.png)
 
-If you don't understand all of the different things in the diagram it is completely okay. The point is to show that a single node process (the hexagon in the middle) can act as the broker between all of the different I/O endpoints (orange and purple represent I/O).
+如果你無法明白上圖顯示的所有東西，這是沒問題的。重點是你看到一個Node的運作（在中間六邊形那個），它就像經紀人，管理全部I/O的端口（橙色和紫色的線條代表I/O）。
 
-Usually building these kinds of systems is either:
+一般上我們編寫的程序可以分爲以下兩類：
 
-- difficult to code but yields super fast results (like writing your web servers from scratch in C)
-- easy to code but not very speedy/robust (like when someone tries to upload a 5GB file and your server crashes)
+- 很難編寫，但是效率超高（就像用C從零開始編寫一個Web服務器）
+- 很簡單編寫，但是不夠效率/強大（就像有人上傳5GB的文件去你服務器，但是服務器當機了）
 
-Node's goal is to strike a balance between these two: relatively easy to understand and use and fast enough for most use cases.
+Node設圖做到平衡在這兩者之間：在大多數用列做到高效運行，而且容易明白和開發。
 
-Node isn't either of the following:
+Node不是以下兩樣東西：
 
-  - A web framework (like Rails or Django, though it can be used to make such things)
-  - A programming language (it uses JavaScript but node isn't its own language)
+  - 不是Web框架 （不像Rails或Django，儘管它可以被用來使這樣的事情）
+  - 不是編程語言（Node是使用JavaScript編程，它沒有自己的編程語言）
   
 Instead, node is somewhere in the middle. It is:
 
-  - Designed to be simple and therefore relatively easy to understand and use
-  - Useful for I/O based programs that need to be fast and/or handle lots of connections
-  
-At a lower level, node can be described as a tool for writing two major types of programs: 
+相反，Node是：
 
-  - Network programs using the protocols of the web: HTTP, TCP, UDP, DNS and SSL
-  - Programs that read and write data to the filesystem or local processes/memory
+  - 設計上簡單，而且容易明白和使用的平臺
+  - 適合那些需要快速和處理很多I/O鏈接的程序
 
-What is an "I/O based program"? Here are some common I/O sources:
+在基層，Node可以作爲一種工具，並編寫出以下兩類程序：
 
-  - Databases (e.g. MySQL, PostgreSQL, MongoDB, Redis, CouchDB)
-  - APIs (e.g. Twitter, Facebook, Apple Push Notifications)
-  - HTTP/WebSocket connections (from users of a web app)
-  - Files (image resizer, video editor, internet radio)
+  - 需要使用到Web協議（如：HTTP、TCP、UDP、DNS和SSL）的網絡程序
+  - 需要對文件系統或者本地進程/內存進行讀入和讀出操作的程序
 
-Node does I/O in a way that is [asynchronous](http://en.wikipedia.org/wiki/Asynchronous_I/O) which lets it handle lots of different things simultaneously. For example, if you go down to a fast food joint and order a cheeseburger they will immediately take your order and then make you wait around until the cheeseburger is ready. In the meantime they can take other orders and start cooking cheeseburgers for other people. Imagine if you had to wait at the register for your cheeseburger, blocking all other people in line from ordering while they cooked your burger! This is called **blocking I/O** because all I/O (cooking cheeseburgers) happens one at a time. Node, on the other hand, is **non-blocking**, which means it can cook many cheeseburgers at once.
+什麼是“I/O程序”？ 這裏有一些常見的I/O源：
 
-Here are some fun things made easy with node thanks to its non-blocking nature:
-  
-  - Control [flying quadcopters](http://nodecopter.com)
-  - Write IRC chat bots
-  - Create [walking biped robots](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
+  - 資料庫 （如：MySQL、PostgreSQL、MongoDB、Redis、CouchDB）
+  - APIs（如：Twitter、Facebook、Apple Push Notifications）
+  - HTTP/WebSocket的鏈接（從用戶的Web應用程序）
+  - 文件檔（圖像尺寸伸縮軟件、視頻編輯軟件、網絡收音機）
+
+Node能夠[異步處理](http://en.wikipedia.org/wiki/Asynchronous_I/O)多個不同種類的I/O源。比如說，假設你來到快餐店，你向店員要了一個芝士漢堡，他們會馬上爲你下單和準備漢堡。然後，他們會要求你在旁邊等漢堡完成。在你等待這段時間，他們可以接受其他訂單和幫其他人準備漢堡。試想下，如果你站在櫃檯前面，一直等到你的芝士漢堡完成，那麼你就阻礙了後面的人下訂單，廚師也不能幫其他人準備漢堡！我們稱這個爲**阻塞I/O**，因爲一次只能處理一個I/O操作（廚師一次只能準備一個漢堡）。Node，不是這樣的，它是**非阻塞**性質，就是說它能一次準備很多漢堡。
+
+多謝Node非阻塞的性質，讓我們可以實現以下這麼有趣事情：
+
+  - 控制[Quadcopters飛行](http://nodecopter.com)
+  - 編寫IRC談天機器人
+  - 製作一個[雙腳走路的機器人](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
 ## Core modules
 
