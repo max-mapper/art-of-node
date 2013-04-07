@@ -13,7 +13,7 @@ Este corto libro es un trabajo en progeso + No tengo trabajo en este momento (si
 ## Tabla de contenidos
 
 - [Entendiendo node](#entendiendo-node)
-- [Módulos del core](#modulos-del-core)
+- [Módulos en el core](#mdulos-en-el-core)
 - [Callbacks](#callbacks)
 - [Events](#events) (not written yet)
 - [Streams](#streams) (not written yet)
