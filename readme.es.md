@@ -13,7 +13,7 @@ Este corto libro es un trabajo en progeso + No tengo trabajo en este momento (si
 ## Tabla de contenidos
 
 - [Entendiendo node](#entendiendo-node)
-- [Core modules](#core-modules)
+- [Módulos del core](#modulos-del-core)
 - [Callbacks](#callbacks)
 - [Events](#events) (not written yet)
 - [Streams](#streams) (not written yet)
@@ -68,15 +68,15 @@ Aquí hay algunas cosas divertidas hechas de manera fácil con Node gracias a su
   - Escribir bots para chat IRC
   - Crear [robots bípedos](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
-## Core modules
+## Módulos en el core
 
-Firstly I would recommend that you get node installed on your computer. The easiest way is to visit [nodejs.org](http://nodejs.org) and click `Install`. 
+Primero que todo recomiendo tener instalado Node en tu computadora. La forma más fácil es visitar [nodejs.org](http://nodejs.org) y dar click en `Install`.
 
-Node has a small core group of modules (commonly referred to as 'node core') that are presented as the public API that you are intended to write programs with. For working with file systems there is the `fs` module and for networks there are modules like `net` (TCP), `http`, `dgram` (UDP).
+Node tiene un pequeño grupo de módulos en el core (comunmente referenciados como 'core de node') los cuales son presentados como la API pública que tienen por objeto el escribir programas con ellos. Para trabajar con sistemas de archivos está el módulo `fs` y para redes existen módulos como `net` (TCP), `http`, `dgram` (UDP).
 
-In addition to `fs` and network modules there are a number of other base modules in node core. There is a module for asynchronously resolving DNS queries called `dns`, a module for getting OS specific information like the tmpdir location called `os`, a module for allocating binary chunks of memory called `buffer`, some modules for parsing urls and paths (`url`, `querystring`, `path`), etc. Most if not all of the modules in node core are there to support nodes main use case: writing fast programs that talk to file systems or networks.
+Adicionalmente a los módulos `fs` y de redes, hay otros módulos base en el core de node. Existe un módulo para resolver consultas DNS asincronamente llamado `dns`, un módulo para obtener información específica del SO como el directorio temporal, llamado `os`, un módulo para asignar pedazos binarios de memoria llamado `buffer`, algunos módulos para parsear urls y caminos (`url`, `querystring`, `path`), etc. La mayoría si no todos los módulos en el core de Node, están para soportar los casos de uso principales de Node: Escribir programas rápidos que se comuniquen con sistemas de archivos o redes.
 
-Node handles I/O with: callbacks, events, streams and modules. If you learn how these four things work then you will be able to go into any module in node core and have a basic understanding about how to interface with it.
+Node maneja E/S con: callbacks, eventos, streams (flujos) y módulos. Si aprendes cómo trabajan esos cuatro elementos entonces serás capaz de ir dentro de cualquier módulo en el core de Node y entender básicamente sobre cómo interactuar con él.
 
 ## Callbacks
 
