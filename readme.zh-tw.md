@@ -1,21 +1,21 @@
 # Node的藝術
 ## Node.js入門
 
-本文檔會假定讀者至少懂一點以下的兩樣東西：
+本文檔假定讀者已經懂了以下的兩樣東西：
 
-- 懂得一種編程語言。如：JavaScript，Ruby，Python，Perl或其他編程語言。如果你還不是程序員，你不懂編程語言，你可以閱讀[JavaScript for Cats](http://jsforcats.com/)。:cat2:
+- 懂得至少一種編程語言。例如：JavaScript，Ruby，Python，Perl或其他編程語言。如果你還不是程序員，你不懂編程語言，你可以閱讀[JavaScript for Cats](http://jsforcats.com/)。:cat2:
 - git和github。這是一個開源的協作工具，Node社區的用戶使用git共享模塊。你需要懂得基本操作就能了。這裏有三篇很好的入門教程：[1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
 
 This short book is a work in progress + I don't have a job right now (if I did I wouldn't have the time to write this). If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/) so that I can write more!
 
-> 譯者: 上面這段我沒有翻譯，因爲我希望保持原文。上面作者提到，目前他還沒找到工作。如果你喜歡這個文檔，希望你可以通過[gittip](https://www.gittip.com/maxogden/)樂捐給作者。這樣作者纔能夠寫更多。
+> 譯者: 上面這段我沒有翻譯，因爲我希望保持原文。上面作者提到，目前他還沒找到工作。如果你喜歡這個文檔，希望你可以通過[gittip](https://www.gittip.com/maxogden/)樂捐給作者。這樣作者才能夠寫更多。
 
 [![donate](donate.png)](https://www.gittip.com/maxogden/)
 
 ## 目錄
 
 - [瞭解Node](#node-1)
-- [Core modules](#core-modules)
+- [核心模塊](#-1)
 - [Callbacks](#callbacks)
 - [Events](#events) (not written yet)
 - [Streams](#streams) (not written yet)
@@ -25,7 +25,7 @@ This short book is a work in progress + I don't have a job right now (if I did I
 
 ## 瞭解Node
 
-Node.js是一個開源項目，目的是讓你通過編寫JavaScript的程序進行網絡、文件系統或其他I/O源的溝通。就這些！它只是一個簡單而穩定的輸入/輸出平臺，你可以在這個平臺上架構模塊。
+Node.js是一個開源項目，目的是讓你通過編寫JavaScript的程序進行網絡、文件系統或其他I/O源的溝通。就這些！它只是一個簡單而穩定的I/O平臺，你可以在這個平臺上架構模塊。
 
 有沒有I/O出的例子？ 我這裏有一張圖，上面是我用Node.js製作的程序，你可以看到上面有很多I/O源：
 
@@ -70,15 +70,15 @@ Node能夠[異步處理](http://en.wikipedia.org/wiki/Asynchronous_I/O)多個不
   - 編寫IRC談天機器人
   - 製作一個[雙腳走路的機器人](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
-## Core modules
+## 核心模塊
 
-Firstly I would recommend that you get node installed on your computer. The easiest way is to visit [nodejs.org](http://nodejs.org) and click `Install`. 
+首先，你需要安裝Node進去你的電腦。Node安裝很簡單，只需瀏覽[nodejs.org](http://nodejs.org)和點擊`Install`.
 
-Node has a small core group of modules (commonly referred to as 'node core') that are presented as the public API that you are intended to write programs with. For working with file systems there is the `fs` module and for networks there are modules like `net` (TCP), `http`, `dgram` (UDP).
+Node擁有一組核心模塊（通常被稱爲`Node核心`）提供公共 API 讓你編程時候調用。我們可以調用`fs`模塊來操作文件系統。當我們要進行網絡操作時候，我們會調用網絡模塊，例如：`net`（TCP），`http`，`dgram`（UDP）。
 
-In addition to `fs` and network modules there are a number of other base modules in node core. There is a module for asynchronously resolving DNS queries called `dns`, a module for getting OS specific information like the tmpdir location called `os`, a module for allocating binary chunks of memory called `buffer`, some modules for parsing urls and paths (`url`, `querystring`, `path`), etc. Most if not all of the modules in node core are there to support nodes main use case: writing fast programs that talk to file systems or networks.
+除了`fs`和網絡模塊之外，Node核心還有很多其他的核心模塊。如`dns`模塊用來異步解析DNS查詢。`os`模塊可以用來收集操作系統的資訊，如tempdir的路徑。`buffer`模塊可以處理二進制數據。還有些模塊可以處理URL和路徑，如：`url`，`querystring`和`path`等等。大部分的核心模塊都支持Node的主要使用目標：快速編寫能夠進行文件或網絡操作的程序。
 
-Node handles I/O with: callbacks, events, streams and modules. If you learn how these four things work then you will be able to go into any module in node core and have a basic understanding about how to interface with it.
+Node通過回調，事件，數據流和模塊來控制I/O。如果你學會了這四樣東西如何工作，那麼你就能夠靈活使用任何核心模塊，而且你還會懂得模塊的基本接口。
 
 ## Callbacks
 
