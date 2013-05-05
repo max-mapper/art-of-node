@@ -1,9 +1,9 @@
 # Node的艺术
 ## Node.js入门
 
-本文档会假定读者至少懂一点以下的两样东西：
+本文档假定读者已经懂了以下的两样东西：
 
-- 懂得一种编程语言。如：JavaScript，Ruby，Python，Perl或其他编程语言。如果你还不是程序员，你不懂编程语言，你可以阅读[JavaScript for Cats](http://jsforcats.com/)。:cat2:
+- 懂得至少一种编程语言。例如：JavaScript，Ruby，Python，Perl或其他编程语言。如果你还不是程序员，你不懂编程语言，你可以阅读[JavaScript for Cats](http://jsforcats.com/)。:cat2:
 - git和github。这是一个开源的协作工具，Node社区的用户使用git共享模块。你需要懂得基本操作就能了。这里有三篇很好的入门教程：[1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
 
 This short book is a work in progress + I don't have a job right now (if I did I wouldn't have the time to write this). If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/) so that I can write more!
@@ -15,7 +15,7 @@ This short book is a work in progress + I don't have a job right now (if I did I
 ## 目录
 
 - [了解Node](#node-1)
-- [Core modules](#core-modules)
+- [核心模块](#-1)
 - [Callbacks](#callbacks)
 - [Events](#events) (not written yet)
 - [Streams](#streams) (not written yet)
@@ -25,7 +25,7 @@ This short book is a work in progress + I don't have a job right now (if I did I
 
 ## 了解Node
 
-Node.js是一个开源项目，目的是让你通过编写JavaScript的程序进行网络、文件系统或其他I/O源的沟通。就这些！它只是一个简单而稳定的输入/输出平台，你可以在这个平台上架构模块。
+Node.js是一个开源项目，目的是让你通过编写JavaScript的程序进行网络、文件系统或其他I/O源的沟通。就这些！它只是一个简单而稳定的I/O平台，你可以在这个平台上架构模块。
 
 有没有I/O出的例子？ 我这里有一张图，上面是我用Node.js制作的程序，你可以看到上面有很多I/O源：
 
@@ -70,15 +70,15 @@ Node能够[异步处理](http://en.wikipedia.org/wiki/Asynchronous_I/O)多个不
   - 编写IRC谈天机器人
   - 制作一个[双脚走路的机器人](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
-## Core modules
+## 核心模块
 
-Firstly I would recommend that you get node installed on your computer. The easiest way is to visit [nodejs.org](http://nodejs.org) and click `Install`. 
+首先，你需要安装Node进去你的电脑。Node安装很简单，只需浏览[nodejs.org](http://nodejs.org)和点击`Install`.
 
-Node has a small core group of modules (commonly referred to as 'node core') that are presented as the public API that you are intended to write programs with. For working with file systems there is the `fs` module and for networks there are modules like `net` (TCP), `http`, `dgram` (UDP).
+Node拥有一组核心模块（通常被称为`Node核心`）提供公共 API 让你编程时候调用。我们可以调用`fs`模块来操作文件系统。当我们要进行网络操作时候，我们会调用网络模块，例如：`net`（TCP），`http`，`dgram`（UDP）。
 
-In addition to `fs` and network modules there are a number of other base modules in node core. There is a module for asynchronously resolving DNS queries called `dns`, a module for getting OS specific information like the tmpdir location called `os`, a module for allocating binary chunks of memory called `buffer`, some modules for parsing urls and paths (`url`, `querystring`, `path`), etc. Most if not all of the modules in node core are there to support nodes main use case: writing fast programs that talk to file systems or networks.
+除了`fs`和网络模块之外，Node核心还有很多其他的核心模块。如`dns`模块用来异步解析DNS查询。`os`模块可以用来收集操作系统的资讯，如tempdir的路径。`buffer`模块可以处理二进制数据。还有些模块可以处理URL和路径，如：`url`，`querystring`和`path`等等。大部分的核心模块都支持Node的主要使用目标：快速编写能够进行文件或网络操作的程序。
 
-Node handles I/O with: callbacks, events, streams and modules. If you learn how these four things work then you will be able to go into any module in node core and have a basic understanding about how to interface with it.
+Node通过回调，事件，数据流和模块来控制I/O。如果你学会了这四样东西如何工作，那么你就能够灵活使用任何核心模块，而且你还会懂得模块的基本接口。
 
 ## Callbacks
 
