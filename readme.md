@@ -70,7 +70,7 @@ Here are some fun things made easy with node thanks to its non-blocking nature:
 
 ## Core modules
 
-Firstly I would recommend that you get node installed on your computer. The easiest way is to visit [nodejs.org](http://nodejs.org) and click `Install`. 
+Firstly I would recommend that you get node installed on your computer. The easiest way is to visit [nodejs.org](http://nodejs.org) and click `Install`.
 
 Node has a small core group of modules (commonly referred to as 'node core') that are presented as the public API that you are intended to write programs with. For working with file systems there is the `fs` module and for networks there are modules like `net` (TCP), `http`, `dgram` (UDP).
 
@@ -80,11 +80,11 @@ Node handles I/O with: callbacks, events, streams and modules. If you learn how 
 
 ## Callbacks
 
-This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just a particularly useful way to use JavaScript functions.
+This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just part of the JavaScript language.
 
 Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
 
-The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example:
+The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example, meaning you can read the code top to bottom just like a book:
 
 ```js
 var myNumber = 1
@@ -93,16 +93,16 @@ addOne() // run the function
 console.log(myNumber) // logs out 2
 ```
 
-The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2.
+The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2. This is the expectation of synchronous code - it sequentially top to bottom.
 
-Let's suppose that we want to instead store our number in a file called `number.txt`:
+Node, however, uses mostly asynchronous code. Let's use node to read our number from a file called `number.txt`:
 
 ```js
 var fs = require('fs') // require is a special function provided by node
-var myNumber = undefined // we dont know what the number is yet since it is stored in a file
+var myNumber = undefined // we don't know what the number is yet since it is stored in a file
 
 function addOne() {
-  fs.readFile('./number.txt', function doneReading(err, fileContents) {
+  fs.readFile('number.txt', function doneReading(err, fileContents) {
     myNumber = parseInt(fileContents)
     myNumber++
   })
@@ -110,10 +110,10 @@ function addOne() {
 
 addOne()
 
-console.log(myNumber) // logs out undefined
+console.log(myNumber) // logs out undefined -- the this line gets run before readFile is done
 ```
 
-Why do we get `undefined` when we log out the number this time? In this code we use the `fs.readFile` method, which happens to be an asynchronous method. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. The reason for this is that I/O is reallyyy reallyyy sloowwww. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (RAM).
+Why do we get `undefined` when we log out the number this time? In this code we use the `fs.readFile` method, which happens to be an asynchronous method. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. The reason for this is that I/O is reallyyy reallyyy sloowwww. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (e.g. RAM).
 
 When we run this program all of the functions are immediately defined, but they don't all execute immediately. This is a fundamental thing to understand about async programming. When `addOne` is called it kicks off a `readFile` and then moves on to the next thing that is ready to execute. If there is nothing to execute node will either wait for pending fs/network operations to finish or it will stop running and exit to the command line.
 
@@ -136,7 +136,7 @@ var fs = require('fs')
 var myNumber = undefined
 
 function addOne(callback) {
-  fs.readFile('./number.txt', function doneReading(err, fileContents) {
+  fs.readFile('number.txt', function doneReading(err, fileContents) {
     myNumber = parseInt(fileContents)
     myNumber++
     callback()
@@ -156,9 +156,9 @@ When a function get invoked in javascript the code inside that function will imm
 
 To break down this example even more, here is a timeline of events that happen when we run this program:
 
-- 1: the code is parsed, which means if there are any syntax errors they would make the program break.
-- 2: `addOne` gets invoked, getting passed in the `logMyNumber` function as `callback`, which is what we want to be called when `addOne` is complete. This immediately causes the asynchronous `fs.readFile` function to kick off. This part of the program takes a while to finish.
-- 3: with nothing to do, node idles for a bit as it waits for `readFile` to finish
+- 1: the code is parsed, which means if there are any syntax errors they would make the program break. During this initial phase there are 4 things that get defined: `fs`, `myNumber`, `addOne`, and `logMyNumber`. Note that these are just being defined, no functions have been called/invoked yet.
+- 2: When the last line of our program gets executed `addOne` gets invoked, getting passed in the `logMyNumber` function as `callback`, which is what we want to be called when `addOne` is complete. This immediately causes the asynchronous `fs.readFile` function to kick off. This part of the program takes a while to finish.
+- 3: with nothing to do, node idles for a bit as it waits for `readFile` to finish. If there was anything else to do during this time, node would be available for work.
 - 4: `readFile` finishes and calls its callback, `doneReading`, which then in turn increments the number and then immediately invokes the function that `addOne` passed in (its callback), `logMyNumber`.
 
 Perhaps the most confusing part of programming with callbacks is how functions are just objects that be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
@@ -196,7 +196,7 @@ read a file
 process that file
 ```
 
-If you were to naively turn this into pseudocode you would end up with this:
+If you were to turn this into pseudocode you would end up with this:
 
 ```
 var file = readFile()
@@ -249,7 +249,7 @@ Here are few common use cases for using events instead of plain callbacks:
 
 - Chat room where you want to broadcast messages to many listeners
 - Game server that needs to know when new players connect, disconnect, move, shoot and jump
-- Database connector that might need to know when the database connection opens, closes or sends an error
+- Game engine where you want to let game developers subscribe to events like `.on('jump', function() {})`
 
 If we were trying to write a module that connects to a chat server using only callbacks it would look like this:
 
@@ -323,7 +323,7 @@ MORE EVENTS CONTENT TODO
 
 ## Streams
 
-Early on in the project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
+Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
 
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
 
