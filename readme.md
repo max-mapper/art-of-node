@@ -15,11 +15,10 @@ This short book is a work in progress + I don't have a job right now (if I did I
 - [Understanding node](#understanding)
 - [Core modules](#core-modules)
 - [Callbacks](#callbacks)
-- [Events](#events) (not written yet)
-- [Streams](#streams) (not written yet)
-- [Modules and NPM](#modules) (not written yet)
+- [Events](#events)
+- [Streams](#streams)
+- [Modules and NPM](#modules)
 - [Going with the grain](#going-with-the-grain)
-- [Real-time apps](#realtime) (not written yet)
 
 ## Understanding node
 
@@ -413,6 +412,10 @@ var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
 
 Does this make one any better than the other? Hard to say! It's important to actually *read* the code and make your own conclusions. If you find a module you like, use `npm star modulename` to give NPM feedback about modules that you had a positive experience with.
 
+### How to write a module
+
+** coming soon **
+
 ## Going with the grain
 
 Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](http://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
@@ -469,10 +472,6 @@ fs.readFile('movie.mp4', function(err, data) {
 Note: If you don't know what these things mean then you will likely have an easier time learning node, since unlearning things is just as much work as learning things.
 
 Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
-
-## Real-time apps
-
-TODO - this section will have a non-contrived, functioning application with a web UI whose architecture will be dissected and discussed.
 
 ## License
 
