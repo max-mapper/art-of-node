@@ -328,11 +328,90 @@ Early on in the node project the file system and network APIs had their own sepa
 
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
 
-THE REST IS TODO, in the meantime read the [streams handbook](https://github.com/substack/stream-handbook#introduction)
+There are already two great resources that you can use to learn about node streams:
+
+### Stream Adventure
+
+[stream-adventure](https://github.com/substack/stream-adventure) by @substack is an interactive command line stream tutorial. You can install it with NPM:
+
+```
+# install
+npm install stream-adventure -g
+
+# start the adventure
+stream-adventure
+```
+
+[![stream-adventure](stream-adventure.png)](https://github.com/substack/stream-adventure)
+
+### Stream Handbook
+
+[stream-handbook](https://github.com/substack/stream-handbook#introduction) is a guide, similar to this one, that contains a reference for everything you could possibly need to know about streams.
+
+[![stream-handbook](stream-handbook.png)](https://github.com/substack/stream-handbook)
 
 ## Modules
 
-TODO
+Node core is made up of about two dozen modules, some lower level ones like `events` and `stream` some higher level ones like `http` and `crypto`.
+
+This design is intentional. Node core is supposed to be small, and the modules in core should be focused on providing tools for working with common I/O protocols and formats in a way that is cross-platform.
+
+For everything else there is [NPM](https://npmjs.org/). Anyone can create a new node module that adds some functionality and publish it to NPM. As of the time of this writing there are 34,000 modules on NPM.
+
+### How to find a module
+
+Imagine you are trying to convert PDF files into TXT files. The best place to start is by doing `npm search pdf`:
+
+![pdfsearch](npm-search.png)
+
+There are a ton of results! NPM is quite popular and you will usually be able to find multiple potential solutions. If you go through each module and whittle down the results into a more narrow set (filtering out things like PDF generation modules) you'll end up with these:
+
+- [hummus](https://github.com/galkahana/HummusJS/wiki/Features) - c++ pdf manipulator
+- [mimeograph](https://github.com/steelThread/mimeograph) - api on a conglomeration of tools (poppler, tesseract, imagemagick etc)
+- [pdftotextjs](https://npmjs.org/package/pdftotextjs) - wrapper around [pdftotext](https://en.wikipedia.org/wiki/Pdftotext)
+- [pdf-text-extract](https://npmjs.org/package/pdf-text-extract) - another wrapper around pdftotext
+- [pdf-extract](https://npmjs.org/package/pdf-extract) - wrapper around pdftotext, pdftk, tesseract, ghostscript
+- [pdfutils](https://npmjs.org/package/pdfutils) - poppler wrapper
+- [scissors](https://npmjs.org/package/scissors) - pdftk, ghostscript wrapper w/ high level api
+- [textract](https://npmjs.org/package/textract) - pdftotext wrapper
+- [pdfiijs](https://github.com/fagbokforlaget/pdfiijs) - pdf to inverted index using textiijs and poppler
+- [pdf2json](https://github.com/modesty/pdf2json/blob/master/readme.md) - pure js pdf to json
+
+A lot of the modules have overlapping functionality but present alternate APIs and most of them require external dependencies (like `apt-get install poppler`).
+
+Here are some different ways to interpret the modules:
+
+- `pdf2json` is the only one that is written in pure JavaScript, which means it is the easiest to install, especially on low power devices like the raspberry pi or on Windows where native code might not be cross platform.
+- modules like `mimeograph`, `hummus` and `pdf-extract` each combine multiple lower level modules to expose a high level API
+- a lot of modules seem to sit on top of the `pdftotext`/`poppler` unix command line tools
+
+Lets compare the differences between `pdftotextjs` and `pdf-text-extract`, both of which are are wrappers around the `pdftotext` utility.
+
+![pdf-modules](pdf-modules.png)
+
+Both of these:
+
+- were updated relatively recently
+- have github repositories linked (this is very important!)
+- have READMEs
+- have at least some number of people installing them every week
+- are liberally licensed (anyone can use them)
+
+Just looking at the `package.json` + module statistics it's hard to get a feeling about which one might be the right choice. Let's compare the READMEs:
+
+![pdf-readmes](pdf-readmes.png)
+
+Both have simple descriptions, CI badges, installation instructions, clear examples and instructions for running the tests. Great! But which one do we use? Let's compare the code:
+
+![pdf-code](pdf-code.png)
+
+`pdftotextjs` is around 110 lines of code, and `pdf-text-extract` is around 40, but both essentially boil down to this line:
+
+```
+var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
+```
+
+Does this make one any better than the other? Hard to say! It's important to actually *read* the code and make your own conclusions. If you find a module you like, use `npm star modulename` to give NPM feedback about modules that you had a positive experience with.
 
 ## Going with the grain
 
