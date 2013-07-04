@@ -426,8 +426,9 @@ With NPM installing global modules is an anti-pattern. Just like how you shouldn
 
 When you call `require('some_module')` in node here is what happens:
 
-1. node looks in the current folder for a `node_modules` folder with a `some_module` folder in it
-2. if it doesn't find it, it will go up one folder and repeat
+1. if a file called `some_module.js` exists in the current folder node will load that, otherwise:
+2. node looks in the current folder for a `node_modules` folder with a `some_module` folder in it
+3. if it doesn't find it, it will go up one folder and repeat step 2
 
 This cycle repeats until node reaches the root folder of the filesystem, at which point it will then check any global module folders (e.g. `/usr/local/node_modules` on Mac OS) and if it still doesn't find `some_module` it will throw an exception.
 
