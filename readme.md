@@ -422,11 +422,11 @@ It's not just Debian that does this. Most programming language package managers 
 
 With NPM installing global modules is an anti-pattern. Just like how you shouldn't use global variables in your JavaScript programs you also shouldn't install global modules (unless you need a module with an executable binary to show up in your global `PATH`, but you don't always need to do this -- more on this later).
 
-#### How does `require` works
+#### How `require` works
 
 When you call `require('some_module')` in node here is what happens:
 
-1. node looks in the current folder (AKA `__dirname`) for a `node_modules` folder with a `some_module` folder in it
+1. node looks in the current folder for a `node_modules` folder with a `some_module` folder in it
 2. if it doesn't find it, it will go up one folder and repeat
 
 This cycle repeats until node reaches the root folder of the filesystem, at which point it will then check any global module folders (e.g. `/usr/local/node_modules` on Mac OS) and if it still doesn't find `some_module` it will throw an exception.
@@ -435,11 +435,11 @@ Here's a visual example:
 
 ![mod-diagram-01](mod-diagram-01.png)
 
-One of the benefits of NPM's approach is that modules can install their dependent modules at specific known working versions. In this case the module `foo` is quite popular - there are three copies of it, each one inside it's parent module folder. The reasoning for this could be that each parent module needed a different version of `foo`, e.g. 'folder' needs `foo@0.0.1`, `subfolder_A` needs `foo@0.2.1` etc.
-
 When the current working directory is `subsubfolder` and `require('foo')` is called, node will look for the folder called `subsubsubfolder/node_modules`. In this case it won't find it -- the folder there is mistakenly called `my_modules`. Then node will go up one folder and try again, meaning it then looks for `subfolder_B/node_modules`, which also doesn't exist. Third try is a charm, though, as `folder/node_modules` does exist *and* has a folder called `foo` inside of it. If `foo` wasn't in there node would continue it's search up the directory tree.
 
 Note that if called from `subfolder_B` node will never find `subfolder_A/node_modules`, it can only see `folder/node_modules` on it's way up the tree.
+
+One of the benefits of NPM's approach is that modules can install their dependent modules at specific known working versions. In this case the module `foo` is quite popular - there are three copies of it, each one inside it's parent module folder. The reasoning for this could be that each parent module needed a different version of `foo`, e.g. 'folder' needs `foo@0.0.1`, `subfolder_A` needs `foo@0.2.1` etc.
 
 Here's what happens when we fix the folder naming error by changing `my_modules` to the correct name `node_modules`:
 
