@@ -418,7 +418,7 @@ NPM is different from most package managers in that it installs modules into a f
 
 Many package managers install things globally. For instance, if you `apt-get install couchdb` on Debian Linux it will try to install the latest stable version of CouchDB. If you are trying to install CouchDB as a dependency of some other piece of software and that software needs and older version of CouchDB, you have to uninstall the newer version of CouchDB and then install the older version. You can't have two versions of CouchDB installed because Debian only knows how to install things into one place.
 
-It's not just Debian that does this. Most programming language package managers work this way too. To address the global dependencies problem described above there have been virtual environment developed like [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs.html) for Python or [bundler](http://bundler.io/) for Ruby. These just split your environment up in to many virtual environments, one for each projects, but inside each environment dependencies are still globally installed. Virtual environments don't always solve the problem, sometimes they just multiply it by adding additional layers of complexity.
+It's not just Debian that does this. Most programming language package managers work this way too. To address the global dependencies problem described above there have been virtual environment developed like [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs.html) for Python or [bundler](http://bundler.io/) for Ruby. These just split your environment up in to many virtual environments, one for each project, but inside each environment dependencies are still globally installed. Virtual environments don't always solve the problem, sometimes they just multiply it by adding additional layers of complexity.
 
 With NPM installing global modules is an anti-pattern. Just like how you shouldn't use global variables in your JavaScript programs you also shouldn't install global modules (unless you need a module with an executable binary to show up in your global `PATH`, but you don't always need to do this -- more on this later).
 
@@ -450,7 +450,64 @@ To test out which module actually gets loaded by node, you can use the `require.
 
 ### How to write a module
 
-** coming soon **
+Now that you know how to find modules and require them you can start writing your own modules.
+
+#### The simplest possible module
+
+Node modules are radically lightweight. Here is one of the simplest possible node modules:
+
+`package.json`:
+```js
+{
+  "id": "number-one",
+  "version": "1.0.0"
+}
+```
+
+`index.js`:
+```js
+module.exports = 1
+```
+
+Put both of those files in a folder called `number-one` (the `id` in `package.json` must match the folder name) and you'll have a working node module.
+
+Calling the function `require('number-one')` return the value of whatever `module.exports` was set to inside the module:
+
+![simple-module](simple-module.png)
+
+An even quicker way to create a module is to run these commands:
+
+```sh
+mkdir my_module
+cd my_module
+git init
+git remote add git@github.com:yourusername/my_module.git
+npm init
+```
+
+Running `npm init` will create a valid `package.json` for you and if you run it in an existing `git` repo it will set the `repositories` field inside `package.json` automatically as well!
+
+#### Adding dependencies
+
+A module can list any other modules from NPM or GitHub in the `dependencies` field of `package.json`. To install the `request` module as a new dependency and automatically add it to `package.json` run this from your module root directory:
+
+```sh
+npm install --save request
+```
+
+This installs a copy of `request` into the closest `node_modules` folder and makes our `package.json` look something like this:
+
+```
+{
+  "id": "number-one",
+  "version": "1.0.0",
+  "dependencies": {
+    "request": "~2.22.0"
+  }
+}
+```
+
+By default `npm install` will grab the latest published version of a module.
 
 ## Going with the grain
 
