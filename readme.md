@@ -464,10 +464,12 @@ Node modules are radically lightweight. Here is one of the simplest possible nod
 }
 ```
 
-`index.js` (by default node tries to load `module/index.js` when you `require('module')`, other file names won't work by default):
+`index.js`:
 ```js
 module.exports = 1
 ```
+
+By default node tries to load `module/index.js` when you `require('module')`, any other file name won't work unless you set the `main` field of `package.json` to point to it.
 
 Put both of those files in a folder called `number-one` (the `id` in `package.json` must match the folder name) and you'll have a working node module.
 
