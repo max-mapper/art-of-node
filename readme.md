@@ -139,7 +139,7 @@ function addOne(callback) {
     myNumber = parseInt(fileContents)
     myNumber++
     callback()
-  }
+  })
 }
 
 function logMyNumber() {
