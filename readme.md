@@ -109,7 +109,7 @@ function addOne() {
 
 addOne()
 
-console.log(myNumber) // logs out undefined -- the this line gets run before readFile is done
+console.log(myNumber) // logs out undefined -- this line gets run before readFile is done
 ```
 
 Why do we get `undefined` when we log out the number this time? In this code we use the `fs.readFile` method, which happens to be an asynchronous method. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. The reason for this is that I/O is reallyyy reallyyy sloowwww. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (e.g. RAM).
