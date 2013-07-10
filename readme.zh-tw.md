@@ -1,21 +1,21 @@
 # Node的藝術
 ## Node.js入門
 
-本文檔假定讀者已經懂了以下的兩樣東西：
+本文件假設讀者已經懂了以下的兩樣東西：
 
-- 懂得至少一種編程語言。例如：JavaScript，Ruby，Python，Perl或其他編程語言。如果你還不是程序員，你不懂編程語言，你可以閱讀[JavaScript for Cats](http://jsforcats.com/)。:cat2:
-- git和github。這是一個開源的協作工具，Node社區的用戶使用git共享模塊。你需要懂得基本操作就能了。這裏有三篇很好的入門教程：[1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
+- 至少懂得一種程式語言。例如：JavaScript，Ruby，Python，Perl或其他程式語言。如果你還不是程式設計師，你也不懂程式語言，你可以閱讀[JavaScript for Cats](http://jsforcats.com/)。:cat2:
+- git和github。這是一個開源的協作工具，Node社群的參與者使用git共享模組。你只需要懂得基本操作就夠了。這裏有三篇很好的入門教學：[1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
 
 This short book is a work in progress + I don't have a job right now (if I did I wouldn't have the time to write this). If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/) so that I can write more!
 
-> 譯者: 上面這段我沒有翻譯，因爲我希望保持原文。上面作者提到，目前他還沒找到工作。如果你喜歡這個文檔，希望你可以通過[gittip](https://www.gittip.com/maxogden/)樂捐給作者。這樣作者才能夠寫更多。
+> 譯者: 上面這段我沒有翻譯，因爲我希望保持原文。上面作者提到，目前他還沒找到工作。如果你喜歡這份文件，希望你可以通過[gittip](https://www.gittip.com/maxogden/)樂捐給作者。這樣作者才能夠寫更多內容。
 
 [![donate](donate.png)](https://www.gittip.com/maxogden/)
 
 ## 目錄
 
 - [瞭解Node](#node-1)
-- [核心模塊](#-1)
+- [核心模組](#-1)
 - [Callbacks](#callbacks)
 - [Events](#events) (not written yet)
 - [Streams](#streams) (not written yet)
@@ -25,64 +25,64 @@ This short book is a work in progress + I don't have a job right now (if I did I
 
 ## 瞭解Node
 
-Node.js是一個開源項目，目的是讓你通過編寫JavaScript的程序進行網絡、文件系統或其他I/O源的溝通。就這些！它只是一個簡單而穩定的I/O平臺，你可以在這個平臺上架構模塊。
+Node.js是一個自由軟體專案，目的是讓你通過編寫JavaScript的程式進行網路、檔案系統或者與其他輸入/輸出裝置溝通的程式。就這樣！它只是一個簡單而穩定的輸入/輸出平臺，你可以在這個平臺上建構模組。
 
-有沒有I/O出的例子？ 我這裏有一張圖，上面是我用Node.js製作的程序，你可以看到上面有很多I/O源：
+那有沒有一些關於輸入/輸出的實際例子？ 這裏有張我用Node.js製作的應用程式結構圖，你可以看到上面有很多輸入/輸出裝置：
 
 ![server diagram](server-diagram.png)
 
-如果你無法明白上圖顯示的所有東西，這是沒問題的。重點是你看到一個Node的運作（在中間六邊形那個），它就像經紀人，管理全部I/O的端口（橙色和紫色的線條代表I/O）。
+如果你無法完全瞭解上圖顯示的所有東西，那沒關係。重點是你看到一個Node的運作（中間的六邊形那個），它就像經紀人，管理全部輸入/輸出的節點（橙色和紫色的線條代表輸入/輸出）。
 
-一般上我們編寫的程序可以分爲以下兩類：
+一般上我們撰寫的程式可以分爲以下兩類：
 
-- 很難編寫，但是效率超高（就像用C從零開始編寫一個Web服務器）
-- 很簡單編寫，但是不夠效率/強大（就像有人上傳5GB的文件去你服務器，但是服務器當機了）
+- 很難寫，但是效率超高（就像用C從零開始編寫一個網頁伺服器）
+- 很好寫，但是不夠效率/強大（就像有人試圖上傳5GB的檔案去你伺服器，但是伺服器卻當掉了）
 
-Node設圖做到平衡在這兩者之間：在大多數用列做到高效運行，而且容易明白和開發。
+Node試圖在這兩者之間做到平衡：容易理解與使用，並且在多數的情況下能夠快速開發。
 
 Node不是以下兩樣東西：
 
-  - 不是Web框架 （不像Rails或Django，儘管它可以被用來使這樣的事情）
-  - 不是編程語言（Node是使用JavaScript編程，它沒有自己的編程語言）
+  - 不是Web框架 （不像Rails或Django，儘管它可以被用來做這樣的事情）
+  - 不是程式語言（Node使用JavaScript程式語言，它沒有自己的語言）
 
 相反，Node是：
 
   - 設計上簡單，而且容易明白和使用的平臺
-  - 適合那些需要快速和處理很多I/O鏈接的程序
+  - 適合那些需要快速和處理很多輸入/輸出連接的程式
 
-在基層，Node可以作爲一種工具，並編寫出以下兩類程序：
+在底層，Node可以作爲一種工具，並編寫出以下兩類程式：
 
-  - 需要使用到Web協議（如：HTTP、TCP、UDP、DNS和SSL）的網絡程序
-  - 需要對文件系統或者本地進程/內存進行讀入和讀出操作的程序
+  - 需要使用到Web協議（如：HTTP、TCP、UDP、DNS和SSL）的網路程式
+  - 需要對檔案系統或者本機執行緒/記憶體進行寫入或讀出操作的程式
 
-什麼是“I/O程序”？ 這裏有一些常見的I/O源：
+什麼是“輸入/輸出程式”？ 這裏有一些常見的輸入/輸出裝置：
 
   - 資料庫 （如：MySQL、PostgreSQL、MongoDB、Redis、CouchDB）
   - APIs（如：Twitter、Facebook、Apple Push Notifications）
-  - HTTP/WebSocket的鏈接（從用戶的Web應用程序）
-  - 文件檔（圖像尺寸伸縮軟件、視頻編輯軟件、網絡收音機）
+  - HTTP/WebSocket的連線（從使用者的Web應用程式）
+  - 文件檔（圖像縮放軟件、影音編輯器、網路收音機）
 
-Node能夠[異步處理](http://en.wikipedia.org/wiki/Asynchronous_I/O)多個不同種類的I/O源。比如說，假設你來到快餐店，你向店員要了一個芝士漢堡，他們會馬上爲你下單和準備漢堡。然後，他們會要求你在旁邊等漢堡完成。在你等待這段時間，他們可以接受其他訂單和幫其他人準備漢堡。試想下，如果你站在櫃檯前面，一直等到你的芝士漢堡完成，那麼你就阻礙了後面的人下訂單，廚師也不能幫其他人準備漢堡！我們稱這個爲**阻塞I/O**，因爲一次只能處理一個I/O操作（廚師一次只能準備一個漢堡）。Node，不是這樣的，它是**非阻塞**性質，就是說它能一次準備很多漢堡。
+Node能夠[非同步處理](http://en.wikipedia.org/wiki/Asynchronous_I/O)多個不同種類的輸入/輸出來源。比如說，假設你來到快餐店，你向店員要了一個起士堡，他們會馬上爲你下單和準備漢堡。然後，他們會要求你在旁邊等漢堡完成。在你等待這段時間，他們可以接受其他訂單和幫其他人準備漢堡。試想一下，如果你站在櫃檯前面，一直等到你的起士堡完成，那麼你就阻礙了後面的人下訂單，廚師也不能幫其他人準備漢堡！我們稱這個爲**阻塞式I/O**，因爲一次只能處理一個I/O操作（廚師一次只能準備一個漢堡）。Node並不是這樣的，它是**非阻塞**的，也就是說它能一次準備很多漢堡。
 
-多謝Node非阻塞的性質，讓我們可以實現以下這麼有趣事情：
+感謝Node的非阻塞特性，讓我們可以實現以下這些有趣事情：
 
   - 控制[Quadcopters飛行](http://nodecopter.com)
   - 編寫IRC談天機器人
   - 製作一個[雙腳走路的機器人](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
-## 核心模塊
+## 核心模組
 
-首先，你需要安裝Node進去你的電腦。Node安裝很簡單，只需瀏覽[nodejs.org](http://nodejs.org)和點擊`Install`.
+首先，你需要安裝Node到你的電腦。Node安裝很簡單，只需瀏覽[nodejs.org](http://nodejs.org)和按下`Install`.
 
-Node擁有一組核心模塊（通常被稱爲`Node核心`）提供公共 API 讓你編程時候調用。我們可以調用`fs`模塊來操作文件系統。當我們要進行網絡操作時候，我們會調用網絡模塊，例如：`net`（TCP），`http`，`dgram`（UDP）。
+Node擁有一組核心模組（通常被稱爲`Node核心`）提供公用 API 讓你開發時呼叫。我們可以呼叫`fs`模組來操作檔案系統。當我們要進行網路操作時候，我們會呼叫網路模組，例如：`net`（TCP），`http`，`dgram`（UDP）。
 
-除了`fs`和網絡模塊之外，Node核心還有很多其他的核心模塊。如`dns`模塊用來異步解析DNS查詢。`os`模塊可以用來收集操作系統的資訊，如tempdir的路徑。`buffer`模塊可以處理二進制數據。還有些模塊可以處理URL和路徑，如：`url`，`querystring`和`path`等等。大部分的核心模塊都支持Node的主要使用目標：快速編寫能夠進行文件或網絡操作的程序。
+除了`fs`和網路模組之外，Node核心還有很多其他的核心模組。如`dns`模組用來非同步解析DNS查詢。`os`模組可以用來收集作業系統的資訊，如tempdir的路徑。`buffer`模組可以處理二進制資料。還有些模組可以處理URL和路徑，如：`url`，`querystring`和`path`等等。大部分的核心模組都支援Node的主要使用目標：快速編寫能夠進行檔案或網路操作的程式。
 
-Node通過回調，事件，數據流和模塊來控制I/O。如果你學會了這四樣東西如何工作，那麼你就能夠靈活使用任何核心模塊，而且你還會懂得模塊的基本接口。
+Node通過回呼機制，事件，串流和模組來控制I/O。如果你知道這四樣東西是如何工作的，那麼你就能夠靈活使用任何核心模組，並且懂得如何與這些模組串聯。
 
-## Callbacks
+## 回呼機制
 
-This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just a particularly useful way to use JavaScript functions.
+如果你想瞭解如何使用node，這將會是最重要的課題。幾乎在node中的所有事情都會使用到回呼機制。這並不是node發明的，它只是一種呼叫javascript函示的特殊方式。
 
 Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
 
