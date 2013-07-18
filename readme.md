@@ -12,12 +12,13 @@ This short book is a work in progress. If you like it then please **give me a do
 
 ## Table of contents
 
-- [Understanding node](#understanding)
+- [Understanding node](#understanding-node)
 - [Core modules](#core-modules)
 - [Callbacks](#callbacks)
 - [Events](#events)
 - [Streams](#streams)
-- [Modules and NPM](#modules)
+- [Modules and npm](#modules)
+- [Client side development with npm](#client-side-development-with-npm)
 - [Going with the grain](#going-with-the-grain)
 
 ## Understanding node
@@ -331,7 +332,7 @@ There are already two great resources that you can use to learn about node strea
 
 ### Stream Adventure
 
-[stream-adventure](https://github.com/substack/stream-adventure) by @substack is an interactive command line stream tutorial. You can install it with NPM:
+[stream-adventure](https://github.com/substack/stream-adventure) by @substack is an interactive command line stream tutorial. You can install it with npm:
 
 ```
 # install
@@ -355,7 +356,7 @@ Node core is made up of about two dozen modules, some lower level ones like `eve
 
 This design is intentional. Node core is supposed to be small, and the modules in core should be focused on providing tools for working with common I/O protocols and formats in a way that is cross-platform.
 
-For everything else there is [NPM](https://npmjs.org/). Anyone can create a new node module that adds some functionality and publish it to NPM. As of the time of this writing there are 34,000 modules on NPM.
+For everything else there is [npm](https://npmjs.org/). Anyone can create a new node module that adds some functionality and publish it to npm. As of the time of this writing there are 34,000 modules on npm.
 
 ### How to find a module
 
@@ -363,7 +364,7 @@ Imagine you are trying to convert PDF files into TXT files. The best place to st
 
 ![pdfsearch](npm-search.png)
 
-There are a ton of results! NPM is quite popular and you will usually be able to find multiple potential solutions. If you go through each module and whittle down the results into a more narrow set (filtering out things like PDF generation modules) you'll end up with these:
+There are a ton of results! npm is quite popular and you will usually be able to find multiple potential solutions. If you go through each module and whittle down the results into a more narrow set (filtering out things like PDF generation modules) you'll end up with these:
 
 - [hummus](https://github.com/galkahana/HummusJS/wiki/Features) - c++ pdf manipulator
 - [mimeograph](https://github.com/steelThread/mimeograph) - api on a conglomeration of tools (poppler, tesseract, imagemagick etc)
@@ -410,17 +411,17 @@ Both have simple descriptions, CI badges, installation instructions, clear examp
 var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
 ```
 
-Does this make one any better than the other? Hard to say! It's important to actually *read* the code and make your own conclusions. If you find a module you like, use `npm star modulename` to give NPM feedback about modules that you had a positive experience with.
+Does this make one any better than the other? Hard to say! It's important to actually *read* the code and make your own conclusions. If you find a module you like, use `npm star modulename` to give npm feedback about modules that you had a positive experience with.
 
 ### Modular development workflow
 
-NPM is different from most package managers in that it installs modules into a folder inside of other existing modules. The previous sentence might not make sense right now but it is the key to NPMs success.
+npm is different from most package managers in that it installs modules into a folder inside of other existing modules. The previous sentence might not make sense right now but it is the key to npm's success.
 
 Many package managers install things globally. For instance, if you `apt-get install couchdb` on Debian Linux it will try to install the latest stable version of CouchDB. If you are trying to install CouchDB as a dependency of some other piece of software and that software needs an older version of CouchDB, you have to uninstall the newer version of CouchDB and then install the older version. You can't have two versions of CouchDB installed because Debian only knows how to install things into one place.
 
 It's not just Debian that does this. Most programming language package managers work this way too. To address the global dependencies problem described above there have been virtual environment developed like [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs.html) for Python or [bundler](http://bundler.io/) for Ruby. These just split your environment up in to many virtual environments, one for each project, but inside each environment dependencies are still globally installed. Virtual environments don't always solve the problem, sometimes they just multiply it by adding additional layers of complexity.
 
-With NPM installing global modules is an anti-pattern. Just like how you shouldn't use global variables in your JavaScript programs you also shouldn't install global modules (unless you need a module with an executable binary to show up in your global `PATH`, but you don't always need to do this -- more on this later).
+With npm installing global modules is an anti-pattern. Just like how you shouldn't use global variables in your JavaScript programs you also shouldn't install global modules (unless you need a module with an executable binary to show up in your global `PATH`, but you don't always need to do this -- more on this later).
 
 #### How `require` works
 
@@ -440,7 +441,7 @@ When the current working directory is `subsubfolder` and `require('foo')` is cal
 
 Note that if called from `subfolder_B` node will never find `subfolder_A/node_modules`, it can only see `folder/node_modules` on its way up the tree.
 
-One of the benefits of NPM's approach is that modules can install their dependent modules at specific known working versions. In this case the module `foo` is quite popular - there are three copies of it, each one inside its parent module folder. The reasoning for this could be that each parent module needed a different version of `foo`, e.g. 'folder' needs `foo@0.0.1`, `subfolder_A` needs `foo@0.2.1` etc.
+One of the benefits of npm's approach is that modules can install their dependent modules at specific known working versions. In this case the module `foo` is quite popular - there are three copies of it, each one inside its parent module folder. The reasoning for this could be that each parent module needed a different version of `foo`, e.g. 'folder' needs `foo@0.0.1`, `subfolder_A` needs `foo@0.2.1` etc.
 
 Here's what happens when we fix the folder naming error by changing `my_modules` to the correct name `node_modules`:
 
@@ -491,7 +492,7 @@ Running `npm init` will create a valid `package.json` for you and if you run it 
 
 #### Adding dependencies
 
-A module can list any other modules from NPM or GitHub in the `dependencies` field of `package.json`. To install the `request` module as a new dependency and automatically add it to `package.json` run this from your module root directory:
+A module can list any other modules from npm or GitHub in the `dependencies` field of `package.json`. To install the `request` module as a new dependency and automatically add it to `package.json` run this from your module root directory:
 
 ```sh
 npm install --save request
@@ -510,6 +511,43 @@ This installs a copy of `request` into the closest `node_modules` folder and mak
 ```
 
 By default `npm install` will grab the latest published version of a module.
+
+## Client side development with npm
+
+A common misconception about npm is that since it has 'Node' in the name that it must only be used for server side JS modules. This is completely untrue! npm actually stands for Node Packaged Modules, e.g. modules that Node packages together for you. The modules themselves can be whatever you want -- they are just a folder of files wrapped up in a .tar.gz, and a file called `package.json` that declares the module version and a list of all modules that are dependencies of the module (as well as their version numbers so the working versions get installed automatically). It's turtles all the way down - module dependencies are just modules, and those modules can have dependencies etc. etc. etc.
+
+[browserify](http://browserify.org/) is a utility written in Node that tries to convert any node module into code that can be run in browsers. Not all modules work (browsers can't do things like host an HTTP server), but a lot of modules on NPM *will* work.
+
+To try out npm in the browser you can use [RequireBin](http://requirebin.com/), an app I made that takes advantage of [Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn), which internally uses browserify but returns the output through HTTP (instead of the command line -- which is how browserify is usually used).
+
+Try putting this code into RequireBin and then hit the preview button:
+
+```js
+var reverse = require('ascii-art-reverse')
+
+// makes a visible HTML console
+require('console-log').show(true)
+
+var coolbear =
+  "    ('-^-/')  \n" +
+  "    `o__o' ]  \n" +
+  "    (_Y_) _/  \n" +
+  "  _..`--'-.`, \n" +
+  " (__)_,--(__) \n" +
+  "     7:   ; 1 \n" +
+  "   _/,`-.-' : \n" +
+  "  (_,)-~~(_,) \n"
+
+setInterval(function() { console.log(coolbear) }, 1000)
+
+setTimeout(function() {
+  setInterval(function() { console.log(reverse(coolbear)) }, 1000)
+}, 500)
+```
+
+Or check out a [more complicated example](http://requirebin.com/?gist=6031068) (feel free to change the code and see what happens):
+
+[![requirebin](requirebin.png)](http://requirebin.com/embed?gist=6031068)
 
 ## Going with the grain
 
