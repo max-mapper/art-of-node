@@ -90,9 +90,9 @@ A diferença pode ser confusa já que uma função ser asincrona ou não depende
 
 ```js
 var myNumber = 1
-function addOne() { myNumber++ } // define the function
-addOne() // run the function
-console.log(myNumber) // logs out 2
+function addOne() { myNumber++ } // define a função
+addOne() // roda a função
+console.log(myNumber) // resultado: 2
 ```
 
 The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2. This is the expectation of synchronous code - it sequentially top to bottom.
