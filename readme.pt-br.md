@@ -95,7 +95,7 @@ addOne() // roda a função
 console.log(myNumber) // resultado: 2
 ```
 
-The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2. This is the expectation of synchronous code - it sequentially top to bottom.
+Este código aqui define uma função e então na próxima linha chama a função, sem esperar por nada. Quando a função é chamada imediatamente adiciona 1 para a variável number, então podemos esperar que após a chamada da função number seja 2. Esta é a expectativa de uma código síncrono - De cima para baixo sequencialmente.
 
 Node, however, uses mostly asynchronous code. Let's use node to read our number from a file called `number.txt`:
 
