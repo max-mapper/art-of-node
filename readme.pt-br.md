@@ -1,4 +1,4 @@
-# A arte de node
+# A arte do node
 ## Uma introdução ao Node.js
 
 Este documento é destinado à leitores que sabem no mínimo algumas das coisas abaixo:
@@ -14,7 +14,7 @@ Este pequeno livro é um trabalho em progresso. Se você gosta deste livro consi
 
 - [Entendendo node](#understanding-node)
 - [Módulos do core](#core-modules)
-- [Callbacks](#callbacks) (Não traduzido ainda)
+- [Callbacks](#callbacks) (Parcialmente traduzido)
 - [Eventos](#events) (Não traduzido ainda)
 - [Streams](#streams) (Não traduzido ainda)
 - [Módulos e npm](#modules) (Não traduzido ainda)
@@ -23,7 +23,7 @@ Este pequeno livro é um trabalho em progresso. Se você gosta deste livro consi
 
 ## Entendendo node
 
-Node.js é um projeto de código aberto feito para te ajudar a escrever programas JavaScript que se comunicam com a rede, arquivos do sistema ou outros 
+Node.js é um projeto de código aberto feito para te ajudar a escrever programas JavaScript que se comunicam com a rede, sistemas de arquivo ou outros 
 códigos I/O(Entrada/Saida, Leitura/Escrita). É isso! Node é apenas uma simples e estável plataforma I/O que encoraja a construção de módulos sobre
 ela mesma.
 
@@ -60,9 +60,9 @@ O que é um "Programa baseado em I/O?" Aqui estão alguns usos comuns:
   - Bancos de dados (ex: MySQL, PostgreSQL, MongoDB, Redis, CouchDB)
   - APIs (ex: Twitter, Facebook, Apple Push Notifications)
   - Conexões HTTP/WebSocket (de usuários para um web app)
-  - Arquivos (Editor de imagem, Editor de vídeo, Radio por Internet
+  - Arquivos (Editor de imagem, Editor de vídeo, Radio por Internet)
 
-Node processa I/O de forma [asíncrona](http://en.wikipedia.org/wiki/Asynchronous_I/O) que permite manejar várias coisas diferentes simultaneamente. Por exemplo, se você for à um fast food e pedir um cheesburger eles vão pegar seu pedido imediatamente e então fazer você esperar até que o cheesburger esteja pronto. Neste tempo eles podem pegar outros pedido e começar a fazer os X-Burgers para outras pessoas. Imagine que você tem que esperar na fila, bloqueando todas as outras pessoas na fila enquanto eles preparam o seu hamburger! Isto é chamado **I/O Bloqueador** porque todo o I/O (preparamento dos chessburgers) acontece uma vez por tempo. Node, por outro lado, é **Não-bloqueador**, o que significa que pode preparar vários chessburgers de uma vez.
+Node processa I/O de forma [asíncrona](http://en.wikipedia.org/wiki/Asynchronous_I/O)(ingles) que permite manejar várias coisas diferentes simultaneamente. Por exemplo, se você for a um fast food e pedir um cheesburger eles vão pegar seu pedido imediatamente e então fazer você esperar até que o cheesburger esteja pronto. Neste tempo eles podem pegar outros pedido e começar a fazer os cheesburgers para outras pessoas. Imagine que você tem que esperar na fila, bloqueando todas as outras pessoas na fila enquanto eles preparam o seu hamburger! Isto é chamado **I/O Bloqueador** porque todo o I/O (preparamento dos chessburgers) acontece uma vez por tempo. Node, por outro lado, é **Não-bloqueador**, o que significa que pode preparar vários chessburgers de uma vez.
 
 Aqui estão algumas coisas divertidas feitas de forma fácil com node graças a sua natureza não-bloqueadora
   
@@ -74,28 +74,28 @@ Aqui estão algumas coisas divertidas feitas de forma fácil com node graças a 
 
 Primeiro eu recomendo que você instale node.js no seu computador. A maneira mais fácil é visitando [nodejs.org](http://nodejs.org) e clicar em `install`
 
-Node tem um pequeno grupo do módulos no seu core (geralmente chamado de 'node core') os quais são apresentados como uma API pública que tem como objetivo escrever programas com eles. Para trabalhar com sistema de arquivos temos o módulo `fs` e para redes existem os módulos `net` (TCP), `http`, `dgram` (UDP).
+Node tem um pequeno grupo de módulos no seu core (geralmente chamado de 'node core') os quais são apresentados como uma API pública que tem como objetivo escrever programas com eles. Para trabalhar com sistema de arquivos temos o módulo `fs` e para redes existem os módulos `net` (TCP), `http`, `dgram` (UDP).
 
-Em adição aos módulos `fs` e de rede existem outros módulos no node core. Existe um módulo para resolver consultas DNS asincronamente chamado `dns`, um módulo para pegar informações específicas do SO como o tmpdir chamado `os`, um módulo para alocação de pedações binários de memória chamado `buffer`, alguns módulos para parsear urls e diretórios (`url`, `querystring`, `path`), etc. A maioria se não todos os módulos no node core estão ali para suportar os principais casos de uso do node: escrever rápidos programas que se comunicam com sistemas de arquivos ou redes.
+Em adição aos módulos `fs` e de rede existem outros módulos no node core. Existe um módulo para resolver consultas DNS asincronamente chamado `dns`, um módulo para pegar informações específicas do SO como o tmpdir chamado `os`, um módulo para alocação de pedaços binários de memória chamado `buffer`, alguns módulos para parsear urls e diretórios (`url`, `querystring`, `path`), etc. A maioria se não todos os módulos no node core estão ali para suportar os principais casos de uso do node: escrever rápidos programas que se comunicam com sistemas de arquivos ou redes.
 
 Node maneja I/O com: callbacks, eventos, streams e módulos. Se você aprender como estas 4 coisas funcionam então você será capaz de ir dentro de qualquer módulo no node core e entender basicamente como interagir com eles.
 
 ## Callbacks
 
-This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just part of the JavaScript language.
+Esta é o tópico mais importante para entender se você quiser entender como usar o node. Quase tudo em node usa callbacks. Eles não foram inventados pelo node, eles são apenas partes da linguagem JavaScript.
 
-Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
+Callbacks são funções que são executadas asincronamente, ou um tempo depois. Ao invés do código ser lido de cima para baixo, programs asincronos podem executar diferentes funções em tempos diferentes baseado na ordem e velocidade de funções declaradas antes como http requests ou leituras de sistema de arquivo.
 
-The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example, meaning you can read the code top to bottom just like a book:
+A diferença pode ser confusa já que uma função ser asincrona ou não depende muito do contexto. Aqui está um simples exemplo síncrono, você lê de cima para baixo assim como um livro:
 
 ```js
 var myNumber = 1
-function addOne() { myNumber++ } // define the function
-addOne() // run the function
-console.log(myNumber) // logs out 2
+function addOne() { myNumber++ } // define a função
+addOne() // roda a função
+console.log(myNumber) // resultado: 2
 ```
 
-The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2. This is the expectation of synchronous code - it sequentially top to bottom.
+Este código aqui define uma função e então na próxima linha chama a função, sem esperar por nada. Quando a função é chamada imediatamente adiciona 1 para a variável number, então podemos esperar que após a chamada da função number seja 2. Esta é a expectativa de uma código síncrono - De cima para baixo sequencialmente.
 
 Node, however, uses mostly asynchronous code. Let's use node to read our number from a file called `number.txt`:
 
