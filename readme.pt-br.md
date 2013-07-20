@@ -14,7 +14,7 @@ Este pequeno livro é um trabalho em progresso. Se você gosta deste livro consi
 
 - [Entendendo node](#understanding-node)
 - [Módulos do core](#core-modules)
-- [Callbacks](#callbacks) (Parcialmente traduzido)
+- [Callbacks](#callbacks)
 - [Eventos](#events) (Não traduzido ainda)
 - [Streams](#streams) (Não traduzido ainda)
 - [Módulos e npm](#modules) (Não traduzido ainda)
@@ -84,9 +84,9 @@ Node maneja I/O com: callbacks, eventos, streams e módulos. Se você aprender c
 
 Este é o tópico mais importante para entender se você quiser entender como usar o node. Quase tudo em node usa callbacks. Eles não foram inventados pelo node, eles são apenas partes da linguagem JavaScript.
 
-Callbacks são funções que são executadas asincronamente, ou um tempo depois. Ao invés do código ser lido de cima para baixo, programs asincronos podem executar diferentes funções em tempos diferentes baseado na ordem e velocidade de funções declaradas antes como http requests ou leituras de sistema de arquivo.
+Callbacks são funções que são executadas asincronamente, ou um tempo depois. Ao invés do código ser lido de cima para baixo, programs asíncronos podem executar diferentes funções em tempos diferentes baseado na ordem e velocidade de funções declaradas antes como http requests ou leituras de sistemas de arquivo.
 
-A diferença pode ser confusa já que uma função ser asincrona ou não depende muito do contexto. Aqui está um simples exemplo síncrono, você lê de cima para baixo assim como um livro:
+A diferença pode ser confusa já que uma função ser asíncrona ou não depende muito do contexto. Aqui está um simples exemplo síncrono, você lê de cima para baixo assim como um livro:
 
 ```js
 var myNumber = 1
@@ -115,11 +115,11 @@ addOne()
 console.log(myNumber) // resultado: Undefined, já que esta parte do código rodou mais rápido que a função
 ```
 
-Porque nosso resultado foi `undefined` quando demos log no nosso número esta vez? Neste código nós usamos o método `fs.readFile`, que é um método asícrono. Normalmente coisas que tem que se comunicar com discos rígidos ou redes vão asíncronos. Se eles tem que acessar coisas na memória ou fazer algum trabalho na CPU eles vão ser síncronos. A rasão para isso é que I/O é muitoooo muitoooo devagarrr. Se comunicar com um disco rígido é cerca de 100,000 vezes mais devagar do que se comunicar com memória (ex: RAM).
+Porque nosso resultado foi `undefined` quando damos log no nosso número esta vez? Neste código nós usamos o método `fs.readFile`, que é um método asícrono. Normalmente coisas que tem que se comunicar com discos rígidos ou redes são asíncronos. Se eles tem que acessar coisas na memória ou fazer algum trabalho na CPU eles vão ser síncronos. A rasão para isso é que I/O é muitoooo muitoooo devagarrr. Se comunicar com um disco rígido é cerca de 100,000 vezes mais devagar do que se comunicar com a memória (ex: RAM).
 
 Quando nós rodamos este programa todas as funções são automaticamente definidas, mas elas não são executadas imediatamente. Isto é uma coisa fundamental para entender sobre programas asíncronos. Quando `addOne` é chamado fora de `readFile` então executa a proxima coisa que está pronta para executar. Se não tem nada para executar node vai esperar as operações pendentes de fs/rede para terminar ou parar de rodar e sair da linha de comando.
 
-Quando `readFile` esta pronto para ler o arquivo (isto pode levar de milisegundos para segundos ou minutos dependendo de quão rápido o disco rígido é) ele vai rodar a função `doneReading` e mostrar um erro (se existir algum erro) e o conteúdo do arquivo.
+Quando `readFile` está pronto para ler o arquivo (isto pode levar de milisegundos para segundos ou minutos dependendo de quão rápido o disco rígido é) ele vai rodar a função `doneReading` e mostrar um erro (se existir algum erro) e o conteúdo do arquivo.
 
 A razão pelo resultado ser `undefined` é que em nenhum lugar do nosso código existe uma lógica que diga para `console.log` esperar até que `readFile` tenha terminado.
 
@@ -152,22 +152,22 @@ function logMyNumber() {
 addOne(logMyNumber)
 ```
 
-Now the `logMyNumber` function can get passed in an argument that will become the `callback` variable inside the `addOne` function. After `readFile` is done the `callback` variable will be invoked (`callback()`). Only functions can be invoked, so if you pass in anything other than a function it will cause an error.
+Agora a função `logMyNumber` pode ser passada no argumento que vai ser a variável `callback` dentro da função `addOne`. Depois que `readFile` terminar a variável `callback` vai ser invocada (`callback()`). Apenas funções podem ser invocadas, então se você passar alguma coisa que não é uma função vai causar um erro.
 
-When a function gets invoked in javascript the code inside that function will immediately get executed. In this case our log statement will execute since `callback` is actually `logMyNumber`. Remember, just because you *define* a function it doesn't mean it will execute. You have to *invoke* a function for that to happen.
+Quando a função é invocada no código JavaScript vai ser executada imediatamente. Nesse caso nosso log vai executar já que `callback` é a função `logMyNumber`. Lembre, *definir* uma função é diferente de executar. Você tem que *invocar* a função para isso acontecer.
 
-To break down this example even more, here is a timeline of events that happen when we run this program:
+Para quebrar o exemplo acima ainda mais, aqui esta a linha do tempo dos eventos que acontecem quando rodam este programa: 
 
-- 1: the code is parsed, which means if there are any syntax errors they would make the program break. During this initial phase there are 4 things that get defined: `fs`, `myNumber`, `addOne`, and `logMyNumber`. Note that these are just being defined, no functions have been called/invoked yet.
-- 2: When the last line of our program gets executed `addOne` gets invoked, getting passed in the `logMyNumber` function as `callback`, which is what we want to be called when `addOne` is complete. This immediately causes the asynchronous `fs.readFile` function to kick off. This part of the program takes a while to finish.
-- 3: with nothing to do, node idles for a bit as it waits for `readFile` to finish. If there was anything else to do during this time, node would be available for work.
-- 4: `readFile` finishes and calls its callback, `doneReading`, which then in turn increments the number and then immediately invokes the function that `addOne` passed in (its callback), `logMyNumber`.
+- 1: O código é analisado, o que significa que se existir algum erro de sintaxe o programa vai quebrar. Durante esta fase inicial tem 4 coisas que são definidas: `fs`, `myNumber`, `addOne`, e `logMyNumber`. Note que eles estão sendo apenas definidos, nenhuma função foi chamada/invocada ainda.
+- 2: Quando a última linha do nosso programa é executada `addOne` é invocado, onde `logMyNumber` é passado como `callback`, que é o que queremos que seja chamado quando `addOne` terminar. Isto imediatamente executa o código asíncrono `fs.readFile`. Esta parte do programa leva um tempo para terminar
+- 3: Sem nada para fazer, node espera até que `readFile` termine. Se existisse alguma outra coisa durante esse tempo, node poderia fazer o trabalho.
+- 4: `readFile` termina e chama o callback, `doneReading`, que incrementa o número e imediatamente invoca a função callback de `addOne`, `logMyNumber`.
 
-Perhaps the most confusing part of programming with callbacks is how functions are just objects that can be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
+Talvez a parte mais confusa de programar com callbacks é que funções são apenas objetos que podem ser armazenadas em variáveis e passadas no programa com diferentes nomes. Dando um simples e descritivo nome para suas variáveis é importante ao fazer seu código legível para outras pessoas. Geralmente falando em programas node quando você vê uma variável como `callback` ou `cb` você sabe que é uma função.
 
-You may have heard the terms 'evented programming' or 'event loop'. They refer to the way that `readFile` is implemented. Node first dispatches the `readFile` operation and then waits for `readFile` to send it an event that it has completed. While it is waiting node can go check on other things. Inside node there is a list of things that are dispatched but haven't reported back yet, so node loops over the list again and again checking to see if they are finished. After they finished they get 'processed', e.g. any callbacks that depended on them finishing will get invoked.
+Você pode ter ouvido os termos 'programação com eventos' ou 'loop de eventos'. Eles se referem a maneira que `readFile` é implementado. Node primeiro roda a operação `readFile` e então espera por `readFile` para enviar um evento dizendo que está completo. Enquanto espera node pode checar outras coisas. Dentro do node esta uma lista de coisas que são executadas mas não reportaram de volta ainda, então node faz um loop na lista de novo e de novo checando para ver se eles terminaram. Depois que eles terminam eles são 'processados', Ex: Callbacks que dependem desse término vão ser invocados.
 
-Here is a pseudocode version of the above example:
+Aqui um pseudocódigo do exemplo acima.
 
 ```js
 function addOne(thenRunThisFunction) {
@@ -179,7 +179,7 @@ function addOne(thenRunThisFunction) {
 addOne(function thisGetsRunAfterAddOneFinishes() {})
 ```
 
-Imagine you had 3 async functions `a`, `b` and `c`. Each one takes 1 minute to run and after it finishes it calls a callback (that gets passed in the first argument). If you wanted to tell node 'start running a, then run b after a finishes, and then run c after b finishes' it would look like this:
+Imagine que você tem 3 funções asíncronas `a`, `b` e `c`. Cada um leva um minuto para rodar e quando termina chama um callback (que é passado no primeiro argumento). Se você precisar que node 'primeiro rode a, depois rode b quando a terminar, e então rode c quando b terminar' iria parecer com isso:
 
 ```js
 a(function() {
@@ -189,7 +189,7 @@ a(function() {
 })
 ```
 
-When this code gets executed, `a` will immediately start running, then a minute later it will finish and call `b`, then a minute later it will finish and call `c` and finally 3 minutes later node will stop running since there would be nothing more to do. There are definitely more elegant ways to write the above example, but the point is that if you have code that has to wait for some other async code to finish then you express that dependency by putting your code in functions that get passed around as callbacks.
+Quando este código é executado, `a` vai rodar automaticamente, então, um minuto depois ele vai terminar e chamar `b`, e um minuto depois ele vai terminar e chamar `c` e finalmente 3 minutos depois node vai parar o código já que não tem mais nada para fazer. Definitivamente, existem formas mais elegantes de escrever o código acima, mas o ponto é que se você tiver um código que tem que esperar outro código asíncrono terminar então você expressa esta dependência colocando este código em funções que são passadas como callbacks.
 
 A forma como node trabalha requer que você pense de uma forma não-linear. Considerando esta lista de operações:
 
