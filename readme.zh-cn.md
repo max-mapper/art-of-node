@@ -80,11 +80,17 @@ Node拥有一组核心模块（通常被称为`Node核心`）提供公共 API �
 
 Node通过回调，事件，数据流和模块来控制I/O。如果你学会了这四样东西如何工作，那么你就能够灵活使用任何核心模块，而且你还会懂得模块的基本接口。
 
-## Callbacks
+## 回调函数
+
+你如果想真的弄明白怎么用Node，回调函数是你需要了解的东西中最重要的，没有之一。回调函数倒不是Node始创的，只不过这功能是JavaScript中尤其好用的一个。
 
 This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just a particularly useful way to use JavaScript functions.
 
+回调函数不是同步执行的，或者是在将来执行。同步代码运行的顺序是从上至下，而非同步的程序却是在不同的时间运行不同的函数，基于某些函数的顺序和运行速度，包括HTTP请求和从文件系统里读取内容等等。
+
 Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
+
+这种同步和非同步之间的差异可能会让人比较阔或，因为看一个函数是不是非同步，很大程度取决于具体的情况。下面是一个很简单的同步函数的例子：
 
 The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example:
 
