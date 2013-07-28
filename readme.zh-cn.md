@@ -96,18 +96,22 @@ The difference can be confusing since determining if a function is asynchronous 
 
 ```js
 var myNumber = 1
-function addOne() { myNumber++ } // define the function
+function addOne() { myNumber++ } // 定义函数
 addOne() // run the function
-console.log(myNumber) // logs out 2
+console.log(myNumber) // 结果显示2
 ```
 
+上面的代码定义了一个函数，然后调用了它，之间没有停留。当该函数被调用时，它立即把那个数字加上1，所以我们可以预见到，调用过函数后，那个数字的值会是2。
+
 The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2.
+
+现在假设我们把数字存在一个叫`number.text`的文件里：
 
 Let's suppose that we want to instead store our number in a file called `number.txt`:
 
 ```js
-var fs = require('fs') // require is a special function provided by node
-var myNumber = undefined // we dont know what the number is yet since it is stored in a file
+var fs = require('fs') // require是Node提供的一个特别函数
+var myNumber = undefined // 数字被存在文件里，因此我们并不知道它的值
 
 function addOne() {
   fs.readFile('./number.txt', function doneReading(err, fileContents) {
@@ -118,16 +122,26 @@ function addOne() {
 
 addOne()
 
-console.log(myNumber) // logs out undefined
+console.log(myNumber) // 结果显示undefined
 ```
+
+这次为什么显示数字的值是`undefined`？因为在上面的代码中，我们用了`fs.readFile`这个方法，它恰好是个非同步方法。一般来说，需要和硬盘沟通或是从通信获得数据的，都是非同步的。只是需要从内存里或CPU里读些东西的话，就是同步的。这是因为I/O（输入输出）是非常非常非常慢的。如果要大概形容一下，从硬盘里读取大概比从内存里读取慢了10万倍。
 
 Why do we get `undefined` when we log out the number this time? In this code we use the `fs.readFile` method, which happens to be an asynchronous method. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. The reason for this is that I/O is reallyyy reallyyy sloowwww. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (RAM).
 
+当这个程序运行的时候，所有的函数都马上被定义，但它们不是都马上被执行的。这是非同步编程的一个基础概念。当`addOne`被调用的时候，Node执行`readFile`这个方法，但不等到`readFile`结束，它就继续进行下一个不需要等待就能执行的函数了。如果没有可以执行的东西了，Node要么会停下来，等待文件读取或是网络通讯结束，要么就结束运行，返回到命令行。
+
 When we run this program all of the functions are immediately defined, but they don't all execute immediately. This is a fundamental thing to understand about async programming. When `addOne` is called it kicks off a `readFile` and then moves on to the next thing that is ready to execute. If there is nothing to execute node will either wait for pending fs/network operations to finish or it will stop running and exit to the command line.
+
+当`readFile`终于把文件读完的时候（需要的时间从几毫秒到几秒到几分钟不等，要看硬盘有多快），Node会执行`doneReading`这个函数，并把报的错和文件的内容传给它（如果读文件的时候有报错的话）。
 
 When `readFile` is done reading the file (this may take anywhere from milliseconds to seconds to minutes depending on how fast the hard drive is) it will run the `doneReading` function and give it an error (if there was an error) and the file contents.
 
+在上面的程序中，之所以显示`undefine`，是因为我们的代码并没有在任何地方注明了要`console.log`在文件读取完成后再打印出数字。
+
 The reason we got `undefined` above is that nowhere in our code exists logic that tells the `console.log` statement to wait until the `readFile` statement finishes before it prints out the number.
+
+如果你有一些想要反复执行的代码，你应该做的第一件事就把这些代码放在一个函数里。然后，在你需要执行那些代码的时候，调用这个函数就好了。给你的函数取一看就知道其功能的名字，会很有帮助。
 
 If you have some code that you want to be able to execute over and over again or at a later time the first step is to put that code inside a function. Then you can call the function whenever you want to run your code. It helps to give your functions descriptive names.
 
