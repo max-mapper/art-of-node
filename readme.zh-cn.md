@@ -145,9 +145,15 @@ The reason we got `undefined` above is that nowhere in our code exists logic tha
 
 If you have some code that you want to be able to execute over and over again or at a later time the first step is to put that code inside a function. Then you can call the function whenever you want to run your code. It helps to give your functions descriptive names.
 
+回调函数，不过是在将来某个时间被执行的函数。要理解回调函数，很关键的一点是使用的时机。你要在不知道**什么时候**某个非同步进程会结束，但知道这个进程会在**哪里**结束————就在那个非同步函数的最后一行！你在什么地方声明这些函数并不重要，重要的这些函数之间的逻辑顺序。把代码分装进各个函数之后，我们在一个函数的执行取决于另一个函数何时结束时使用回调函数。
+
 Callbacks are just functions that get executed at some later time. The key to understanding callbacks is to realize that they are used when you don't know **when** some async operation will complete, but you do know **where** the operation will complete — the last line of the async function! The top-to-bottom order that you declare callbacks does not necessarily matter, only the logical/hierarchical nesting of them. First you split your code up into functions, and then use callbacks to declare if one function depends on another function finishing.
 
+上面代码中的`fs.readFile`方法是Node自带的，这个方法是非同步的，而且要花费很长时间。想想看它要做多少事情：它要进入操作系统，进入文件系统，文件系统可是在硬盘上的，硬盘可能转得飞快，也可能是坏掉的。然后它要用激光读出数据，并把数据传回你的JavaScript程序。当你给了它一个回调函数后，它就可以在成功从文件系统中取得数据后调用那个回调函数。它会把数据放在一个变量里，交给你给的回调函数，我们给这个变量起的名字叫做`fileContents`，因为变量中包含的是读取到的文件内容。
+
 The `fs.readFile` method is provided by node, is asynchronous and happens to take a long time to finish. Consider what it does: it has to go to the operating system, which in turn has to go to the file system, which lives on a hard drive that may or may not be spinning at thousands of revolutions per minute. Then it has to use a laser to read data and send it back up through the layers back into your javascript program. You give `readFile` a function (known as a callback) that it will call after it has retrieved the data from the file system. It puts the data it retrieved into a javascript variable and calls your function (callback) with that variable, in this case the variable is called `fileContents` because it contains the contents of the file that was read.
+
+想想看这个教程刚开始的那个餐厅的例子。在很多餐厅，在你点的菜上来之前，服务生会放一个数字牌在你桌上。这个和回调函数很类似。回调函数的作用就是告诉服务器在你的芝士汉堡好了后要做些什么。
 
 Think of the restaurant example at the beginning of this tutorial. At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your cheeseburger is done.
 
