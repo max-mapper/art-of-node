@@ -157,6 +157,8 @@ The `fs.readFile` method is provided by node, is asynchronous and happens to tak
 
 Think of the restaurant example at the beginning of this tutorial. At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your cheeseburger is done.
 
+现在，让我们把`console.log`放进一个函数里作回调函数使用吧。
+
 Let's put our `console.log` statement into a function and pass it in as a callback.
 
 ```js
@@ -178,16 +180,29 @@ function logMyNumber() {
 addOne(logMyNumber)
 ```
 
+现在`logMyNumber`这个函数可以被传给`addOne`作为回调函数了。在`readFile`完成后，`callback`这个变量会被执行（也就是`callback()`)。只有函数才能被执行，所以如果你提供一个不是函数的东西，程序是会出错的。
+
 Now the `logMyNumber` function can get passed in an argument that will become the `callback` variable inside the `addOne` function. After `readFile` is done the `callback` variable will be invoked (`callback()`). Only functions can be invoked, so if you pass in anything other than a function it will cause an error.
+
+在JavaScript里，当函数被调用，其包含的代码会立刻被执行。在这个例子里，`console.log`会被执行，因为`callback`其实就是`logMyNumber`。要记得，你*定义*了一个函数，不代表它会执行！你一定得*调用*它才行。
 
 When a function get invoked in javascript the code inside that function will immediately get executed. In this case our log statement will execute since `callback` is actually `logMyNumber`. Remember, just because you *define* a function it doesn't mean it will execute. You have to *invoke* a function for that to happen.
 
+如果要更细地分析一下这个例子，下面是按时间顺利排列的所有发生的事件：
+
 To break down this example even more, here is a timeline of events that happen when we run this program:
+
+- 1: 代码被分析，这是，如果有任何语法错误，程序会停止并报错。
+- 2: `addOne`被调用，以`logMyName`作为它的回调函数，也就是我们想在`addOne`结束后执行的函数。接下来，非同步的`fs.readFile`马上开始运作。这个部分要花上点时间。
+- 3: Node没事做了，等待`readFile`结束。
+- 4: `readFile`结束了，`doneReading`这个函数被调用，它把数字加上1然后马上调用回调函数————我们传给`addOne`的`logMyNumber`。
 
 - 1: the code is parsed, which means if there are any syntax errors they would make the program break.
 - 2: `addOne` gets invoked, getting passed in the `logMyNumber` function as `callback`, which is what we want to be called when `addOne` is complete. This immediately causes the asynchronous `fs.readFile` function to kick off. This part of the program takes a while to finish.
 - 3: with nothing to do, node idles for a bit as it waits for `readFile` to finish
 - 4: `readFile` finishes and calls its callback, `doneReading`, which then in turn increments the number and then immediately invokes the function that `addOne` passed in (its callback), `logMyNumber`.
+
+也许关于回调函数最难理解的部分是，为什么函数可以被存在变量里被传来传去，还有各种各样的名字。要让你的代码容易被看懂，给你的函数起简单明了的名字是很重要的一部分。总的来说，在使用Node时，如果你看见一个变量叫做`callback`或缩写为`cb`，你可以差不多确定它是一个函数。
 
 Perhaps the most confusing part of programming with callbacks is how functions are just objects that be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
 
