@@ -219,8 +219,6 @@ function finishedReading(error, movieData) {
 
 不过你这样写也可以，照样会成功运行：
 
-But you could also structure your code like this and it would still work:
-
 ```js
 var fs = require('fs')
 
@@ -233,8 +231,6 @@ fs.readFile('movie.mp4', finishedReading)
 ```
 
 甚至像下面这样：
-
-Or even like this:
 
 ```js
 var fs = require('fs')
