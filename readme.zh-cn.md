@@ -82,17 +82,11 @@ Node通过回调，事件，数据流和模块来控制I/O。如果你学会了�
 
 ## 回调函数
 
-你如果想真的弄明白怎么用Node，回调函数是你需要了解的东西中最重要的，没有之一。回调函数倒不是Node始创的，只不过这功能是JavaScript中尤其好用的一个。
+如果想真的弄明白怎么使用Node，回调函数是你需要了解的东西中最重要的，没有之一。回调函数倒不是有了Node后才有的，只不过这功能是JavaScript中尤其好用的一个。
 
-This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just a particularly useful way to use JavaScript functions.
+回调函数是指非同步执行的，或者是在将来某个时间才会被执行的函数。同步代码运行的顺序是从上至下，而非同步的程序却是在不同的时间运行不同的函数，这些事件都基于某些某同步函数的顺序和运行速度，包括HTTP请求和从文件系统里读取内容等等。
 
-回调函数不是同步执行的，或者是在将来执行。同步代码运行的顺序是从上至下，而非同步的程序却是在不同的时间运行不同的函数，基于某些函数的顺序和运行速度，包括HTTP请求和从文件系统里读取内容等等。
-
-Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
-
-这种同步和非同步之间的差异可能会让人比较阔或，因为看一个函数是不是非同步，很大程度取决于具体的情况。下面是一个很简单的同步函数的例子：
-
-The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example:
+这种同步和非同步之间的差异可能会让人比较困惑，因为看一个函数是不是非同步，很大程度上取决于具体的情况。下面是一个很简单的同步函数的例子：
 
 ```js
 var myNumber = 1
@@ -101,13 +95,9 @@ addOne() // run the function
 console.log(myNumber) // 结果显示2
 ```
 
-上面的代码定义了一个函数，然后调用了它，之间没有停留。当该函数被调用时，它立即把那个数字加上1，所以我们可以预见到，调用过函数后，那个数字的值会是2。
-
-The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2.
+上面的代码定义了一个函数，然后调用了它，之间没有任何停留。当该函数被调用时，它立即把那个数字加上1，所以我们可以预见到，调用过该函数后，那个数字的值会变成2。
 
 现在假设我们把数字存在一个叫`number.text`的文件里：
-
-Let's suppose that we want to instead store our number in a file called `number.txt`:
 
 ```js
 var fs = require('fs') // require是Node提供的一个特别函数
@@ -125,41 +115,23 @@ addOne()
 console.log(myNumber) // 结果显示undefined
 ```
 
-这次为什么显示数字的值是`undefined`？因为在上面的代码中，我们用了`fs.readFile`这个方法，它恰好是个非同步方法。一般来说，需要和硬盘沟通或是从通信获得数据的，都是非同步的。只是需要从内存里或CPU里读些东西的话，就是同步的。这是因为I/O（输入输出）是非常非常非常慢的。如果要大概形容一下，从硬盘里读取大概比从内存里读取慢了10万倍。
+为什么这些显示出来的值是`undefined`？因为在上面的代码中，我们用了`fs.readFile`这个方法，而它恰好是个非同步方法。一般来说，需要和硬盘沟通或是从通信网络获得数据的，都是非同步的。只是需要从内存里或CPU里读些东西的话，就是同步的。这是因为I/O（输入输出）是非常非常非常慢的。如果要大概形容一下，从硬盘里读取大概比从内存里读取慢了10万倍。
 
-Why do we get `undefined` when we log out the number this time? In this code we use the `fs.readFile` method, which happens to be an asynchronous method. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. The reason for this is that I/O is reallyyy reallyyy sloowwww. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (RAM).
+当这个程序运行的时候，所有的函数都马上被定义，但它们不是马上都被执行的。这是非同步编程的一个基础概念。当`addOne`被调用的时候，Node执行`readFile`这个方法，但不等到`readFile`结束，它就继续进行下一个不需要等待就能执行的函数了。如果没有可以执行的东西了，Node要么会停下来，等待文件读取或是网络通讯结束，要么就结束运行，返回到命令行。
 
-当这个程序运行的时候，所有的函数都马上被定义，但它们不是都马上被执行的。这是非同步编程的一个基础概念。当`addOne`被调用的时候，Node执行`readFile`这个方法，但不等到`readFile`结束，它就继续进行下一个不需要等待就能执行的函数了。如果没有可以执行的东西了，Node要么会停下来，等待文件读取或是网络通讯结束，要么就结束运行，返回到命令行。
+当`readFile`终于把文件读完的时候（需要的时间从几毫秒到几秒到几分钟不等，要看硬盘有多快），Node会执行`doneReading`这个函数，并把报的错（如果读文件的时候有报错的话）和文件的内容传给它。
 
-When we run this program all of the functions are immediately defined, but they don't all execute immediately. This is a fundamental thing to understand about async programming. When `addOne` is called it kicks off a `readFile` and then moves on to the next thing that is ready to execute. If there is nothing to execute node will either wait for pending fs/network operations to finish or it will stop running and exit to the command line.
+在上面的程序中，之所以会显示`undefine`，是因为我们的代码并没有在任何地方注明了要在文件读取完成后再`console.log`出数字。
 
-当`readFile`终于把文件读完的时候（需要的时间从几毫秒到几秒到几分钟不等，要看硬盘有多快），Node会执行`doneReading`这个函数，并把报的错和文件的内容传给它（如果读文件的时候有报错的话）。
+如果你有一些想要反复执行的代码，你应该做的第一件事就是把这些代码放在一个函数里。然后，在你需要执行那些代码的时候，调用这个函数就好了。你给函数起的名字最好能让人一看就知道这个函数是做什么的。
 
-When `readFile` is done reading the file (this may take anywhere from milliseconds to seconds to minutes depending on how fast the hard drive is) it will run the `doneReading` function and give it an error (if there was an error) and the file contents.
+回调函数，不过是在将来某个时间被执行的函数。要理解回调函数，很关键的一点是它被使用的时机。你使用回调函数的前提是，你不知道**什么时候**某个非同步进程会结束，但知道这个进程会在**哪里**结束————就在那个非同步函数的最后一行！你在什么地方声明这些函数并不重要，重要的是这些函数之间的逻辑顺序。把代码分装进各个函数之后，如果一个函数的执行取决于另一个函数何时结束，就该使用回调函数了。
 
-在上面的程序中，之所以显示`undefine`，是因为我们的代码并没有在任何地方注明了要`console.log`在文件读取完成后再打印出数字。
+上面代码中的`fs.readFile`方法是Node自带的，这个方法是非同步的，而且要花费很长时间。想想看它要做多少事情：它要进入操作系统，进入文件系统，文件系统可是在硬盘上的，硬盘可能转得飞快，也可能根本就不转。然后它要用激光读出数据，并把数据传回你的JavaScript程序。当你给了它一个回调函数后，它就可以在成功从文件系统中取得数据以后，调用那个回调函数。它会把数据放在一个变量里，交给你给的回调函数，我们给这个变量起的名字叫做`fileContents`，因为变量中包含的是读取到的文件内容。
 
-The reason we got `undefined` above is that nowhere in our code exists logic that tells the `console.log` statement to wait until the `readFile` statement finishes before it prints out the number.
-
-如果你有一些想要反复执行的代码，你应该做的第一件事就把这些代码放在一个函数里。然后，在你需要执行那些代码的时候，调用这个函数就好了。给你的函数取一看就知道其功能的名字，会很有帮助。
-
-If you have some code that you want to be able to execute over and over again or at a later time the first step is to put that code inside a function. Then you can call the function whenever you want to run your code. It helps to give your functions descriptive names.
-
-回调函数，不过是在将来某个时间被执行的函数。要理解回调函数，很关键的一点是使用的时机。你要在不知道**什么时候**某个非同步进程会结束，但知道这个进程会在**哪里**结束————就在那个非同步函数的最后一行！你在什么地方声明这些函数并不重要，重要的这些函数之间的逻辑顺序。把代码分装进各个函数之后，我们在一个函数的执行取决于另一个函数何时结束时使用回调函数。
-
-Callbacks are just functions that get executed at some later time. The key to understanding callbacks is to realize that they are used when you don't know **when** some async operation will complete, but you do know **where** the operation will complete — the last line of the async function! The top-to-bottom order that you declare callbacks does not necessarily matter, only the logical/hierarchical nesting of them. First you split your code up into functions, and then use callbacks to declare if one function depends on another function finishing.
-
-上面代码中的`fs.readFile`方法是Node自带的，这个方法是非同步的，而且要花费很长时间。想想看它要做多少事情：它要进入操作系统，进入文件系统，文件系统可是在硬盘上的，硬盘可能转得飞快，也可能是坏掉的。然后它要用激光读出数据，并把数据传回你的JavaScript程序。当你给了它一个回调函数后，它就可以在成功从文件系统中取得数据后调用那个回调函数。它会把数据放在一个变量里，交给你给的回调函数，我们给这个变量起的名字叫做`fileContents`，因为变量中包含的是读取到的文件内容。
-
-The `fs.readFile` method is provided by node, is asynchronous and happens to take a long time to finish. Consider what it does: it has to go to the operating system, which in turn has to go to the file system, which lives on a hard drive that may or may not be spinning at thousands of revolutions per minute. Then it has to use a laser to read data and send it back up through the layers back into your javascript program. You give `readFile` a function (known as a callback) that it will call after it has retrieved the data from the file system. It puts the data it retrieved into a javascript variable and calls your function (callback) with that variable, in this case the variable is called `fileContents` because it contains the contents of the file that was read.
-
-想想看这个教程刚开始的那个餐厅的例子。在很多餐厅，在你点的菜上来之前，服务生会放一个数字牌在你桌上。这个和回调函数很类似。回调函数的作用就是告诉服务器在你的芝士汉堡好了后要做些什么。
-
-Think of the restaurant example at the beginning of this tutorial. At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your cheeseburger is done.
+想想看这个教程刚开始时的那个餐厅的例子。在很多餐厅，在你点的菜上来之前，服务生会放一个数字牌在你桌上。这个和回调函数很类似。回调函数的作用就是告诉服务器在你的芝士汉堡好了后要做些什么。
 
 现在，让我们把`console.log`放进一个函数里作回调函数使用吧。
-
-Let's put our `console.log` statement into a function and pass it in as a callback.
 
 ```js
 var fs = require('fs')
@@ -180,39 +152,22 @@ function logMyNumber() {
 addOne(logMyNumber)
 ```
 
-现在`logMyNumber`这个函数可以被传给`addOne`作为回调函数了。在`readFile`完成后，`callback`这个变量会被执行（也就是`callback()`)。只有函数才能被执行，所以如果你提供一个不是函数的东西，程序是会出错的。
-
-Now the `logMyNumber` function can get passed in an argument that will become the `callback` variable inside the `addOne` function. After `readFile` is done the `callback` variable will be invoked (`callback()`). Only functions can be invoked, so if you pass in anything other than a function it will cause an error.
+现在`logMyNumber`这个函数可以被传给`addOne`作为回调函数了。在`readFile`完成后，`callback`这个变量会被执行（也就是`callback()`)。只有函数才能被执行，所以如果你提供一个不是函数的东西，程序会出错。
 
 在JavaScript里，当函数被调用，其包含的代码会立刻被执行。在这个例子里，`console.log`会被执行，因为`callback`其实就是`logMyNumber`。要记得，你*定义*了一个函数，不代表它会执行！你一定得*调用*它才行。
 
-When a function get invoked in javascript the code inside that function will immediately get executed. In this case our log statement will execute since `callback` is actually `logMyNumber`. Remember, just because you *define* a function it doesn't mean it will execute. You have to *invoke* a function for that to happen.
+如果要更细地分析一下这个例子，下面是按时间顺序排列的所有发生的事件：
 
-如果要更细地分析一下这个例子，下面是按时间顺利排列的所有发生的事件：
+- 1: 代码被分析，这时，如果有任何语法错误，程序会停止并报错。
+- 2: `addOne`被调用，以`logMyName`作为它的回调函数，也就是我们想在`addOne`结束后执行的函数。接下来，非同步的`fs.readFile`马上开始运行。这个部分要花上点时间。
+- 3: Node暂时没事做的，于是它就闲下来等待着`readFile`结束。
+- 4: `readFile`结束了，`doneReading`这个函数被调用，它把数字加上1然后马上调用回调函数————也就是我们传给`addOne`的`logMyNumber`。
 
-To break down this example even more, here is a timeline of events that happen when we run this program:
+也许关于回调函数最难理解的部分是，为什么函数可以被存在变量里被传来传去，而且还有着变来变去的名字。要让你的代码更容易被看懂，给你的函数起简单明了的名字是很重要的一部分。总的来说，在使用Node时，如果你看见一个变量叫做`callback`或是它的缩写`cb`，你差不多可以确定它就是一个函数。
 
-- 1: 代码被分析，这是，如果有任何语法错误，程序会停止并报错。
-- 2: `addOne`被调用，以`logMyName`作为它的回调函数，也就是我们想在`addOne`结束后执行的函数。接下来，非同步的`fs.readFile`马上开始运作。这个部分要花上点时间。
-- 3: Node没事做了，等待`readFile`结束。
-- 4: `readFile`结束了，`doneReading`这个函数被调用，它把数字加上1然后马上调用回调函数————我们传给`addOne`的`logMyNumber`。
-
-- 1: the code is parsed, which means if there are any syntax errors they would make the program break.
-- 2: `addOne` gets invoked, getting passed in the `logMyNumber` function as `callback`, which is what we want to be called when `addOne` is complete. This immediately causes the asynchronous `fs.readFile` function to kick off. This part of the program takes a while to finish.
-- 3: with nothing to do, node idles for a bit as it waits for `readFile` to finish
-- 4: `readFile` finishes and calls its callback, `doneReading`, which then in turn increments the number and then immediately invokes the function that `addOne` passed in (its callback), `logMyNumber`.
-
-也许关于回调函数最难理解的部分是，为什么函数可以被存在变量里被传来传去，还有各种各样的名字。要让你的代码容易被看懂，给你的函数起简单明了的名字是很重要的一部分。总的来说，在使用Node时，如果你看见一个变量叫做`callback`或缩写为`cb`，你可以差不多确定它是一个函数。
-
-Perhaps the most confusing part of programming with callbacks is how functions are just objects that be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
-
-你可能听过一个术语叫“事件驱动式编程”，或者叫“事件循环”。`readFile`这类的函数就利用了“事件循环”。Node首先开始运行`readFile`，并等待着`readFile`发回一个事件。在Node等待的这段时间，它可以继续运行其他的东西。在Node里有一个列表，里面有所有开始运行却还有发回结束的信号的事情，Node就一遍遍循环检查这个列表，看有没有事情完成了。它们运行完之后，就会被Node处理掉，也就是需要运行的回调函数会被运行。
-
-You may have heard the terms 'evented programming' or 'event loop'. They refer to the way that `readFile` is implemented. Node first dispatches the `readFile` operation and then waits for `readFile` to send it an event that it has completed. While it is waiting node can go check on other things. Inside node there is a list of things that are dispatched but haven't reported back yet, so node loops over the list again and again checking to see if they are finished. After they finished they get 'processed', e.g. any callbacks that depended on them finishing will get invoked.
+你可能听过一个术语叫“事件驱动式编程”，或者叫“事件循环”。`readFile`这类的函数就利用了“事件循环”。Node首先开始运行`readFile`，并等待着`readFile`发回一个事件。在Node等待的这段时间，它可以继续运行其他的东西。在Node里有一个列表，里面记下了所有开始运行却还没有发回结束信号的事，Node就一遍遍循环检查这个列表，看看有没有事情完成了。它们运行完之后，就会被Node处理掉，也就是说，需要运行的回调函数会被运行。
 
 下面是上面例子的伪代码写法：
-
-Here is a pseudocode version of the above example:
 
 ```js
 function addOne(thenRunThisFunction) {
@@ -224,9 +179,7 @@ function addOne(thenRunThisFunction) {
 addOne(function thisGetsRunAfterAddOneFinishes() {})
 ```
 
-假设你有三个非同步函数：`a`、`b`，以及`c`。它们都要一分钟来运行，运行完了之后会调用一个回调函数（函数以第一个参数的形式被传进函数）。如果你想让Node先运行a，a运行完后运行b，b运行完后再运行c，那么程序是下面这样的：
-
-Imagine you had 3 async functions `a`, `b` and `c`. Each one takes 1 minute to run and after it finishes it calls a callback (that gets passed in the first argument). If you wanted to tell node 'start running a, then run b after a finishes, and then run c after b finishes' it would look like this:
+假设你有三个非同步函数：`a`、`b`，和`c`。它们要花上一分钟来运行，运行完了之后会调用一个回调函数（函数以第一个参数的形式被传进函数）。如果你想让Node先运行a，a运行完后运行b，b运行完后再运行c，那么程序是下面这样的：
 
 ```js
 a(function() {
@@ -236,31 +189,23 @@ a(function() {
 })
 ```
 
-当这段代码被运行时，`a`马上就会被运行，一分钟后`a`结束运行，`b`开始执行，再一分钟后，`b`结束运行，`c`开始运行。最后，也就是三分钟后，Node会停止运行，因为所有事都运行完了。上面的代码可能看起来没那么漂亮，但重点是，如果有些代码需要在某些非同步的事情运行完了之后再运行，你需要做的事把那些代码放进一个函数，当作回调函数传给非同步函数，以表示回调函数中的代码是要依赖非同步的部分运行结束才能运行的。
+当这段代码被运行时，`a`马上就会被运行，一分钟后`a`结束运行，`b`开始执行，再一分钟后，`b`结束运行，`c`开始运行。最后，也就是三分钟后，Node会停止运行，因为所有事都运行完了。上面的代码可能看起来没那么漂亮，但重点是，如果有些代码需要在某些非同步的事情运行完了之后再运行，你需要做的是把那些代码放进一个函数，当作回调函数传给非同步函数，以表示回调函数中的代码要依赖非同步的部分运行结束才能运行。
 
-When this code gets executed, `a` will immediately start running, then a minute later it will finish and call `b`, then a minute later it will finish and call `c` and finally 3 minutes later node will stop running since there would be nothing more to do. There are definitely more elegant ways to write the above example, but the point is that if you have code that has to wait for some other async code to finish then you express that dependency by putting your code in functions that get passed around as callbacks.
-
-Node要求你用非线性的思维去思考。看看下面这两个操作：
-
-The design of node requires you to think non-linearly. Consider this list of operations:
+Node要求你用非线性的思维思考。看看下面这两件事：
 
 ```
 read a file
 process that file
 ```
 
-如果你只是不假思索地把这两个操作改成伪代码，你会这么写：
-
-If you were to naively turn this into pseudocode you would end up with this:
+如果你只是不假思索地把这两件事改成伪代码，你会这么写：
 
 ```
 var file = readFile()
 processFile(file)
 ```
 
-这种线性的代码不是Node的风格。（线性是指一步接一步，按照顺序地）。如果上面的代码被运行了。那么`readFile`和`processFile`会同时被调用。这根本说不通，因为`reafFile`要花上一阵子时间才能运行结束。正确的做法是，表达清楚`processFile`是要依赖`readFile`结束才能运行的。这就是回调函数的作用了！因为JavaScript的？？？，有好几种方法可以表达这种依赖性：
-
-This kind of linear (step-by-step, in order) code is isn't the way that node works. If this code were to get executed then `readFile` and `processFile` would both get executed at the same exact time. This doesn't make sense since `readFile` will take a while to complete. Instead you need to express that `processFile` depends on `readFile` finishing. This is exactly what callbacks are for! And because of the way that JavaScript works you can write this dependency many different ways:
+这种线性的代码不是Node的风格。（线性是指一步接一步、按照顺序地）。如果上面的代码被运行了。那么`readFile`和`processFile`会同时被调用。这根本说不通，因为`reafFile`要花上一阵子时间才能运行结束。正确的做法是，表达清楚`processFile`是要依赖`readFile`结束才能运行的。这就是回调函数的作用了！因为JavaScript的特点，有好几种方法可以表达这种依赖性：
 
 ```js
 var fs = require('fs')
