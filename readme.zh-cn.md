@@ -206,7 +206,11 @@ To break down this example even more, here is a timeline of events that happen w
 
 Perhaps the most confusing part of programming with callbacks is how functions are just objects that be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
 
+你可能听过一个术语叫“事件驱动式编程”，或者叫“事件循环”。`readFile`这类的函数就利用了“事件循环”。Node首先开始运行`readFile`，并等待着`readFile`发回一个事件。在Node等待的这段时间，它可以继续运行其他的东西。在Node里有一个列表，里面有所有开始运行却还有发回结束的信号的事情，Node就一遍遍循环检查这个列表，看有没有事情完成了。它们运行完之后，就会被Node处理掉，也就是需要运行的回调函数会被运行。
+
 You may have heard the terms 'evented programming' or 'event loop'. They refer to the way that `readFile` is implemented. Node first dispatches the `readFile` operation and then waits for `readFile` to send it an event that it has completed. While it is waiting node can go check on other things. Inside node there is a list of things that are dispatched but haven't reported back yet, so node loops over the list again and again checking to see if they are finished. After they finished they get 'processed', e.g. any callbacks that depended on them finishing will get invoked.
+
+下面是上面例子的伪代码写法：
 
 Here is a pseudocode version of the above example:
 
@@ -220,6 +224,8 @@ function addOne(thenRunThisFunction) {
 addOne(function thisGetsRunAfterAddOneFinishes() {})
 ```
 
+假设你有三个非同步函数：`a`、`b`，以及`c`。它们都要一分钟来运行，运行完了之后会调用一个回调函数（函数以第一个参数的形式被传进函数）。如果你想让Node先运行a，a运行完后运行b，b运行完后再运行c，那么程序是下面这样的：
+
 Imagine you had 3 async functions `a`, `b` and `c`. Each one takes 1 minute to run and after it finishes it calls a callback (that gets passed in the first argument). If you wanted to tell node 'start running a, then run b after a finishes, and then run c after b finishes' it would look like this:
 
 ```js
@@ -230,7 +236,11 @@ a(function() {
 })
 ```
 
+当这段代码被运行时，`a`马上就会被运行，一分钟后`a`结束运行，`b`开始执行，再一分钟后，`b`结束运行，`c`开始运行。最后，也就是三分钟后，Node会停止运行，因为所有事都运行完了。上面的代码可能看起来没那么漂亮，但重点是，如果有些代码需要在某些非同步的事情运行完了之后再运行，你需要做的事把那些代码放进一个函数，当作回调函数传给非同步函数，以表示回调函数中的代码是要依赖非同步的部分运行结束才能运行的。
+
 When this code gets executed, `a` will immediately start running, then a minute later it will finish and call `b`, then a minute later it will finish and call `c` and finally 3 minutes later node will stop running since there would be nothing more to do. There are definitely more elegant ways to write the above example, but the point is that if you have code that has to wait for some other async code to finish then you express that dependency by putting your code in functions that get passed around as callbacks.
+
+Node要求你用非线性的思维去思考。看看下面这两个操作：
 
 The design of node requires you to think non-linearly. Consider this list of operations:
 
@@ -239,12 +249,16 @@ read a file
 process that file
 ```
 
+如果你只是不假思索地把这两个操作改成伪代码，你会这么写：
+
 If you were to naively turn this into pseudocode you would end up with this:
 
 ```
 var file = readFile()
 processFile(file)
 ```
+
+这种线性的代码不是Node的风格。（线性是指一步接一步，按照顺序地）。如果上面的代码被运行了。那么`readFile`和`processFile`会同时被调用。这根本说不通，因为`reafFile`要花上一阵子时间才能运行结束。正确的做法是，表达清楚`processFile`是要依赖`readFile`结束才能运行的。这就是回调函数的作用了！因为JavaScript的？？？，有好几种方法可以表达这种依赖性：
 
 This kind of linear (step-by-step, in order) code is isn't the way that node works. If this code were to get executed then `readFile` and `processFile` would both get executed at the same exact time. This doesn't make sense since `readFile` will take a while to complete. Instead you need to express that `processFile` depends on `readFile` finishing. This is exactly what callbacks are for! And because of the way that JavaScript works you can write this dependency many different ways:
 
@@ -258,6 +272,8 @@ function finishedReading(error, movieData) {
 }
 ```
 
+不过你这样写也可以，照样会成功运行：
+
 But you could also structure your code like this and it would still work:
 
 ```js
@@ -270,6 +286,8 @@ function finishedReading(error, movieData) {
 
 fs.readFile('movie.mp4', finishedReading)
 ```
+
+甚至像下面这样：
 
 Or even like this:
 
