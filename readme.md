@@ -12,6 +12,7 @@ This short book is a work in progress. If you like it then please **give me a do
 
 ## Table of contents
 
+- [Learn node interactively](#understanding-node)
 - [Understanding node](#understanding-node)
 - [Core modules](#core-modules)
 - [Callbacks](#callbacks)
@@ -20,6 +21,42 @@ This short book is a work in progress. If you like it then please **give me a do
 - [Modules and npm](#modules)
 - [Client side development with npm](#client-side-development-with-npm)
 - [Going with the grain](#going-with-the-grain)
+
+## Learn node interactively
+
+In addition to reading this guide it's super important to also bust out your favorite text editor and actually write some node code. I always find that when I just read some code in a book it never really clicks, but learning by writing code is a good way to grasp new programming concepts.
+
+Here are two great tutorial programs that you can install on your computer that will let you learn Node in a more interactive fashion:
+
+### Learn You The Node.js
+
+[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) is a set of programming problems that introduce you to common node.js patterns. It comes as a set of interactive command line tutorials.
+
+[![learnyounode](https://github.com/rvagg/learnyounode/raw/master/learnyounode.png)](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win)
+
+You can install it with npm:
+
+```
+# install
+npm install learnyounode -g
+
+# start the menu
+learnyounode
+```
+
+### Stream Adventure
+
+Once you have finished `learnyounode`, graduate to `[stream-adventure](https://github.com/substack/stream-adventure)` for a set of exercises that dig in to Node's streams.
+
+```
+# install
+npm install stream-adventure -g
+
+# start the adventure
+stream-adventure
+```
+
+[![stream-adventure](stream-adventure.png)](https://github.com/substack/stream-adventure)
 
 ## Understanding node
 
@@ -328,21 +365,7 @@ Early on in the node project the file system and network APIs had their own sepa
 
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
 
-There are already two great resources that you can use to learn about node streams:
-
-### Stream Adventure
-
-[stream-adventure](https://github.com/substack/stream-adventure) by @substack is an interactive command line stream tutorial. You can install it with npm:
-
-```
-# install
-npm install stream-adventure -g
-
-# start the adventure
-stream-adventure
-```
-
-[![stream-adventure](stream-adventure.png)](https://github.com/substack/stream-adventure)
+There are already two great resources that you can use to learn about node streams. One is the stream-adventure (see the Learn Node Interactively section) and the other is a reference called the Stream Handbook.
 
 ### Stream Handbook
 
