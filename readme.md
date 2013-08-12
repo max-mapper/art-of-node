@@ -483,7 +483,7 @@ Node modules are radically lightweight. Here is one of the simplest possible nod
 `package.json`:
 ```js
 {
-  "id": "number-one",
+  "name": "number-one",
   "version": "1.0.0"
 }
 ```
