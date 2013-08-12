@@ -30,7 +30,7 @@ Here are two great tutorial programs that you can install on your computer that 
 
 ### Learn You The Node.js
 
-[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) is a set of programming problems that introduce you to common node.js patterns. It comes as a set of interactive command line tutorials.
+[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) is a set of programming problems that introduce you to common node patterns. It comes as a set of interactive command line tutorials.
 
 [![learnyounode](https://github.com/rvagg/learnyounode/raw/master/learnyounode.png)](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win)
 
@@ -46,7 +46,7 @@ learnyounode
 
 ### Stream Adventure
 
-Once you have finished `learnyounode`, graduate to `[stream-adventure](https://github.com/substack/stream-adventure)` for a set of exercises that dig in to Node's streams.
+Once you have finished `learnyounode`, graduate to [stream-adventure](https://github.com/substack/stream-adventure) for a set of exercises that dig in to node's streams.
 
 ```
 # install
