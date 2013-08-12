@@ -12,7 +12,7 @@ This short book is a work in progress. If you like it then please **give me a do
 
 ## Table of contents
 
-- [Learn node interactively](#understanding-node)
+- [Learn node interactively](#learn-node-interactively)
 - [Understanding node](#understanding-node)
 - [Core modules](#core-modules)
 - [Callbacks](#callbacks)
