@@ -38,11 +38,11 @@ Node.js是一个开源项目，目的是让你通过编写JavaScript的程序进
 - 很难编写，但是效率超高（就像用C从零开始编写一个Web服务器）
 - 很简单编写，但是不够效率/强大（就像有人上传5GB的文件去你服务器，但是服务器当机了）
 
-Node设图做到平衡在这两者之间：在大多数用列做到高效运行，而且容易明白和开发。
+Node试图做到平衡在这两者之间：在大多数用列做到高效运行，而且容易明白和开发。
 
 Node不是以下两样东西：
 
-  - 不是Web框架 （不像Rails或Django，尽管它可以被用来使这样的事情）
+  - 不是Web框架 （不像Rails或Django，尽管它可以被用来做这样的事情）
   - 不是编程语言（Node是使用JavaScript编程，它没有自己的编程语言）
 
 相反，Node是：
@@ -72,7 +72,7 @@ Node能够[异步处理](http://en.wikipedia.org/wiki/Asynchronous_I/O)多个不
 
 ## 核心模块
 
-首先，你需要安装Node进去你的电脑。Node安装很简单，只需浏览[nodejs.org](http://nodejs.org)和点击`Install`.
+首先，你需要在电脑上安装Node。Node安装很简单，只需浏览[nodejs.org](http://nodejs.org)和点击`Install`.
 
 Node拥有一组核心模块（通常被称为`Node核心`）提供公共 API 让你编程时候调用。我们可以调用`fs`模块来操作文件系统。当我们要进行网络操作时候，我们会调用网络模块，例如：`net`（TCP），`http`，`dgram`（UDP）。
 
