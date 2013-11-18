@@ -1,92 +1,128 @@
-# A arte do node
+# A arte do Node
+
 ## Uma introdução ao Node.js
 
 Este documento é destinado à leitores que sabem no mínimo algumas das coisas abaixo:
 
 - Uma linguagem de script como JavaScript, Ruby, Python, Perl, etc. Se você ainda não é um programador então é provavelmente mais fácil começar a ler  [JavaScript for Cats](http://jsforcats.com/). :cat2:
-- git e github. Estas são ferramentas de colaboração de código aberto que pessoas da comunidade node usam para compartilhar módulos. Você só precisa saber o básico. Aqui estão três ótimos tutoriais de introdução. [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/) (inglês)
+- Git e Github. Estas são ferramentas de colaboração de código aberto que pessoas da comunidade Node usam para compartilhar módulos. Você só precisa saber o básico. Aqui estão três ótimos tutoriais de introdução. [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/) (em inglês).
 
-Este pequeno livro é um trabalho em progresso. Se você gosta deste livro considere **fazer uma doação** via [gittip](https://www.gittip.com/maxogden/) para que eu possa escrever muito mais.
+Este pequeno livro é um trabalho em progresso. Se você gostar deste livro considere **fazer uma doação** via [gittip](https://www.gittip.com/maxogden/) para que eu possa escrever muito mais.
 
 [![donate](donate.png)](https://www.gittip.com/maxogden/)
 
 ## Tabela de Conteúdo
 
-- [Entendendo node](#understanding-node)
-- [Módulos do core](#core-modules)
+- [Aprenda Node de forma interativa](#aprenda-node-de-forma-interativa)
+- [Entendendo Node](#entendendo-node)
+- [Módulos do núcleo](#módulos-do-núcleo)
 - [Callbacks](#callbacks)
-- [Eventos](#events) (Não traduzido ainda)
-- [Streams](#streams) (Não traduzido ainda)
-- [Módulos e npm](#modules) (Não traduzido ainda)
-- [Desenvolvimento client-side com npm](#client-side-development-with-npm) (Não traduzido ainda) 
-- [Going with the grain](#going-with-the-grain) (Não traduzido ainda)
+- [Eventos](#eventos)
+- [Streams](#streams)
+- [Módulos e NPM](#módulos-e-npm)
+- [Desenvolvimento no lado do cliente com NPM](#desenvolvimento-no-lado-do-cliente-com-npm)
+- [Evoluindo de forma correta](#evoluindo-de-forma-correta)
 
-## Entendendo node
+## Aprenda Node de forma interativa
 
-Node.js é um projeto de código aberto feito para te ajudar a escrever programas JavaScript que se comunicam com a rede, sistemas de arquivo ou outros 
-códigos I/O(Entrada/Saida, Leitura/Escrita). É isso! Node é apenas uma simples e estável plataforma I/O que encoraja a construção de módulos sobre
-ela mesma.
+Como complemento para a leitura deste guia, é super importante que você também inicie o seu editor de texto e comece desde já a escrever alguns códigos de Node. Eu sempre acho que quando acabo de ler algum código em um livro ele nunca realmente é executado, mas aprender a escrever códigos é uma boa maneira para compreender os novos conceitos de programação.
 
-Quais são os exemplos de I/O? Aqui está um diagrama de uma aplicação que foi feita com node que mostra algumas fontes I/O:
+Aqui estão dois grandes tutoriais que você pode instalar no seu computador e permitirá a você aprender o Node de uma forma mais interativa:
+
+### Learn You The Node.js
+
+[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) é um conjunto de problemas de programação que vai apresentá-lo aos padrões do Node mais comuns. Ele vem como um conjunto de tutoriais interativos de linha de comando.
+
+[![learnyounode](https://github.com/rvagg/learnyounode/raw/master/learnyounode.png)](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win)
+
+Você pode instalar com o npm:
+
+```
+# instalação
+npm install learnyounode -g
+
+# inicialização
+learnyounode
+```
+
+### Stream Adventure
+
+Depois que você finalizar o `learnyounode`, prossiga para o [stream-adventure](https://github.com/substack/stream-adventure) para um conjunto de exercícios a fim de se aprofundar mais ainda no Node.
+
+```
+# instalação
+npm install stream-adventure -g
+
+# inicialização
+stream-adventure
+```
+
+[![stream-adventure](stream-adventure.png)](https://github.com/substack/stream-adventure)
+
+## Entendendo Node
+
+Node.js é um projeto de código aberto feito para te ajudar a escrever programas JavaScript que se comunicam com a rede, sistemas de arquivo ou outros códigos I/O (Entrada/Saida, Leitura/Escrita). Apenas isso! Node é apenas uma simples e estável plataforma I/O que encoraja a construção de módulos sobre ela mesma.
+
+Quais são os exemplos de I/O? Aqui está um diagrama de uma aplicação que foi feita com Node que mostra algumas fontes I/O:
 
 ![server diagram](server-diagram.png)
 
-Se você não entende todo os elementos do diagrama está tudo bem. O ponto é mostrar que um simples processo em node(o hexágono no meio) pode atuar como o agente entre todos os pontos finais de I/O(laranja e roxo representam I/O).
+Se você não entende todo os elementos do diagrama está tudo bem. O ponto é mostrar que um simples processo em Node (o hexágono no meio) pode atuar como o agente entre todos os pontos finais de I/O (laranja e roxo representam I/O).
 
 Normalmente construir este tipo de sistema apresentam alguns dos casos:
 
-- Dificuldade para programar, mas robusto e com boa performance (Como escrever seus servidores web do zero em C)
-- Facilidade para programar, mas não muito robusto/rápido (Como quando alguem tenta fazer upload de um arquivo de 5GB e seu servidor para)
+- Dificuldade para programar, mas robusto e com boa performance (como escrever seus servidores web do zero em C)
+- Facilidade para programar, mas não muito robusto/rápido (como quando alguem tenta fazer upload de um arquivo de 5GB e seu servidor trava)
 
-O objetivo de node é prover um balanço entre estes dois: Relativamente fácil para entender e usar, e rápido o suficiente para a maioria dos casos.
+O objetivo do Node é oferecer um balanço entre estes dois: relativamente fácil para entender e usar, e rápido o suficiente para a maioria dos casos.
 
 Node não é nenhuma das coisas a seguir:
 
   - Um framework web (como Rails ou Django, embora possa ser usado para fazer tais coisas)
   - Uma linguagem de programação (Node usa JavaScript mas não é uma linguagem por si só)
-  
-Em vez disso, node é uma coisa no meio. node é:
+
+Em vez disso, Node é uma coisa no meio. Node é:
 
   - Desenhado para ser simples e relativamente fácil de entender e usar
-  - Útil para programas baseados no I/O que precisam ser rápidos e manusear várias conexões
-  
-Em um nível mais baixo, node pode ser descrito com uma ferramenta para escrever dois maiores tipos de programas: 
+  - Útil para programas baseados no I/O que precisam ser rápidos e/ou manusear várias conexões
+
+Em um nível mais baixo, Node pode ser descrito como uma ferramenta para escrever dois maiores tipos de programas:
 
   - Programas de rede usando os protocolos da web: HTTP, TCP, UDP, DNS e SSL
-  - Programas que lêem e escrevem dados em sistemas de arquivos e os processos/memoria local
+  - Programas que lêem e escrevem dados em sistemas de arquivos e os processos/memória local
 
-O que é um "Programa baseado em I/O?" Aqui estão alguns usos comuns:
+O que é um "Programa baseado em I/O"? Aqui estão alguns usos comuns:
 
   - Bancos de dados (ex: MySQL, PostgreSQL, MongoDB, Redis, CouchDB)
   - APIs (ex: Twitter, Facebook, Apple Push Notifications)
-  - Conexões HTTP/WebSocket (de usuários para um web app)
-  - Arquivos (Editor de imagem, Editor de vídeo, Radio por Internet)
+  - Conexões HTTP/WebSocket (usuários de um aplicativo web)
+  - Arquivos (redimensionador de imagem, editor de vídeo, rádio via internet)
 
-Node processa I/O de forma [asíncrona](http://en.wikipedia.org/wiki/Asynchronous_I/O)(ingles) que permite manejar várias coisas diferentes simultaneamente. Por exemplo, se você for a um fast food e pedir um cheesburger eles vão pegar seu pedido imediatamente e então fazer você esperar até que o cheesburger esteja pronto. Neste tempo eles podem pegar outros pedido e começar a fazer os cheesburgers para outras pessoas. Imagine que você tem que esperar na fila, bloqueando todas as outras pessoas na fila enquanto eles preparam o seu hamburger! Isto é chamado **I/O Bloqueador** porque todo o I/O (preparamento dos chessburgers) acontece uma vez por tempo. Node, por outro lado, é **Não-bloqueador**, o que significa que pode preparar vários chessburgers de uma vez.
+Node processa I/O de modo assíncrono([asynchronous](http://en.wikipedia.org/wiki/Asynchronous_I/O)) que permite manusear várias coisas diferentes simultaneamente. Por exemplo, se você for a um fast food e pedir um cheesburger eles vão pegar seu pedido imediatamente e então fazer você esperar até que o cheesburger esteja pronto. Neste tempo eles podem pegar outros pedidos e começar a fazer os cheesburgers para outras pessoas. Imagine que você tem que esperar na fila, bloqueando todas as outras pessoas na fila enquanto eles preparam o seu hamburger! Isto é chamado **I/O bloqueante** porque todo o I/O (preparamento dos chessburgers) acontece um de cada vez. Node, por outro lado, é **não-bloqueante**, o que significa que pode preparar vários chessburgers de uma só vez.
 
-Aqui estão algumas coisas divertidas feitas de forma fácil com node graças a sua natureza não-bloqueadora
-  
-  - Controlar [Quadcopters voadores](http://nodecopter.com)
-  - Escrever bots para chat IRC
-  - Criar [Robôs bípedes que andam](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
+Aqui estão algumas coisas divertidas feitas de forma fácil com Node graças a sua natureza não-bloqueante:
 
-## Módulos do core
+  - Controlar [voos de quadricópteros](http://nodecopter.com)
+  - Escrever bots para IRC
+  - Criar [robôs bípedes que andam](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
-Primeiro eu recomendo que você instale node.js no seu computador. A maneira mais fácil é visitando [nodejs.org](http://nodejs.org) e clicar em `install`
+## Módulos do núcleo
 
-Node tem um pequeno grupo de módulos no seu core (geralmente chamado de 'node core') os quais são apresentados como uma API pública que tem como objetivo escrever programas com eles. Para trabalhar com sistema de arquivos temos o módulo `fs` e para redes existem os módulos `net` (TCP), `http`, `dgram` (UDP).
+Em primeiro lugar eu recomendo que você instale o Node no seu computador. A maneira mais fácil é visitando [Nodejs.org](http://nodejs.org) e clicar em `install`.
 
-Em adição aos módulos `fs` e de rede existem outros módulos no node core. Existe um módulo para resolver consultas DNS asincronamente chamado `dns`, um módulo para pegar informações específicas do SO como o tmpdir chamado `os`, um módulo para alocação de pedaços binários de memória chamado `buffer`, alguns módulos para parsear urls e diretórios (`url`, `querystring`, `path`), etc. A maioria se não todos os módulos no node core estão ali para suportar os principais casos de uso do node: escrever rápidos programas que se comunicam com sistemas de arquivos ou redes.
+Node tem um pequeno grupo de módulos no seu núcleo (geralmente chamado de *node core*) os quais são apresentados como uma API pública que tem como objetivo escrever programas com eles. Para trabalhar com sistema de arquivos temos o módulo `fs` e para redes existem os módulos `net` (TCP), `http`, `dgram` (UDP).
 
-Node maneja I/O com: callbacks, eventos, streams e módulos. Se você aprender como estas 4 coisas funcionam então você será capaz de ir dentro de qualquer módulo no node core e entender basicamente como interagir com eles.
+Em adição aos módulos `fs` e de rede existem outros módulos no núcleo do Node. Existe um módulo para resolver consultas DNS de modo assíncrono chamado `dns`, um módulo para pegar informações específicas do sistema operacional como o *tmpdir* chamado `os`, um módulo para alocação de pedaços binários de memória chamado `buffer`, alguns módulos para parsear urls e caminhos (`url`, `querystring`, `path`), etc. A maioria, se não todos os módulos no núcleo do Node, estão ali para suportar os principais casos de uso do Node: escrever rápidos programas que se comunicam com sistemas de arquivos ou redes.
+
+Node manipula I/O com: callbacks, eventos, streams e módulos. Se você aprender como estas quatro coisas funcionam então você será capaz de ir dentro de qualquer módulo no núcleo do Node e entender basicamente como interagir com eles.
 
 ## Callbacks
 
-Este é o tópico mais importante para entender se você quiser entender como usar o node. Quase tudo em node usa callbacks. Eles não foram inventados pelo node, eles são apenas partes da linguagem JavaScript.
+Este é o tópico mais importante para entender se você quiser entender como usar o Node. Quase tudo em Node usa callbacks. Eles não foram inventados pelo Node, eles são apenas parte da linguagem JavaScript.
 
-Callbacks são funções que são executadas asincronamente, ou um tempo depois. Ao invés do código ser lido de cima para baixo, programs asíncronos podem executar diferentes funções em tempos diferentes baseado na ordem e velocidade de funções declaradas antes como http requests ou leituras de sistemas de arquivo.
+Callbacks são funções executadas de modo assíncrono, ou posteriormente. Ao invés do código ser lido de cima para baixo de forma procedural, programas assíncronos podem executar diferentes funções em diferentes momentos baseando-se na ordem e velocidade em que as funções declaradas anteriormente (como requisições HTTP ou leituras de sistemas de arquivo) forem acontecendo.
 
-A diferença pode ser confusa já que uma função ser asíncrona ou não depende muito do contexto. Aqui está um simples exemplo síncrono, você lê de cima para baixo assim como um livro:
+A diferença pode ser confuso uma vez que determinar se uma função será assíncrona ou não depender muito do contexto. Aqui está um simples exemplo síncrono, você lê de cima para baixo assim como um livro:
 
 ```js
 var myNumber = 1
@@ -95,12 +131,12 @@ addOne() // roda a função
 console.log(myNumber) // resultado: 2
 ```
 
-Este código aqui define uma função e então na próxima linha chama a função, sem esperar por nada. Quando a função é chamada imediatamente adiciona 1 para a variável number, então podemos esperar que após a chamada da função number seja 2. Esta é a expectativa de uma código síncrono - De cima para baixo sequencialmente.
+Este código define uma função e então na próxima linha chama a função, sem esperar por nada. Quando a função é chamada imediatamente adiciona 1 para a variável number, então podemos esperar que após a chamada da função number seja 2. Esta é a expectativa de uma código síncrono - De cima para baixo sequencialmente.
 
-Node, entretanto, usa principalmente código asíncrono. Vamos usar node para ler nosso número de um arquivo chamado `number.txt`:
+Node, entretanto, usa principalmente código assíncrono. Vamos usar Node para ler nosso número de um arquivo chamado `number.txt`:
 
 ```js
-var fs = require('fs') // require é uma função especial fornecido pelo node
+var fs = require('fs') // require é uma função especial fornecida pelo Node
 var myNumber = undefined // nós ainda não sabemos o número já que ele está armazenado em um arquivo
 
 function addOne() {
@@ -115,19 +151,19 @@ addOne()
 console.log(myNumber) // resultado: Undefined, já que esta parte do código rodou mais rápido que a função
 ```
 
-Porque nosso resultado foi `undefined` quando damos log no nosso número esta vez? Neste código nós usamos o método `fs.readFile`, que é um método asícrono. Normalmente coisas que tem que se comunicar com discos rígidos ou redes são asíncronos. Se eles tem que acessar coisas na memória ou fazer algum trabalho na CPU eles vão ser síncronos. A rasão para isso é que I/O é muitoooo muitoooo devagarrr. Se comunicar com um disco rígido é cerca de 100,000 vezes mais devagar do que se comunicar com a memória (ex: RAM).
+Porque nosso resultado foi `undefined` quando damos *log* no nosso número desta vez? Neste código nós usamos o método `fs.readFile`, que é um método assíncrono. Normalmente coisas que tem que se comunicar com discos rígidos ou redes são assíncronos. Se eles tem que acessar coisas na memória ou fazer algum trabalho na CPU eles serão síncronos. A razão para isso é que I/O é muitoooo muitoooo devagaaaar. Se comunicar com um disco rígido é cerca de 100,000 vezes mais devagar do que se comunicar com a memória (RAM).
 
-Quando nós rodamos este programa todas as funções são automaticamente definidas, mas elas não são executadas imediatamente. Isto é uma coisa fundamental para entender sobre programas asíncronos. Quando `addOne` é chamado fora de `readFile` então executa a proxima coisa que está pronta para executar. Se não tem nada para executar node vai esperar as operações pendentes de fs/rede para terminar ou parar de rodar e sair da linha de comando.
+Quando nós rodamos este programa todas as funções são automaticamente definidas, mas elas não são executadas imediatamente. Isto é uma coisa fundamental para entender sobre programas assíncronos. Quando `addOne` é chamado fora de `readFile` então executa a proxima coisa que está pronta para executar. Se não tem nada para executar Node vai esperar as operações pendentes de fs/rede para terminar ou parar de rodar e sair da linha de comando.
 
-Quando `readFile` está pronto para ler o arquivo (isto pode levar de milisegundos para segundos ou minutos dependendo de quão rápido o disco rígido é) ele vai rodar a função `doneReading` e mostrar um erro (se existir algum erro) e o conteúdo do arquivo.
+Quando `readFile` está pronto para ler o arquivo (isto pode levar de milissegundos para segundos ou minutos dependendo do quão rápido o disco rígido é) ele vai rodar a função `doneReading` e mostrar um erro (se existir algum erro) e o conteúdo do arquivo.
 
 A razão pelo resultado ser `undefined` é que em nenhum lugar do nosso código existe uma lógica que diga para `console.log` esperar até que `readFile` tenha terminado.
 
 Se você tem algum código que tenha que ser executado várias vezes ou depois de um tempo o primeiro passo é colocar o código dentro de uma função. Depois você chama a função quando você quiser rodar aquele código. Dar nomes descritivos as suas funções ajuda.
 
-Callbacks são apenas funções que são executados depois de um tempo. A chave para entender callbacks é perceber que eles são usados quando você não sabe **quando** algum código asíncrono vai terminar, mas você sabe **onde** a operação vai terminar - a última linha da função asíncrona! A ordem de cima à baixo que você declara callbacks não necessariamente importa, apenas a lógica hierárquica de assentamento do código. Primeiro você quebra seu código em funções, e depois usa callbacks para declarar se uma função depende do terminamento de outra função.
+Callbacks são apenas funções que são executados depois de um tempo. A chave para entender callbacks é perceber que eles são usados quando você não sabe **quando** algum código assíncrono vai terminar, mas você sabe **onde** a operação vai terminar - a última linha da função assíncrona! A ordem de cima à baixo que você declara callbacks não necessariamente importa, apenas a lógica hierárquica de assentamento do código. Primeiro você quebra seu código em funções, e depois usa callbacks para declarar se uma função depende do término de outra função.
 
-O método `fs.readFile` é fornecido pelo node, é asíncrono e leva um bom tempo para terminar. Considerando o que ele faz: Ele tem que ir ao Sistema Operacional, que por sua vez tem que ir ao sistema de arquivos, que está no disco rígido que pode ou não está rodando à milhares de vezes por minuto. Então ele tem que usar um laser para ler os dados e enviar de volta através das camadas para seu programa JavaScript. Você dá à `readFile` uma função (conhecida como callback) que vai ser chamado assim que receber os dados do sistema de arquivos. Ele bota os dados em uma variável e chama sua função (callback) com aquela variável, nesse caso a variável é chamada `fileContents` porque ela contém os dados do arquivo que foi lido.
+O método `fs.readFile` é fornecido pelo Node, é assíncrono e leva um bom tempo para terminar. Considerando o que ele faz: ele tem que ir ao Sistema Operacional, que por sua vez tem que ir ao sistema de arquivos, que está no disco rígido que pode ou não estar rodando à milhares de vezes por minuto. Então ele tem que usar um laser para ler os dados e enviar de volta através das camadas para seu programa JavaScript. Você dá à `readFile` uma função (conhecida como callback) que vai ser chamado assim que receber os dados do sistema de arquivos. Ele bota os dados em uma variável e chama sua função (callback) com aquela variável, nesse caso a variável é chamada `fileContents` porque ela contém os dados do arquivo que foi lido.
 
 Pense no exemplo do fast food no começo deste tutorial. Em muitos restaurantes você pega um número para colocar em sua mesa enquanto você espera sua comida. Isto usa vários callbacks. Eles vão falar ao servidor o que fazer depois que seu cheesburger fique pronto.
 
@@ -154,20 +190,20 @@ addOne(logMyNumber)
 
 Agora a função `logMyNumber` pode ser passada no argumento que vai ser a variável `callback` dentro da função `addOne`. Depois que `readFile` terminar a variável `callback` vai ser invocada (`callback()`). Apenas funções podem ser invocadas, então se você passar alguma coisa que não é uma função vai causar um erro.
 
-Quando a função é invocada no código JavaScript vai ser executada imediatamente. Nesse caso nosso log vai executar já que `callback` é a função `logMyNumber`. Lembre, *definir* uma função é diferente de executar. Você tem que *invocar* a função para isso acontecer.
+Quando uma função é invocada no JavaScript, o código dentro dela será executado imediatamente. Nesse caso nosso log será executado já que `callback` é a função `logMyNumber`. Lembre que, só porque você *definiu* uma função não significa que ela será executada. Você tem que *invocar* a função para isso acontecer.
 
-Para quebrar o exemplo acima ainda mais, aqui esta a linha do tempo dos eventos que acontecem quando rodam este programa: 
+Para quebrar o exemplo acima em pedaços, aqui está a linha do tempo dos eventos que acontecem quando rodamos este programa:
 
-- 1: O código é analisado, o que significa que se existir algum erro de sintaxe o programa vai quebrar. Durante esta fase inicial tem 4 coisas que são definidas: `fs`, `myNumber`, `addOne`, e `logMyNumber`. Note que eles estão sendo apenas definidos, nenhuma função foi chamada/invocada ainda.
-- 2: Quando a última linha do nosso programa é executada `addOne` é invocado, onde `logMyNumber` é passado como `callback`, que é o que queremos que seja chamado quando `addOne` terminar. Isto imediatamente executa o código asíncrono `fs.readFile`. Esta parte do programa leva um tempo para terminar
-- 3: Sem nada para fazer, node espera até que `readFile` termine. Se existisse alguma outra coisa durante esse tempo, node poderia fazer o trabalho.
+- 1: o código é analisado, o que significa que se existir algum erro de sintaxe o programa vai quebrar. Durante esta fase inicial tem 4 coisas que são definidas: `fs`, `myNumber`, `addOne`, e `logMyNumber`. Note que eles estão sendo apenas definidos, nenhuma função foi chamada/invocada ainda.
+- 2: quando a última linha do nosso programa é executada `addOne` é invocado, onde `logMyNumber` é passado como `callback`, que é o que queremos que seja chamado quando `addOne` terminar. Isto imediatamente executa o código assíncrono `fs.readFile`. Esta parte do programa leva um tempo para terminar.
+- 3: sem nada para fazer, o Node espera até que `readFile` termine. Se existisse alguma outra coisa durante esse tempo, Node poderia fazer o seu trabalho.
 - 4: `readFile` termina e chama o callback, `doneReading`, que incrementa o número e imediatamente invoca a função callback de `addOne`, `logMyNumber`.
 
-Talvez a parte mais confusa de programar com callbacks é que funções são apenas objetos que podem ser armazenadas em variáveis e passadas no programa com diferentes nomes. Dando um simples e descritivo nome para suas variáveis é importante ao fazer seu código legível para outras pessoas. Geralmente falando em programas node quando você vê uma variável como `callback` ou `cb` você sabe que é uma função.
+Talvez a parte mais confusa de programar com callbacks é que funções são apenas objetos que podem ser armazenadas em variáveis e passadas no programa com diferentes nomes. Dando um simples e descritivo nome para suas variáveis é importante ao fazer seu código legível para outras pessoas. Geralmente falando em programas Node quando você vê uma variável como `callback` ou `cb` você sabe que é uma função.
 
-Você pode ter ouvido os termos 'programação com eventos' ou 'loop de eventos'. Eles se referem a maneira que `readFile` é implementado. Node primeiro roda a operação `readFile` e então espera por `readFile` para enviar um evento dizendo que está completo. Enquanto espera node pode checar outras coisas. Dentro do node esta uma lista de coisas que são executadas mas não reportaram de volta ainda, então node faz um loop na lista de novo e de novo checando para ver se eles terminaram. Depois que eles terminam eles são 'processados', Ex: Callbacks que dependem desse término vão ser invocados.
+Você pode ter ouvido os termos "programação evencionada" ou "ciclo de eventos". Eles se referem a maneira que `readFile` é implementado. O Node roda primeiro a operação `readFile` e então espera por `readFile` para enviar um evento dizendo que está completo. Enquanto espera, Node pode checar outras coisas. Dentro do Node está uma lista de coisas que são executadas mas não foram reportdas de volta ainda, então o Node faz um loop contínuo na lista para checar se elas terminaram. Depois que eles terminam eles são "processados" (ex.: callbacks que dependem desse término vão ser invocados).
 
-Aqui um pseudocódigo do exemplo acima.
+Aqui temos a versão de um pseudocódigo do exemplo acima:
 
 ```js
 function addOne(thenRunThisFunction) {
@@ -179,7 +215,7 @@ function addOne(thenRunThisFunction) {
 addOne(function thisGetsRunAfterAddOneFinishes() {})
 ```
 
-Imagine que você tem 3 funções asíncronas `a`, `b` e `c`. Cada um leva um minuto para rodar e quando termina chama um callback (que é passado no primeiro argumento). Se você precisar que node 'primeiro rode a, depois rode b quando a terminar, e então rode c quando b terminar' iria parecer com isso:
+Imagine que você tem 3 funções assíncronas `a`, `b` e `c`. Cada uma leva um minuto para rodar e quando terminadas chamam um callback (que é passado no primeiro argumento). Se você disser para o Node: 'comece executando "a", depois execute "b" quando "a" terminar, e então execute "c" quando "b" terminar', isso ficaria assim:
 
 ```js
 a(function() {
@@ -189,13 +225,13 @@ a(function() {
 })
 ```
 
-Quando este código é executado, `a` vai rodar automaticamente, então, um minuto depois ele vai terminar e chamar `b`, e um minuto depois ele vai terminar e chamar `c` e finalmente 3 minutos depois node vai parar o código já que não tem mais nada para fazer. Definitivamente, existem formas mais elegantes de escrever o código acima, mas o ponto é que se você tiver um código que tem que esperar outro código asíncrono terminar então você expressa esta dependência colocando este código em funções que são passadas como callbacks.
+Quando este código é executado, `a` vai iniciar automaticamente, então, um minuto depois ele vai terminar e chamar `b`, e um minuto depois ele vai terminar e chamar `c` e finalmente 3 minutos depois o Node vai parar o código já que não tem mais nada para fazer. Definitivamente, existem formas mais elegantes de escrever o código acima, mas o ponto é que se você tiver um código que tem que esperar outro código assíncrono terminar então você expressa esta dependência colocando este código em funções que são passadas como callbacks.
 
-A forma como node trabalha requer que você pense de uma forma não-linear. Considerando esta lista de operações:
+A forma como o Node trabalha requer que você pense de uma forma não-linear. Considerando esta lista de operações:
 
 ```
-read a file
-process that file
+ler um arquivo
+processar esse arquivo
 ```
 
 Se você precisar transformar em pseudocódigo ficaria assim:
@@ -205,7 +241,7 @@ var file = readFile()
 processFile(file)
 ```
 
-Este tipo de código linear (passo-a-passo, em ordem) não é a maneira que node trabalha. Se este código fosse executado então `readFile` e `processFile` iriam executar ao mesmo tempo. Isto não faz sentido já que `readFile` vai levar um tempo para completar. Ao invés disso você precisa expressar que `processFile` depende de `readFile`. Este é o trabalho dos callbacks! E por causa da maneira que JavaScript trabalha você pode escrever esta dependência de várias maneiras diferentes:
+Este tipo de código linear (passo-a-passo, em ordem) não é a maneira que Node trabalha. Se este código fosse executado então `readFile` e `processFile` iriam executar ao mesmo tempo. Isto não faz sentido já que `readFile` vai levar um tempo para completar. Ao invés disso você precisa expressar que `processFile` depende de `readFile`. Este é o trabalho dos callbacks! E por causa da maneira que JavaScript trabalha você pode escrever esta dependência de várias maneiras diferentes:
 
 ```js
 var fs = require('fs')
@@ -213,68 +249,68 @@ fs.readFile('movie.mp4', finishedReading)
 
 function finishedReading(error, movieData) {
   if (error) return console.error(error)
-  // Faz alguma coisa com o filme
+  // faça algo com movieData
 }
 ```
 
-Mas você também pode estruturar seu código como esse que ainda vai funcionar:
+Mas você támbem pode estruturar o seu código dessa maneira, e ainda assim vai funcionar:
 
 ```js
 var fs = require('fs')
 
 function finishedReading(error, movieData) {
   if (error) return console.error(error)
-  // Faz alguma coisa com o filme
+  // faça algo com movieData
 }
 
 fs.readFile('movie.mp4', finishedReading)
 ```
 
-Or even like this:
+Ou até mesmo assim:
 
 ```js
 var fs = require('fs')
 
 fs.readFile('movie.mp4', function finishedReading(error, movieData) {
   if (error) return console.error(error)
-  // Faz alguma coisa com o filme
+  // faça algo com movieData
 })
 ```
 
-## Events
+## Eventos
 
-In node if you require the [events](http://nodejs.org/api/events.html) module you can use the so-called 'event emitter' that node itself uses for all of its APIs that emit things.
+No Node, se você requisitar o módulo [events](http://nodejs.org/api/events.html), você pode utilizar o também chamado "emissor de evento" que o próprio Node utiliza para todas as suas APIs a fim de emitir coisas.
 
-Events are a common pattern in programming, known more widely as the ['observer pattern'](http://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
+Eventos são padrões comuns na programação, para conhecer melhor procure por ['observer pattern'](http://en.wikipedia.org/wiki/Observer_pattern) ou 'pub/sub' (publicar/assinar). Assim como callbacks são uma relação de um-para-um entre algo que espera pelo callback e outra parte que chama o callback, eventos seguem o mesmo padrão com exceção de que eles são uma API de muitos-para-muitos.
 
-The easiest way to think about events is that they let you subscribe to things. You can say 'when X do Y', whereas with plain callbacks it is 'do X then Y'.
+A forma mais fácil de pensar a respeito de eventos é que eles permitem a você assinar as coisas. Você pode dizer "quando X fazer Y", enquanto que com um simples callbacks é "faça X, então Y".
 
-Here are few common use cases for using events instead of plain callbacks:
+Aqui temos casos comuns para utilizar eventos ao invés de simples callbacks:
 
-- Chat room where you want to broadcast messages to many listeners
-- Game server that needs to know when new players connect, disconnect, move, shoot and jump
-- Game engine where you want to let game developers subscribe to events like `.on('jump', function() {})`
-- A low level web server that wants to expose an API to easily hook into events that happen like `.on('incomingRequest')` or `.on('serverError')`
+- Uma sala de chat onde você tem um canal de mensagens com muitos ouvintes.
+- Servidor de um jogo que necessita saber quando os players se ligam, desligam, movem-se, atiram ou pulam.
+- Mecânismo de um jogo onde você quer permitir que os desenolvedores de jogos disparem eventos como: `.on('jump', function() {})`.
+- Um servidor web de baixo nível que quer expor uma API para criar facilmente um gancho para os eventos que acontecem como `on ('incomingRequest')` ou `on ('SERVERERROR')`.
 
-If we were trying to write a module that connects to a chat server using only callbacks it would look like this:
+Se você tentar escrever um servidor de chat que se conecte usando apenas callbacks ele vai se parecer com isso:
 
 ```js
 var chatClient = require('my-chat-client')
 
 function onConnect() {
-  // have the UI show we are connected
+  // exibe a UI quando conectar-se
 }
 
 function onConnectionError(error) {
-  // show error to the user
+  // exibe um erro para o usuário
 }
 
 function onDisconnect() {
- // tell user that they have been disconnected
+ // avisa ao usuario que ele foi desconectado
 }
 
 function onMessage(message) {
- // show the chat room message in the UI
+ // exibe a mensagem na UI da sala
 }
 
 chatClient.connect(
@@ -286,29 +322,29 @@ chatClient.connect(
 )
 ```
 
-As you can see this is really cumbersome because of all of the functions that you have to pass in a specific order to the `.connect` function. Writing this with events would look like this:
+Como você pode ver, isto é realmente pesado pois você tem que passar todas as funções em uma ordem especifica para a função `.connect`. Escrevendo isso com eventos irá se parecer com isso:
 
 ```js
 var chatClient = require('my-chat-client').connect()
 
 chatClient.on('connect', function() {
-  // have the UI show we are connected
-}) 
+  // exibe a UI quando conectar-se
+})
 
 chatClient.on('connectionError', function() {
-  // show error to the user
+  // exibe um erro para o usuário
 })
 
 chatClient.on('disconnect', function() {
-  // tell user that they have been disconnected
+  // avisa ao usuario que ele foi desconectado
 })
 
 chatClient.on('message', function() {
-  // show the chat room message in the UI
+  // exibe a mensagem na UI da sala
 })
 ```
 
-This approach is similar to the pure-callback approach but introduces the `.on` method, which subscribes a callback to an event. This means you can choose which events you want to subscribe to from the `chatClient`. You can also subscribe to the same event multiple times with different callbacks:
+Esta abordagem é bastante similar a utilização com callbacks-puros, mas essa abordagem introduz o método `.on` onde atrela um callback a um evento. Isso significa que você pode escolher quais eventos deseja assinar a partir do `chatClient`. Você pode assinar o mesmo evento diversas vezes com diferentes callbacks:
 
 ```js
 var chatClient = require('my-chat-client').connect()
@@ -326,47 +362,33 @@ function storeMessage(message) {
 
 ## Streams
 
-Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
+Logo no início do projeto do Node, as APIs de arquivos de sistema e redes tiveram os seus próprios padrões de separação para lidar com a streaming de I/O. Por exemplo, arquivos em um sistema de arquivos tem propriedades que se chamam "descritores de arquivo" então o módulo `fs` teve uma lógica adicional enquanto o módulo de rede não teve esse conceito adicionado. Apesar de diferenças menores na semâtica como esta, em um nível fundamental ambos os grupos de código tem uma grande quantidade de funcionalidades duplicadas onde fazem a leitura de dados na entrada e saida. O time que esta trabalhando no Node percebeu que seria confuso ter que aprender dois conjuntos de semântica, essencialmente, fazendo a mesma coisa, por isso fizeram uma nova API chamada `Stream` e tudo o que demanda rede e sistema de arquivos usa ela como base.
 
-The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
+O ponto principal do Node é facilitar a comunicaçãoo com o sistema de arquivos e redes através de um padrão que é utilizado em todos os lugares. A boa notícia é que a maioria dos padrões como esse (há apenas alguns) foram descobertos até este ponto e terão poucas mudanças mesmo que seja quase improvável que isso aconteça no futuro.
 
-There are already two great resources that you can use to learn about node streams:
-
-### Stream Adventure
-
-[stream-adventure](https://github.com/substack/stream-adventure) by @substack is an interactive command line stream tutorial. You can install it with npm:
-
-```
-# install
-npm install stream-adventure -g
-
-# start the adventure
-stream-adventure
-```
-
-[![stream-adventure](stream-adventure.png)](https://github.com/substack/stream-adventure)
+Já existem duas grandes fontes que você pode utilizar para aprender a respeito de Streams no Node. Um é o *stream-adventure* (veja a seção [Aprenda Node de forma interativa](#aprenda-node-de-forma-interativa)) e o outro é uma referência chamada *Stream Handbook*.
 
 ### Stream Handbook
 
-[stream-handbook](https://github.com/substack/stream-handbook#introduction) is a guide, similar to this one, that contains a reference for everything you could possibly need to know about streams.
+O [stream-handbook](https://github.com/substack/stream-handbook#introduction) é um guia, similar a este, que contém referências para tudo o que você quer saber a respeito de Streams.
 
 [![stream-handbook](stream-handbook.png)](https://github.com/substack/stream-handbook)
 
-## Modules
+## Módulos e NPM
 
-Node core is made up of about two dozen modules, some lower level ones like `events` and `stream` some higher level ones like `http` and `crypto`.
+O núcleo do Node é composto de cerca de duas dezenas de módulos, alguns com níveis mais baixos como `events` e `streams`, e outras de níveis mais alto como `http` e `crypto`.
 
-This design is intentional. Node core is supposed to be small, and the modules in core should be focused on providing tools for working with common I/O protocols and formats in a way that is cross-platform.
+Este projeto é intencional. O núcleo do Node foi desenvolvido para ser pequeno e os módulos no núcleo devem focar no fornecimento de ferramentas para trabalhar com protocolos e formatos comuns de I/O de maneira multiplataforma.
 
-For everything else there is [npm](https://npmjs.org/). Anyone can create a new node module that adds some functionality and publish it to npm. As of the time of this writing there are 34,000 modules on npm.
+Para todo o restante, existe o [NPM](https://npmjs.org/). Qualquer um pode criar um novo módulo para o Node que adicione alguma funcionalide e publicá-lo no NPM. No momento em que escrevo isso, existem 34.000 módulos no NPM.
 
-### How to find a module
+### Como encontrar um módulo
 
-Imagine you are trying to convert PDF files into TXT files. The best place to start is by doing `npm search pdf`:
+Imagine que você está tentando converter arquivos PDF em arquivos TXT. A melhor forma para iniciar este busca é com `npm search pdf`:
 
 ![pdfsearch](npm-search.png)
 
-There are a ton of results! npm is quite popular and you will usually be able to find multiple potential solutions. If you go through each module and whittle down the results into a more narrow set (filtering out things like PDF generation modules) you'll end up with these:
+Há uma tonelada de resultados! NPM é bastante popular e normalmente você vai ser capaz de encontrar várias soluções possíveis. Se você passar por cada módulo e filtrar os resultados em um conjunto mais estreito (filtrando as coisas como módulos de geração de PDF), você vai acabar com estes resultados:
 
 - [hummus](https://github.com/galkahana/HummusJS/wiki/Features) - c++ pdf manipulator
 - [mimeograph](https://github.com/steelThread/mimeograph) - api on a conglomeration of tools (poppler, tesseract, imagemagick etc)
@@ -379,90 +401,90 @@ There are a ton of results! npm is quite popular and you will usually be able to
 - [pdfiijs](https://github.com/fagbokforlaget/pdfiijs) - pdf to inverted index using textiijs and poppler
 - [pdf2json](https://github.com/modesty/pdf2json/blob/master/readme.md) - pure js pdf to json
 
-A lot of the modules have overlapping functionality but present alternate APIs and most of them require external dependencies (like `apt-get install poppler`).
+Diversos módulos possuem sobreposição de funcionalidade, mas as atuais APIs alternativas e a maioria delas requer dependências externas (como o `apt-get install poppler`).
 
-Here are some different ways to interpret the modules:
+Aqui estão algumas maneiras diferentes de interpretar os módulos:
 
-- `pdf2json` is the only one that is written in pure JavaScript, which means it is the easiest to install, especially on low power devices like the raspberry pi or on Windows where native code might not be cross platform.
-- modules like `mimeograph`, `hummus` and `pdf-extract` each combine multiple lower level modules to expose a high level API
-- a lot of modules seem to sit on top of the `pdftotext`/`poppler` unix command line tools
+- `pdf2json` é o único que está escrito em JavaScript puro, o que significa que é mais fácil de instalar, especialmente em dispositivos de baixa potência, como o Raspberry Pi ou no Windows, onde o código nativo pode não ser multiplataforma;
+- módulos como `mimeograph`, `hummus` e `pdf-extract` onde cada um combina vários módulos de nível inferior para expor uma API de alto nível;
+- uma série de módulos parecem tomar como base a linha de comando unix do `pdftotext`/`poppler`
 
-Lets compare the differences between `pdftotextjs` and `pdf-text-extract`, both of which are are wrappers around the `pdftotext` utility.
+Vamos comparar as diferenças entre `pdftotextjs` e `pdf-text-extract`, ambos estão contidos no utilitário `pdftotext`.
 
 ![pdf-modules](pdf-modules.png)
 
-Both of these:
+Ambos:
 
-- were updated relatively recently
-- have github repositories linked (this is very important!)
-- have READMEs
-- have at least some number of people installing them every week
-- are liberally licensed (anyone can use them)
+- foram atualizados recentemente
+- possuem repositórios github "linkados" (isto é muito importante!)
+- posuem READMEs
+- possuem, ao menos, um número considerável de pessoas o instalando toda semana
+- são "livremente" licenciados (qualquer um pode usar)
 
-Just looking at the `package.json` + module statistics it's hard to get a feeling about which one might be the right choice. Let's compare the READMEs:
+Olhando apenas para os arquivos `package.json` + módulo de estatísticas, é difícil obter uma sensação sobre qual pode ser a escolha certa. Vamos comparar os READMEs:
 
 ![pdf-readmes](pdf-readmes.png)
 
-Both have simple descriptions, CI badges, installation instructions, clear examples and instructions for running the tests. Great! But which one do we use? Let's compare the code:
+Ambos possuem descrições simples, emblemas para CI, instruções de instalação, exemplos claros e instruções para a execução dos testes. Otimo! Mas, qual é que vamos usar? Vamos comparar o código:
 
 ![pdf-code](pdf-code.png)
 
-`pdftotextjs` is around 110 lines of code, and `pdf-text-extract` is around 40, but both essentially boil down to this line:
+`pdftotextjs` possue cerca de 110 linhas, e `pdf-text-extract` cerca de 40 linhas, mas ambos, essencialmente, resumem-se a esta linha:
 
 ```
 var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
 ```
 
-Does this make one any better than the other? Hard to say! It's important to actually *read* the code and make your own conclusions. If you find a module you like, use `npm star modulename` to give npm feedback about modules that you had a positive experience with.
+Será que isto faz um melhor que o outro? Difícil dizer! É realmente importante "ler" o código e fazer as suas próprias conclusões. Se você encontrar um módulo que você gosta, use `npm star modulename` para dar um *feedback* sobre os módulos que você teve uma experiência positiva com ele.
 
-### Modular development workflow
+### Fluxo de Desenvolvimento Modular
 
-npm is different from most package managers in that it installs modules into a folder inside of other existing modules. The previous sentence might not make sense right now but it is the key to npm's success.
+NPM é diferente da maioria dos gerenciadores de pacotes já que ele instala módulos em uma pasta dentro de outros módulos já existentes. A frase anterior pode não fazer sentido agora, mas é a chave para o sucesso do NPM.
 
-Many package managers install things globally. For instance, if you `apt-get install couchdb` on Debian Linux it will try to install the latest stable version of CouchDB. If you are trying to install CouchDB as a dependency of some other piece of software and that software needs an older version of CouchDB, you have to uninstall the newer version of CouchDB and then install the older version. You can't have two versions of CouchDB installed because Debian only knows how to install things into one place.
+Muitos gerenciadores de pacotes instalam as coisas globalmente. Por exemplo, se você executar `apt-get install couchdb` no Linux Debian ele vai tentar instalar a última versão estável do CouchDB. Se você estiver tentando instalar o CouchDB como dependência de um Software e este precisa de uma versão anterior do CouchDB, você terá de desinstalar a nova versão do CouchDB e assim instalar a versão anterior. Você não pode ter duas versões do CouchDB instaladas pois o Debian só sabe como instalar as coisas em um local somente.
 
-It's not just Debian that does this. Most programming language package managers work this way too. To address the global dependencies problem described above there have been virtual environment developed like [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs.html) for Python or [bundler](http://bundler.io/) for Ruby. These just split your environment up in to many virtual environments, one for each project, but inside each environment dependencies are still globally installed. Virtual environments don't always solve the problem, sometimes they just multiply it by adding additional layers of complexity.
+Não é apenas o Debian que faz isso. A maioria dos gerenciadores de pacotes de linguagem de programação funciona dessa maneira também. Para organizar o problema das dependências globais descrito acima, foram desenvolvidos ambientes virtuais como [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs.html) para o Python ou [bundler](http://bundler.io/) para o Ruby. Eles apenas dividem o ambiente em muitos ambientes virtuais, um para cada projeto, mas dentro de cada ambiente as respectivas dependências continuam instaladas de modo global. Os ambientes virtuais nem sempre resolvem o problema, às vezes eles só o multiplicam através da inclusão de camadas adicionais de complexidade.
 
-With npm installing global modules is an anti-pattern. Just like how you shouldn't use global variables in your JavaScript programs you also shouldn't install global modules (unless you need a module with an executable binary to show up in your global `PATH`, but you don't always need to do this -- more on this later).
+Com o NPM, a instalação de módulos globais é um anti-padrão. Assim como você não deve usar as variáveis ​​globais em seus programas em JavaScript você também não deve instalar os módulos globais (a menos que você precise de um módulo com um binário executável a aparecer em seu `PATH` global, mas nem sempre você precisa fazer isso - mais sobre isso depois).
 
-#### How `require` works
+#### Como o `require` funciona.
 
-When you call `require('some_module')` in node here is what happens:
+Quando você chama o `require('algum_modulo')` no Node, isto é o que acontece:
 
-1. if a file called `some_module.js` exists in the current folder node will load that, otherwise:
-2. node looks in the current folder for a `node_modules` folder with a `some_module` folder in it
-3. if it doesn't find it, it will go up one folder and repeat step 2
+1. se o arquivo chamado `algum_modulo.js` existir no diretório atual o Node vai carregá-lo, do contrário:
+2. o Node vai procurar no diretório atual pela pasta `node_modules` com `algum_modulo` nele
+3. caso não encontre, ele fará o mesmo processo no diretório pai
 
-This cycle repeats until node reaches the root folder of the filesystem, at which point it will then check any global module folders (e.g. `/usr/local/node_modules` on Mac OS) and if it still doesn't find `some_module` it will throw an exception.
+Este ciclo será efetuado até o Node chegar no diretório raiz do sistema de arquivos, até que ele comece a verificar os diretórios dos módulos globais (ex.: `/usr/local/node_modules` no Mac) e, mesmo assim, se `algum_modulo` não for encontrado, será lançada uma exceção.
 
-Here's a visual example:
+Aqui temos um exemplo prático:
 
 ![mod-diagram-01](mod-diagram-01.png)
 
-When the current working directory is `subsubfolder` and `require('foo')` is called, node will look for the folder called `subsubsubfolder/node_modules`. In this case it won't find it -- the folder there is mistakenly called `my_modules`. Then node will go up one folder and try again, meaning it then looks for `subfolder_B/node_modules`, which also doesn't exist. Third try is a charm, though, as `folder/node_modules` does exist *and* has a folder called `foo` inside of it. If `foo` wasn't in there node would continue its search up the directory tree.
+Quando o diretório de trabalho atual é `subsubfolder` e `require('foo')` é chamado, o Node vai procurar pelo diretório chamado `subsubsubfolder/node_modules`. Neste caso, não será encontrado - o diretório foi nomeado incorretamente como `my_modules`. Então, o Node vai procurar no diretório pai e tentar novamente, o que significa que ele vai procurar no diretório `subfolder_B/node_modules` , o qual também não existe. Já a terceira tentativa funciona perfeitamente, pois `folder/node_modules` existe e possui uma pasta chamada `foo` dentro dela. Se `foo` não estivesse neste local, o Node continuaria a sua busca no diretório pai do diretório atual onde a busca está sendo feita.
 
-Note that if called from `subfolder_B` node will never find `subfolder_A/node_modules`, it can only see `folder/node_modules` on its way up the tree.
+Observe que se chamarmos do diretório `subfolder_B` o Node nunca vai encontar `subfolder_A/node_modules`, ele apenas pode visualizar `folder/node_modules` e o que estiver nos diretórios acima dele.
 
-One of the benefits of npm's approach is that modules can install their dependent modules at specific known working versions. In this case the module `foo` is quite popular - there are three copies of it, each one inside its parent module folder. The reasoning for this could be that each parent module needed a different version of `foo`, e.g. 'folder' needs `foo@0.0.1`, `subfolder_A` needs `foo@0.2.1` etc.
+Um dos benefícios da abordagem do NPM é que os módulos podem instalar seus módulos dependentes em versões específicas de trabalho conhecidos. Neste caso, o módulo `foo` é muito popular - existem três cópias dele, cada um instalado dentro de um diretório parente. A razão para isto é que cada módulo parente necessita de uma versão diferente de `foo`, para exemplificar: `folder` precisa de `foo@0.0.1`, `subfolder_A` precisa de `foo@0.2.1` e assim por diante.
 
-Here's what happens when we fix the folder naming error by changing `my_modules` to the correct name `node_modules`:
+Isto é o que acontece quando consertamos o nome do diretório `my_modules` colocado equivocadamente para o nome correto `node_modules`:
 
 ![mod-diagram-02](mod-diagram-02.png)
 
-To test out which module actually gets loaded by node, you can use the `require.resolve('some_module')` command, which will show you the path to the module that node finds as a result of the tree climbing process. `require.resolve` can be useful when double-checking that the module that you *think* is getting loaded is *actually* getting loaded -- sometimes there is another version of the same module closer to your current working directory than the one you intend to load.
+Para testar qual módulo foi carregado pelo node, você pode utilizar o comando `require.resolve('algum_modulo')`, o que vai mostrar o caminho para o módulo que o Node encontrar como resultado no procedimento de busca através dos diretórios. O `require.resolve` pode ser útil para fazer uma verificação mais rígida quando você quer ter a certeza de que um módulo está sendo carregado - às vezes há uma outra versão do mesmo módulo mais perto de seu diretório de trabalho atual do que aquele que você pretende carregar.
 
-### How to write a module
+### Como criar um módulo
 
-Now that you know how to find modules and require them you can start writing your own modules.
+Agora que você já sabe como encontrar os módulos e fazer as suas requisições, você pode começar a escrever os seus próprios módulos.
 
-#### The simplest possible module
+#### O módulo mais simples possível
 
-Node modules are radically lightweight. Here is one of the simplest possible node modules:
+Os módulos do Node são radicalmente leves. Aqui está uma das possibilidades mais simples para um módulo no Node:
 
 `package.json`:
 ```js
 {
-  "id": "number-one",
+  "name": "number-one",
   "version": "1.0.0"
 }
 ```
@@ -472,15 +494,15 @@ Node modules are radically lightweight. Here is one of the simplest possible nod
 module.exports = 1
 ```
 
-By default node tries to load `module/index.js` when you `require('module')`, any other file name won't work unless you set the `main` field of `package.json` to point to it.
+Por padrão, o Node tenta carregar `module/index.js` quando você faz um `require('module')`, qualquer outro nome de arquivo não vai funcionar a menos que você defina o campo `main` no `package.json` e aponte para ele.
 
-Put both of those files in a folder called `number-one` (the `id` in `package.json` must match the folder name) and you'll have a working node module.
+Coloque ambos os arquivos em uma pasta chamada `number-one` (o `id` em `package.json` deve coincidir com o nome da pasta) e você terá um módulo Node para trabalhar.
 
-Calling the function `require('number-one')` returns the value of whatever `module.exports` is set to inside the module:
+Chamando a função `require('number-one')` será retornado o valor de qualquer `module.exports` que estiver definido dentro do módulo:
 
 ![simple-module](simple-module.png)
 
-An even quicker way to create a module is to run these commands:
+Uma forma ainda mais rápida para criar um módulo é executando os seguintes comandos:
 
 ```sh
 mkdir my_module
@@ -490,17 +512,17 @@ git remote add git@github.com:yourusername/my_module.git
 npm init
 ```
 
-Running `npm init` will create a valid `package.json` for you and if you run it in an existing `git` repo it will set the `repositories` field inside `package.json` automatically as well!
+Executando `npm init` será criado um manifesto JSON válido chamado `package.json` para você e se você executá-lo em um repositório `git` existente, será definido um campo `repositories` dentro do `package.json` automaticamente!
 
-#### Adding dependencies
+#### Adicionando dependências
 
-A module can list any other modules from npm or GitHub in the `dependencies` field of `package.json`. To install the `request` module as a new dependency and automatically add it to `package.json` run this from your module root directory:
+Um módulo pode listar outros módulos a partir do NPM ou Github no campo `dependencies` do arquivo `package.json`. Para instalar o módulo `request` como uma nova dependência e automaticamente adicioná-la ao `package.json` é preciso executar o seguinte comando a partir do seu diretório raiz:
 
 ```sh
-npm install --save request
+npm install request --save
 ```
 
-This installs a copy of `request` into the closest `node_modules` folder and makes our `package.json` look something like this:
+Isto vai instalar uma cópia de `request` na pasta mais próxima do `node_modules` e fazer o nosso `package.json` se parecer assim:
 
 ```
 {
@@ -512,17 +534,17 @@ This installs a copy of `request` into the closest `node_modules` folder and mak
 }
 ```
 
-By default `npm install` will grab the latest published version of a module.
+Por padrão, `npm install` vai pegar a versão mais atual publicada do módulo.
 
-## Client side development with npm
+## Desenvolvimento no lado do cliente com NPM
 
-A common misconception about npm is that since it has 'Node' in the name that it must only be used for server side JS modules. This is completely untrue! npm actually stands for Node Packaged Modules, e.g. modules that Node packages together for you. The modules themselves can be whatever you want -- they are just a folder of files wrapped up in a .tar.gz, and a file called `package.json` that declares the module version and a list of all modules that are dependencies of the module (as well as their version numbers so the working versions get installed automatically). It's turtles all the way down - module dependencies are just modules, and those modules can have dependencies etc. etc. etc.
+Um equívoco comum sobre NPM é que uma vez que tem "Node" no nome que deve ser usado apenas para os módulos de JS do lado do servidor. Isto é completamente falso! O NPM está realmente para modulos empacotados do Node, por exemplo, módulos que o Node empacota para você. Os próprios módulos podem ser o que você quiser - eles são apenas uma pasta de arquivos contidos em um arquivo `tar.gz`, e um arquivo chamado `package.json` que declara a versão do módulo e uma lista de todos os módulos que são dependências deste módulo (bem como os respectivos números de versão para a versão de trabalho ficar instalado automaticamente). As dependências deste do módulo são apenas módulos, e estes módulos podem ter dependências, etc, etc, etc.
 
-[browserify](http://browserify.org/) is a utility written in Node that tries to convert any node module into code that can be run in browsers. Not all modules work (browsers can't do things like host an HTTP server), but a lot of modules on NPM *will* work.
+O [browserify](http://browserify.org/) é um utilitário escrito em Node que tenta converter qualquer módulo do Node em um código que possa ser executado em qualquer *browser*. Nem todos os módulos funcionam (navegadores não podem fazer determinadas coisas como hospedar um servidor HTTP), mas muitos módulos no NPM "vão" funcionar.
 
-To try out npm in the browser you can use [RequireBin](http://requirebin.com/), an app I made that takes advantage of [Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn), which internally uses browserify but returns the output through HTTP (instead of the command line -- which is how browserify is usually used).
+Para testar o NPM no *browser*, você pode utilizar o [RequireBin](http://requirebin.com/), que é um app que eu fiz e aproveita as vantagens do [Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn), que utiliza o *browserfy* por debaixo dos panos, mas retorna uma saída através do HTTP (em vez da linha de comando - que é a forma como é normalmente usado browserify).
 
-Try putting this code into RequireBin and then hit the preview button:
+Tente colocar este código dentro do *RequireBin* e pressione o botão *preview*:
 
 ```js
 var reverse = require('ascii-art-reverse')
@@ -547,72 +569,74 @@ setTimeout(function() {
 }, 500)
 ```
 
-Or check out a [more complicated example](http://requirebin.com/?gist=6031068) (feel free to change the code and see what happens):
+Ou verifique um [exemplo mais completo](http://requirebin.com/?gist=6031068) (fique a vontade para modificar o código e ver o que acontece):
 
 [![requirebin](requirebin.png)](http://requirebin.com/embed?gist=6031068)
 
-## Going with the grain
+## Evoluindo de forma correta
 
-Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](http://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
+Como todo boa ferramenta, o Node é adequado para certos casos de uso. Por exemplo: Rails, o popular web framework, é ótimo para modelar complexas [lógicas de negócios](http://en.wikipedia.org/wiki/Business_logic).
 
-### What is outside of node's scope?
+Exemplo: usando código para representar a vida em um plano objetivado que vivemos físicamente como contas, empréstimos, itinerários e inventários. Embora tecnicamente seja possivel fazer o mesmo utilizando o Node, haveriam desvantagens claras sabendo que o Node é projetado para resolver problemas de I/O e não sabe muito a respeito de 'lógica de negócio'. Cada ferramenta tem um foco para resolver diferentes problemas. Esperamos que este guia ajude-o a ganhar uma compreensão intuitiva dos pontos fortes do Node para que você saiba quando ele será útil.
 
-Fundamentally node is just a tool used for managing I/O across file systems and networks, and it leaves other more fancy functionality up to third party modules. Here are some things that are outside the scope of node:
+### O que está fora do escopo do Node?
+
+Fundamentalmente o Node é somente usado como uma ferramenta para gerenciar I/O ao redor do sitema de arquivos e redes, ele deixa outras funcionalidades mais bonitas com módulos de terceiros. Aqui são algumas das coisas ques estão **fora** do escopo do Node:
 
 #### Web frameworks
 
-There are a number of web frameworks built on top of node (framework meaning a bundle of solutions that attempts to address some high level problem like modeling business logic), but node is not a web framework. Web frameworks that are written using node don't always make the same kind of decisions about adding complexity, abstractions and tradeoffs that node does and may have other priorities.
+Existe uma boa quantidade de web frameworks construidos em cima do node (framework é um pacote que tenta resolver um problema de alto nível e problemas similares à modelagem de lógica de negócios), mas o Node não é um framework para web. Frameworks web são escritos para serem utilizado no Node e nem sempre tomam o mesmo tipo de decisões sobre a adição de complexidade, abstração e compreensão que o Node faz e podem ter outras prioridades.
 
-#### Language syntax
+#### Sintaxe da linguagem
 
-Node uses JavaScript and doesn't change anything about it. Felix Geisendörfer has a pretty good write-up of the 'node style' [here](https://github.com/felixge/node-style-guide).
+O Node usa JavaScript e não muda nada sobre isso. Felix Geisendörfer tem um belo conteúdo escrito sobre o 'guia de estilo do node' [aqui](https://github.com/felixge/node-style-guide).
 
-#### Language abstraction
+#### Abstração da linguagem
 
-When possible node will use the simplest possible way of accomplishing something. The 'fancier' you make your JavaScript the more complexity and tradeoffs you introduce. Programming is hard, especially in JS where there are 1000 solutions to every problem! It is for this reason that node tries to always pick the simplest, most universal option. If you are solving a problem that calls for a complex solution and you are unsatisfied with the 'vanilla JS solutions' that node implements, you are free to solve it inside your app or module using whichever abstractions you prefer.
+Quando possivel, o Node vai usar a maneira mais simples para fazer algo. Código mais 'bonito' faz do seu JavaScript mais complexo e compromissado com vantagens e desvantagens. Programar é difícil, especialmente em JS onde você tem 1000 soluções para o mesmo problema! Essa é a principal razão para o Node optar pela simplicidade sempre que possivel e que pode ser uma opção universal. Se você está resolvendo um problema complexo e esta insatisfeito com o modo como o Node implementa as coisas com "soluções de JS com gosto de baunilha" sinta-se livre para resolver isso dentro do seu app ou módulo usando qualquer abstrações que você preferir.
 
-A great example of this is node's use of callbacks. Early on node experimented with a feature called 'promises' that added a number of features to make async code appear more linear. It was taken out of node core for a few reasons:
+Um grande exemplo é como o Node usa os callbacks. Logo no inicio foi experimentado a caracteristica chamada *promises* que adicionava algumas funcionalidades para fazer o código assíncrono parecer mais linear. Ele foi levado para o fora do núcleo do Node por algumas razões:
 
-- they are more complex than callbacks
-- they can be implemented in userland (distributed on npm as third party modules)
+- eles são mais complexos que callbacks
+- ele podem ser implementados na *userland* (distriuído no npm como módulo de terceiros)
 
-Consider one of the most universal and basic things that node does: reading a file. When you read a file you want to know when errors happen, like when your hard drive dies in the middle of your read. If node had promises everyone would have to branch their code like this:
+Considere uma das mais universais e básicas ideias que o Node faz: ler um arquivo. Onde você lê um arquivo e precisa saber onde os erros acontecem, como quando o disco rigido morre no meio da sua leitura. Se Node tivesse *promises* todo mundo teria que criar um *branch* como o código abaixo:
 
 ```js
 fs.readFile('movie.mp4')
   .then(function(data) {
-    // do stuff with data
+    // faz algo com os dados
   })
   .error(function(error) {
-    // handle error
+    // manipula o erro
   })
 ```
 
-This adds complexity, and not everyone wants that. Instead of two separate functions node just uses a single callback function. Here are the rules:
+Isso adiciona uma complexidade desnecessária. No lugar de duas funções separadas o Node somente usa uma única função de callback. Aqui temos as regras:
 
-- When there is no error pass null as the first argument
-- When there is an error, pass it as the first argument
-- The rest of the arguments can be used for anything (usually data or responses since most stuff in node is reading or writing things)
+- Quando não existir erros passe *null* como primeiro argumento.
+- Quando o existir erro, passar ele como primeiro argumento.
+- O restante dos argumentos são usados para qualquer coisa (usualmente dados ou respostas já que na maior parte do tempo o Node está lendo ou escrevendo coisas).
 
-Hence, the node callback style:
+Por isso, o Node usa o estilo de callback:
 
 ```js
 fs.readFile('movie.mp4', function(err, data) {
-  // handle error, do stuff with data
+  // manipula erro, faz algo com os dados
 })
 ```
 
-#### Threads/fibers/non-event-based concurrency solutions
+#### Soluções baseadas em Threads/fibers/non-event
 
-Note: If you don't know what these things mean then you will likely have an easier time learning node, since unlearning things is just as much work as learning things.
+Nota: Se você não sabe o que isso tudo significa você terá uma facilidade maior com o tempo para aprender como o Node funciona, visto que desaprender coisas leva o mesmo tempo que aprender.
 
-Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
+O Node usa *threads* internamente para fazer coisas de uma forma rápida mas não expõe isso ao usuário. Se você é um usuário técnico e esta perguntando-se o porque dele ser projetado desta maneira esta leitura é 100% sobre [o design de libuv](http://nikhilm.github.com/uvbook/), que onde a camada de I/O feita em C++ e pela qual o node é concebido.
 
-## License
+## Licença
 
 ![CCBY](CCBY.png)
 
-Creative Commons Attribution License (do whatever, just attribute me)
+Creative Commons Attribution License (faça o que quiser, apenas dê os créditos)
 http://creativecommons.org/licenses/by/2.0/
 
 Donate icon is from the [http://thenounproject.com/noun/donate/#icon-No285](Noun Project)
