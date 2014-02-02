@@ -4,7 +4,7 @@
 
 Este documento é destinado à leitores que sabem no mínimo algumas das coisas abaixo:
 
-- Uma linguagem de script como JavaScript, Ruby, Python, Perl, etc. Se você ainda não é um programador então é provavelmente mais fácil começar a ler  [JavaScript for Cats](http://jsforcats.com/). :cat2:
+- Uma linguagem de script como JavaScript, Ruby, Python, Perl, etc. Se você ainda não é um programador então é, provavelmente, mais fácil começar a ler [JavaScript for Cats](http://jsforcats.com/). :cat2:
 - Git e Github. Estas são ferramentas de colaboração de código aberto que pessoas da comunidade Node usam para compartilhar módulos. Você só precisa saber o básico. Aqui estão três ótimos tutoriais de introdução. [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/) (em inglês).
 
 Este pequeno livro é um trabalho em progresso. Se você gostar deste livro considere **fazer uma doação** via [gittip](https://www.gittip.com/maxogden/) para que eu possa escrever muito mais.
@@ -25,7 +25,7 @@ Este pequeno livro é um trabalho em progresso. Se você gostar deste livro cons
 
 ## Aprenda Node de forma interativa
 
-Como complemento para a leitura deste guia, é super importante que você também inicie o seu editor de texto e comece desde já a escrever alguns códigos de Node. Eu sempre acho que quando acabo de ler algum código em um livro ele nunca realmente é executado, mas aprender a escrever códigos é uma boa maneira para compreender os novos conceitos de programação.
+Como complemento para a leitura deste guia, é super importante que você também inicie o seu editor de texto e comece desde já a escrever alguns códigos em Node. Eu sempre acho que quando acabo de ler algum código em um livro ele nunca realmente é executado, mas aprender a escrever códigos é uma boa maneira para compreender os novos conceitos de programação.
 
 Aqui estão dois grandes tutoriais que você pode instalar no seu computador e permitirá a você aprender o Node de uma forma mais interativa:
 
@@ -67,7 +67,7 @@ Quais são os exemplos de I/O? Aqui está um diagrama de uma aplicação que foi
 
 ![server diagram](server-diagram.png)
 
-Se você não entende todo os elementos do diagrama está tudo bem. O ponto é mostrar que um simples processo em Node (o hexágono no meio) pode atuar como o agente entre todos os pontos finais de I/O (laranja e roxo representam I/O).
+Se você não entende todo os elementos do diagrama está tudo bem. O ponto é mostrar que um simples processo em Node (o hexágono no meio) pode atuar como um agente entre todos os pontos finais de I/O (laranja e roxo representam I/O).
 
 Normalmente construir este tipo de sistema apresentam alguns dos casos:
 
@@ -79,7 +79,7 @@ O objetivo do Node é oferecer um balanço entre estes dois: relativamente fáci
 Node não é nenhuma das coisas a seguir:
 
   - Um framework web (como Rails ou Django, embora possa ser usado para fazer tais coisas)
-  - Uma linguagem de programação (Node usa JavaScript mas não é uma linguagem por si só)
+  - Uma linguagem de programação (Node usa JavaScript, mas não é uma linguagem por si só)
 
 Em vez disso, Node é uma coisa no meio. Node é:
 
@@ -114,7 +114,7 @@ Node tem um pequeno grupo de módulos no seu núcleo (geralmente chamado de *nod
 
 Em adição aos módulos `fs` e de rede existem outros módulos no núcleo do Node. Existe um módulo para resolver consultas DNS de modo assíncrono chamado `dns`, um módulo para pegar informações específicas do sistema operacional como o *tmpdir* chamado `os`, um módulo para alocação de pedaços binários de memória chamado `buffer`, alguns módulos para parsear urls e caminhos (`url`, `querystring`, `path`), etc. A maioria, se não todos os módulos no núcleo do Node, estão ali para suportar os principais casos de uso do Node: escrever rápidos programas que se comunicam com sistemas de arquivos ou redes.
 
-Node manipula I/O com: callbacks, eventos, streams e módulos. Se você aprender como estas quatro coisas funcionam então você será capaz de ir dentro de qualquer módulo no núcleo do Node e entender basicamente como interagir com eles.
+Node manipula I/O com: callbacks, eventos, streams e módulos. Se você aprender como estas quatro coisas funcionam, então você será capaz de ir dentro de qualquer módulo no núcleo do Node e entender basicamente como interagir com eles.
 
 ## Callbacks
 
@@ -122,7 +122,7 @@ Este é o tópico mais importante para entender se você quiser entender como us
 
 Callbacks são funções executadas de modo assíncrono, ou posteriormente. Ao invés do código ser lido de cima para baixo de forma procedural, programas assíncronos podem executar diferentes funções em diferentes momentos baseando-se na ordem e velocidade em que as funções declaradas anteriormente (como requisições HTTP ou leituras de sistemas de arquivo) forem acontecendo.
 
-A diferença pode ser confuso uma vez que determinar se uma função será assíncrona ou não depender muito do contexto. Aqui está um simples exemplo síncrono, você lê de cima para baixo assim como um livro:
+A diferença pode ser confusa uma vez que determinar se uma função será assíncrona ou não depende muito do contexto. Aqui está um simples exemplo síncrono, você lê de cima para baixo assim como um livro:
 
 ```js
 var myNumber = 1
@@ -153,7 +153,7 @@ console.log(myNumber) // resultado: Undefined, já que esta parte do código rod
 
 Porque nosso resultado foi `undefined` quando damos *log* no nosso número desta vez? Neste código nós usamos o método `fs.readFile`, que é um método assíncrono. Normalmente coisas que tem que se comunicar com discos rígidos ou redes são assíncronos. Se eles tem que acessar coisas na memória ou fazer algum trabalho na CPU eles serão síncronos. A razão para isso é que I/O é muitoooo muitoooo devagaaaar. Se comunicar com um disco rígido é cerca de 100,000 vezes mais devagar do que se comunicar com a memória (RAM).
 
-Quando nós rodamos este programa todas as funções são automaticamente definidas, mas elas não são executadas imediatamente. Isto é uma coisa fundamental para entender sobre programas assíncronos. Quando `addOne` é chamado fora de `readFile` então executa a proxima coisa que está pronta para executar. Se não tem nada para executar Node vai esperar as operações pendentes de fs/rede para terminar ou parar de rodar e sair da linha de comando.
+Quando nós rodamos este programa todas as funções são automaticamente definidas, mas elas não são executadas imediatamente. Isto é uma coisa fundamental para entender sobre programas assíncronos. Quando `addOne` é chamado fora de `readFile` então executa a próxima coisa que está pronta para executar. Se não tem nada para executar, Node vai esperar as operações pendentes de fs/rede para terminar ou parar de rodar e sair da linha de comando.
 
 Quando `readFile` está pronto para ler o arquivo (isto pode levar de milissegundos para segundos ou minutos dependendo do quão rápido o disco rígido é) ele vai rodar a função `doneReading` e mostrar um erro (se existir algum erro) e o conteúdo do arquivo.
 
@@ -190,7 +190,7 @@ addOne(logMyNumber)
 
 Agora a função `logMyNumber` pode ser passada no argumento que vai ser a variável `callback` dentro da função `addOne`. Depois que `readFile` terminar a variável `callback` vai ser invocada (`callback()`). Apenas funções podem ser invocadas, então se você passar alguma coisa que não é uma função vai causar um erro.
 
-Quando uma função é invocada no JavaScript, o código dentro dela será executado imediatamente. Nesse caso nosso log será executado já que `callback` é a função `logMyNumber`. Lembre que, só porque você *definiu* uma função não significa que ela será executada. Você tem que *invocar* a função para isso acontecer.
+Quando uma função é invocada no JavaScript, o código dentro dela será executado imediatamente. Nesse caso, nosso log será executado já que `callback` é a função `logMyNumber`. Lembre que, só porque você *definiu* uma função não significa que ela será executada. Você tem que *invocar* a função para isso acontecer.
 
 Para quebrar o exemplo acima em pedaços, aqui está a linha do tempo dos eventos que acontecem quando rodamos este programa:
 
@@ -199,9 +199,9 @@ Para quebrar o exemplo acima em pedaços, aqui está a linha do tempo dos evento
 - 3: sem nada para fazer, o Node espera até que `readFile` termine. Se existisse alguma outra coisa durante esse tempo, Node poderia fazer o seu trabalho.
 - 4: `readFile` termina e chama o callback, `doneReading`, que incrementa o número e imediatamente invoca a função callback de `addOne`, `logMyNumber`.
 
-Talvez a parte mais confusa de programar com callbacks é que funções são apenas objetos que podem ser armazenadas em variáveis e passadas no programa com diferentes nomes. Dando um simples e descritivo nome para suas variáveis é importante ao fazer seu código legível para outras pessoas. Geralmente falando em programas Node quando você vê uma variável como `callback` ou `cb` você sabe que é uma função.
+Talvez a parte mais confusa de programar com callbacks é que funções são apenas objetos que podem ser armazenadas em variáveis e passadas no programa com diferentes nomes. Dar um simples e descritivo nome para suas variáveis é importante para fazer seu código legível para outras pessoas. Geralmente, falando em programas Node, quando você vê uma variável como `callback` ou `cb` você sabe que é uma função.
 
-Você pode ter ouvido os termos "programação evencionada" ou "ciclo de eventos". Eles se referem a maneira que `readFile` é implementado. O Node roda primeiro a operação `readFile` e então espera por `readFile` para enviar um evento dizendo que está completo. Enquanto espera, Node pode checar outras coisas. Dentro do Node está uma lista de coisas que são executadas mas não foram reportdas de volta ainda, então o Node faz um loop contínuo na lista para checar se elas terminaram. Depois que eles terminam eles são "processados" (ex.: callbacks que dependem desse término vão ser invocados).
+Você pode ter ouvido os termos "programação evencionada" ou "ciclo de eventos". Eles se referem a maneira que `readFile` é implementado. O Node roda primeiro a operação `readFile` e então espera por `readFile` para enviar um evento dizendo que está completo. Enquanto espera, o Node pode checar outras coisas. Dentro do Node está uma lista de coisas que são executadas mas não foram reportadas de volta ainda, então o Node faz um loop contínuo na lista para checar se elas terminaram. Depois que eles terminam eles são "processados" (ex.: callbacks que dependem desse término vão ser invocados).
 
 Aqui temos a versão de um pseudocódigo do exemplo acima:
 
@@ -225,7 +225,7 @@ a(function() {
 })
 ```
 
-Quando este código é executado, `a` vai iniciar automaticamente, então, um minuto depois ele vai terminar e chamar `b`, e um minuto depois ele vai terminar e chamar `c` e finalmente 3 minutos depois o Node vai parar o código já que não tem mais nada para fazer. Definitivamente, existem formas mais elegantes de escrever o código acima, mas o ponto é que se você tiver um código que tem que esperar outro código assíncrono terminar então você expressa esta dependência colocando este código em funções que são passadas como callbacks.
+Quando este código é executado, `a` vai iniciar automaticamente, então, um minuto depois ele vai terminar e chamar `b`, e um minuto depois ele vai terminar e chamar `c` e, finalmente, 3 minutos depois o Node vai parar o código já que não tem mais nada para fazer. Definitivamente, existem formas mais elegantes de escrever o código acima, mas o ponto é que se você tiver um código que tem que esperar outro código assíncrono terminar então você expressa esta dependência colocando este código em funções que são passadas como callbacks.
 
 A forma como o Node trabalha requer que você pense de uma forma não-linear. Considerando esta lista de operações:
 
@@ -288,7 +288,7 @@ A forma mais fácil de pensar a respeito de eventos é que eles permitem a você
 Aqui temos casos comuns para utilizar eventos ao invés de simples callbacks:
 
 - Uma sala de chat onde você tem um canal de mensagens com muitos ouvintes.
-- Servidor de um jogo que necessita saber quando os players se ligam, desligam, movem-se, atiram ou pulam.
+- Servidor de um jogo que necessita saber quando os players se conectam, desconectam, movem-se, atiram ou pulam.
 - Mecânismo de um jogo onde você quer permitir que os desenolvedores de jogos disparem eventos como: `.on('jump', function() {})`.
 - Um servidor web de baixo nível que quer expor uma API para criar facilmente um gancho para os eventos que acontecem como `on ('incomingRequest')` ou `on ('SERVERERROR')`.
 
@@ -366,7 +366,7 @@ Logo no início do projeto do Node, as APIs de arquivos de sistema e redes tiver
 
 O ponto principal do Node é facilitar a comunicaçãoo com o sistema de arquivos e redes através de um padrão que é utilizado em todos os lugares. A boa notícia é que a maioria dos padrões como esse (há apenas alguns) foram descobertos até este ponto e terão poucas mudanças mesmo que seja quase improvável que isso aconteça no futuro.
 
-Já existem duas grandes fontes que você pode utilizar para aprender a respeito de Streams no Node. Um é o *stream-adventure* (veja a seção [Aprenda Node de forma interativa](#aprenda-node-de-forma-interativa)) e o outro é uma referência chamada *Stream Handbook*.
+Já existem duas grandes fontes que você pode utilizar para aprender a respeito de Streams no Node. Uma é o *stream-adventure* (veja a seção [Aprenda Node de forma interativa](#aprenda-node-de-forma-interativa)) e a outra é uma referência chamada *Stream Handbook*.
 
 ### Stream Handbook
 
@@ -380,11 +380,11 @@ O núcleo do Node é composto de cerca de duas dezenas de módulos, alguns com n
 
 Este projeto é intencional. O núcleo do Node foi desenvolvido para ser pequeno e os módulos no núcleo devem focar no fornecimento de ferramentas para trabalhar com protocolos e formatos comuns de I/O de maneira multiplataforma.
 
-Para todo o restante, existe o [NPM](https://npmjs.org/). Qualquer um pode criar um novo módulo para o Node que adicione alguma funcionalide e publicá-lo no NPM. No momento em que escrevo isso, existem 34.000 módulos no NPM.
+Para todo o restante, existe o [NPM](https://npmjs.org/). Qualquer um pode criar um novo módulo para o Node que adicione alguma funcionalidade e publicá-lo no NPM. No momento em que escrevo isso, existem 34.000 módulos no NPM.
 
 ### Como encontrar um módulo
 
-Imagine que você está tentando converter arquivos PDF em arquivos TXT. A melhor forma para iniciar este busca é com `npm search pdf`:
+Imagine que você está tentando converter arquivos PDF em arquivos TXT. A melhor forma para iniciar esta busca é com `npm search pdf`:
 
 ![pdfsearch](npm-search.png)
 
@@ -542,7 +542,7 @@ Um equívoco comum sobre NPM é que uma vez que tem "Node" no nome que deve ser 
 
 O [browserify](http://browserify.org/) é um utilitário escrito em Node que tenta converter qualquer módulo do Node em um código que possa ser executado em qualquer *browser*. Nem todos os módulos funcionam (navegadores não podem fazer determinadas coisas como hospedar um servidor HTTP), mas muitos módulos no NPM "vão" funcionar.
 
-Para testar o NPM no *browser*, você pode utilizar o [RequireBin](http://requirebin.com/), que é um app que eu fiz e aproveita as vantagens do [Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn), que utiliza o *browserfy* por debaixo dos panos, mas retorna uma saída através do HTTP (em vez da linha de comando - que é a forma como é normalmente usado browserify).
+Para testar o NPM no *browser*, você pode utilizar o [RequireBin](http://requirebin.com/), que é um app que eu fiz e aproveita as vantagens do [Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn), que utiliza o *browserfy* por debaixo dos panos, mas retorna uma saída através do HTTP (em vez da linha de comando - que é a forma como é normalmente usado o browserify).
 
 Tente colocar este código dentro do *RequireBin* e pressione o botão *preview*:
 
@@ -577,7 +577,7 @@ Ou verifique um [exemplo mais completo](http://requirebin.com/?gist=6031068) (fi
 
 Como todo boa ferramenta, o Node é adequado para certos casos de uso. Por exemplo: Rails, o popular web framework, é ótimo para modelar complexas [lógicas de negócios](http://en.wikipedia.org/wiki/Business_logic).
 
-Exemplo: usando código para representar a vida em um plano objetivado que vivemos físicamente como contas, empréstimos, itinerários e inventários. Embora tecnicamente seja possivel fazer o mesmo utilizando o Node, haveriam desvantagens claras sabendo que o Node é projetado para resolver problemas de I/O e não sabe muito a respeito de 'lógica de negócio'. Cada ferramenta tem um foco para resolver diferentes problemas. Esperamos que este guia ajude-o a ganhar uma compreensão intuitiva dos pontos fortes do Node para que você saiba quando ele será útil.
+Exemplo: usando código para representar a vida em um plano objetivado que vivemos físicamente como contas, empréstimos, itinerários e inventários. Embora tecnicamente seja possivel fazer o mesmo utilizando o Node, haveriam desvantagens claras sabendo que o Node é projetado para resolver problemas de I/O e não sabe muito a respeito de "lógica de negócio". Cada ferramenta tem um foco para resolver diferentes problemas. Esperamos que este guia ajude-o a ganhar uma compreensão intuitiva dos pontos fortes do Node para que você saiba quando ele será útil.
 
 ### O que está fora do escopo do Node?
 
@@ -589,11 +589,11 @@ Existe uma boa quantidade de web frameworks construidos em cima do node (framewo
 
 #### Sintaxe da linguagem
 
-O Node usa JavaScript e não muda nada sobre isso. Felix Geisendörfer tem um belo conteúdo escrito sobre o 'guia de estilo do node' [aqui](https://github.com/felixge/node-style-guide).
+O Node usa JavaScript e não muda nada sobre isso. Felix Geisendörfer tem um belo conteúdo escrito sobre o "Guia de estilo do Node" [aqui](https://github.com/felixge/node-style-guide).
 
 #### Abstração da linguagem
 
-Quando possivel, o Node vai usar a maneira mais simples para fazer algo. Código mais 'bonito' faz do seu JavaScript mais complexo e compromissado com vantagens e desvantagens. Programar é difícil, especialmente em JS onde você tem 1000 soluções para o mesmo problema! Essa é a principal razão para o Node optar pela simplicidade sempre que possivel e que pode ser uma opção universal. Se você está resolvendo um problema complexo e esta insatisfeito com o modo como o Node implementa as coisas com "soluções de JS com gosto de baunilha" sinta-se livre para resolver isso dentro do seu app ou módulo usando qualquer abstrações que você preferir.
+Quando possivel, o Node vai usar a maneira mais simples para fazer algo. Código mais "bonito" faz do seu JavaScript mais complexo e compromissado com vantagens e desvantagens. Programar é difícil, especialmente em JS onde você tem 1000 soluções para o mesmo problema! Essa é a principal razão para o Node optar pela simplicidade sempre que possivel e que pode ser uma opção universal. Se você está resolvendo um problema complexo e esta insatisfeito com o modo como o Node implementa as coisas com "soluções de JS com gosto de baunilha" sinta-se livre para resolver isso dentro do seu app ou módulo usando quaisquer abstrações que você preferir.
 
 Um grande exemplo é como o Node usa os callbacks. Logo no inicio foi experimentado a caracteristica chamada *promises* que adicionava algumas funcionalidades para fazer o código assíncrono parecer mais linear. Ele foi levado para o fora do núcleo do Node por algumas razões:
 
@@ -615,8 +615,8 @@ fs.readFile('movie.mp4')
 Isso adiciona uma complexidade desnecessária. No lugar de duas funções separadas o Node somente usa uma única função de callback. Aqui temos as regras:
 
 - Quando não existir erros passe *null* como primeiro argumento.
-- Quando o existir erro, passar ele como primeiro argumento.
-- O restante dos argumentos são usados para qualquer coisa (usualmente dados ou respostas já que na maior parte do tempo o Node está lendo ou escrevendo coisas).
+- Quando existir um erro, passar ele como primeiro argumento.
+- O restante dos argumentos são usados para qualquer coisa (usualmente dados ou respostas, já que na maior parte do tempo o Node está lendo ou escrevendo coisas).
 
 Por isso, o Node usa o estilo de callback:
 
@@ -630,7 +630,7 @@ fs.readFile('movie.mp4', function(err, data) {
 
 Nota: Se você não sabe o que isso tudo significa você terá uma facilidade maior com o tempo para aprender como o Node funciona, visto que desaprender coisas leva o mesmo tempo que aprender.
 
-O Node usa *threads* internamente para fazer coisas de uma forma rápida mas não expõe isso ao usuário. Se você é um usuário técnico e esta perguntando-se o porque dele ser projetado desta maneira esta leitura é 100% sobre [o design de libuv](http://nikhilm.github.com/uvbook/), que onde a camada de I/O feita em C++ e pela qual o node é concebido.
+O Node usa *threads* internamente para fazer coisas de uma forma rápida mas não expõe isso ao usuário. Se você é um usuário técnico e esta perguntando-se o porque dele ser projetado desta maneira esta leitura é 100% sobre [o design de libuv](http://nikhilm.github.com/uvbook/), que onde a camada de I/O feita em C++ e pela qual o Node é concebido.
 
 ## Licença
 
