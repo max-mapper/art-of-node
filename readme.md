@@ -26,11 +26,11 @@ This short book is a work in progress. If you like it then please **give me a do
 
 In addition to reading this guide it's super important to also bust out your favorite text editor and actually write some node code. I always find that when I just read some code in a book it never really clicks, but learning by writing code is a good way to grasp new programming concepts.
 
-Here are two great tutorial programs that you can install on your computer that will let you learn Node in a more interactive fashion:
+### NodeSchool.io
 
-### Learn You The Node.js
+[NodeSchool.io](http://nodeschool.io/) is a series of free + open source interactive workshops that teach you the principles of Node.js and beyond.
 
-[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) is a set of programming problems that introduce you to common node patterns. It comes as a set of interactive command line tutorials.
+[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) is the introductory NodeSchool.io workshop. It's a set of programming problems that introduce you to common node patterns. It comes packaged as a command line program.
 
 [![learnyounode](https://github.com/rvagg/learnyounode/raw/master/learnyounode.png)](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win)
 
@@ -43,20 +43,6 @@ npm install learnyounode -g
 # start the menu
 learnyounode
 ```
-
-### Stream Adventure
-
-Once you have finished `learnyounode`, graduate to [stream-adventure](https://github.com/substack/stream-adventure) for a set of exercises that dig in to node's streams.
-
-```
-# install
-npm install stream-adventure -g
-
-# start the adventure
-stream-adventure
-```
-
-[![stream-adventure](stream-adventure.png)](https://github.com/substack/stream-adventure)
 
 ## Understanding node
 
