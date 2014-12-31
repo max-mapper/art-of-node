@@ -1,14 +1,14 @@
-# Node的藝術
-## Node.js入門
+# Node 的藝術
+## Node.js 入門
 
 本文件假設讀者已經懂了以下的兩樣東西：
 
-- 至少懂得一種程式語言。例如：JavaScript，Ruby，Python，Perl或其他程式語言。如果你還不是程式設計師，你也不懂程式語言，你可以閱讀[JavaScript for Cats](http://jsforcats.com/)。:cat2:
-- git和github。這是一個開源的協作工具，Node社群的參與者使用git共享模組。你只需要懂得基本操作就夠了。這裏有三篇很好的入門教學：[1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
+- 至少懂得一種程式語言。例如：JavaScript，Ruby，Python，Perl 或其他程式語言。如果你還不是程式設計師，你也不懂程式語言，你可以閱讀 [JavaScript for Cats](http://jsforcats.com/)。:cat2:
+- git 和 github。這是一個開源的協作工具，Node 社群的參與者使用 git 共享模組。你只需要懂得基本操作就夠了。這裏有三篇很好的入門教學：[1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
 
 This short book is a work in progress + I don't have a job right now (if I did I wouldn't have the time to write this). If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/) so that I can write more!
 
-> 譯者: 上面這段我沒有翻譯，因爲我希望保持原文。上面作者提到，目前他還沒找到工作。如果你喜歡這份文件，希望你可以通過[gittip](https://www.gittip.com/maxogden/)樂捐給作者。這樣作者才能夠寫更多內容。
+> 譯者: 上面這段我沒有翻譯，因爲我希望保持原文。上面作者提到，目前他還沒找到工作。如果你喜歡這份文件，希望你可以通過 [gittip](https://www.gittip.com/maxogden/) 樂捐給作者。這樣作者才能夠寫更多內容。
 
 [![donate](donate.png)](https://www.gittip.com/maxogden/)
 
@@ -16,7 +16,7 @@ This short book is a work in progress + I don't have a job right now (if I did I
 
 - [瞭解Node](#node-1)
 - [核心模組](#-1)
-- [Callbacks](#callbacks)
+- [回呼機制](#callbacks)
 - [Events](#events) (not written yet)
 - [Streams](#streams) (not written yet)
 - [Modules and NPM](#modules) (not written yet)
@@ -25,32 +25,32 @@ This short book is a work in progress + I don't have a job right now (if I did I
 
 ## 瞭解Node
 
-Node.js是一個自由軟體專案，目的是讓你通過編寫JavaScript的程式進行網路、檔案系統或者與其他輸入/輸出裝置溝通的程式。就這樣！它只是一個簡單而穩定的輸入/輸出平臺，你可以在這個平臺上建構模組。
+Node.js 是一個自由軟體專案，目的是讓你通過編寫 JavaScript 的程式進行網路、檔案系統或者與其他輸入/輸出裝置溝通的程式。就這樣！它只是一個簡單而穩定的輸入/輸出平臺，你可以在這個平臺上建構模組。
 
-那有沒有一些關於輸入/輸出的實際例子？ 這裏有張我用Node.js製作的應用程式結構圖，你可以看到上面有很多輸入/輸出裝置：
+那有沒有一些關於輸入/輸出的實際例子？ 這裏有張我用 Node.js 製作的應用程式結構圖，你可以看到上面有很多輸入/輸出裝置：
 
 ![server diagram](server-diagram.png)
 
-如果你無法完全瞭解上圖顯示的所有東西，那沒關係。重點是你看到一個Node的運作（中間的六邊形那個），它就像經紀人，管理全部輸入/輸出的節點（橙色和紫色的線條代表輸入/輸出）。
+如果你無法完全瞭解上圖顯示的所有東西，那沒關係。重點是你看到一個 Node 的運作（中間的六邊形那個），它就像經紀人，管理全部輸入/輸出的節點（橙色和紫色的線條代表輸入/輸出）。
 
 一般上我們撰寫的程式可以分爲以下兩類：
 
-- 很難寫，但是效率超高（就像用C從零開始編寫一個網頁伺服器）
-- 很好寫，但是不夠效率/強大（就像有人試圖上傳5GB的檔案去你伺服器，但是伺服器卻當掉了）
+- 很難寫，但是效率超高（就像用 C 從零開始編寫一個網頁伺服器）
+- 很好寫，但是不夠效率/強大（就像有人試圖上傳 5GB 的檔案去你伺服器，但是伺服器卻當掉了）
 
-Node試圖在這兩者之間做到平衡：容易理解與使用，並且在多數的情況下能夠快速開發。
+Node 試圖在這兩者之間做到平衡：容易理解與使用，並且在多數的情況下能夠快速開發。
 
-Node不是以下兩樣東西：
+Node 不是以下兩樣東西：
 
-  - 不是Web框架 （不像Rails或Django，儘管它可以被用來做這樣的事情）
-  - 不是程式語言（Node使用JavaScript程式語言，它沒有自己的語言）
+  - 不是Web框架 （不像 Rails 或 Django，儘管它可以被用來做這樣的事情）
+  - 不是程式語言（Node 使用 JavaScript 程式語言，它沒有自己的語言）
 
-相反，Node是：
+相反，Node 是：
 
   - 設計上簡單，而且容易明白和使用的平臺
   - 適合那些需要快速和處理很多輸入/輸出連接的程式
 
-在底層，Node可以作爲一種工具，並編寫出以下兩類程式：
+在底層，Node 可以作爲一種工具，並編寫出以下兩類程式：
 
   - 需要使用到Web協議（如：HTTP、TCP、UDP、DNS和SSL）的網路程式
   - 需要對檔案系統或者本機執行緒/記憶體進行寫入或讀出操作的程式
@@ -62,46 +62,46 @@ Node不是以下兩樣東西：
   - HTTP/WebSocket的連線（從使用者的Web應用程式）
   - 文件檔（圖像縮放軟件、影音編輯器、網路收音機）
 
-Node能夠[非同步處理](http://en.wikipedia.org/wiki/Asynchronous_I/O)多個不同種類的輸入/輸出來源。比如說，假設你來到快餐店，你向店員要了一個起士堡，他們會馬上爲你下單和準備漢堡。然後，他們會要求你在旁邊等漢堡完成。在你等待這段時間，他們可以接受其他訂單和幫其他人準備漢堡。試想一下，如果你站在櫃檯前面，一直等到你的起士堡完成，那麼你就阻礙了後面的人下訂單，廚師也不能幫其他人準備漢堡！我們稱這個爲**阻塞式I/O**，因爲一次只能處理一個I/O操作（廚師一次只能準備一個漢堡）。Node並不是這樣的，它是**非阻塞**的，也就是說它能一次準備很多漢堡。
+Node能 夠[非同步處理](http://en.wikipedia.org/wiki/Asynchronous_I/O)多個不同種類的輸入/輸出來源。比如說，假設你來到快餐店，你向店員要了一個起士堡，他們會馬上爲你下單和準備漢堡。然後，他們會要求你在旁邊等漢堡完成。在你等待這段時間，他們可以接受其他訂單和幫其他人準備漢堡。試想一下，如果你站在櫃檯前面，一直等到你的起士堡完成，那麼你就阻礙了後面的人下訂單，廚師也不能幫其他人準備漢堡！我們稱這個爲**阻塞式 I/O**，因爲一次只能處理一個 I/O 操作（廚師一次只能準備一個漢堡）。Node 並不是這樣的，它是**非阻塞**的，也就是說它能一次準備很多漢堡。
 
-感謝Node的非阻塞特性，讓我們可以實現以下這些有趣事情：
+感謝 Node 的非阻塞特性，讓我們可以實現以下這些有趣事情：
 
-  - 控制[Quadcopters飛行](http://nodecopter.com)
-  - 編寫IRC談天機器人
+  - 控制 [Quadcopters 飛行](http://nodecopter.com)
+  - 編寫 IRC 談天機器人
   - 製作一個[雙腳走路的機器人](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
 ## 核心模組
 
-首先，你需要安裝Node到你的電腦。Node安裝很簡單，只需瀏覽[nodejs.org](http://nodejs.org)和按下`Install`.
+首先，你需要安裝 Node 到你的電腦。Node 安裝很簡單，只需瀏覽 [nodejs.org](http://nodejs.org) 和按下 `Install`.
 
-Node擁有一組核心模組（通常被稱爲`Node核心`）提供公用 API 讓你開發時呼叫。我們可以呼叫`fs`模組來操作檔案系統。當我們要進行網路操作時候，我們會呼叫網路模組，例如：`net`（TCP），`http`，`dgram`（UDP）。
+Node 擁有一組核心模組（通常被稱爲`Node 核心`）提供公用 API 讓你開發時呼叫。我們可以呼叫 `fs` 模組來操作檔案系統。當我們要進行網路操作時候，我們會呼叫網路模組，例如：`net`（TCP），`http`，`dgram`（UDP）。
 
-除了`fs`和網路模組之外，Node核心還有很多其他的核心模組。如`dns`模組用來非同步解析DNS查詢。`os`模組可以用來收集作業系統的資訊，如tempdir的路徑。`buffer`模組可以處理二進制資料。還有些模組可以處理URL和路徑，如：`url`，`querystring`和`path`等等。大部分的核心模組都支援Node的主要使用目標：快速編寫能夠進行檔案或網路操作的程式。
+除了 `fs` 和網路模組之外，Node核心還有很多其他的核心模組。如 `dns` 模組用來非同步解析DNS查詢。`os` 模組可以用來收集作業系統的資訊，如 tempdir 的路徑。`buffer` 模組可以處理二進制資料。還有些模組可以處理 URL 和路徑，如：`url`，`querystring` 和 `path` 等等。大部分的核心模組都支援 Node 的主要使用目標：快速編寫能夠進行檔案或網路操作的程式。
 
-Node通過回呼機制，事件，串流和模組來控制I/O。如果你知道這四樣東西是如何工作的，那麼你就能夠靈活使用任何核心模組，並且懂得如何與這些模組串聯。
+Node 通過回呼機制，事件，串流和模組來控制 I/O。如果你知道這四樣東西是如何工作的，那麼你就能夠靈活使用任何核心模組，並且懂得如何與這些模組串聯。
 
 ## 回呼機制
 
-如果你想瞭解如何使用node，這將會是最重要的課題。幾乎在node中的所有事情都會使用到回呼機制。這並不是node發明的，它只是一種呼叫javascript函示的特殊方式。
+如果你想瞭解如何使用 Node，這將會是最重要的課題。幾乎在 Node 中的所有事情都會使用到回呼機制。這並不是 Node 發明的，它只是一種呼叫 JavaScript 函式的特殊方式。
 
-Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
+回呼函式是指非同步，或者在將來某個時間才會被執行的函式。同步程式執行的順序是從上到下，而非同步的程式卻是在不同的時間執行不同的函式，這些都基於早些執行函式的順序和時間，像是 HTTP 請求和從文件系統裡讀取內容等等。
 
-The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example:
+這種同步和非同步之間的差異可能會讓人感到困惑，因為解讀一個函式是不是非同步，很大的程度上取決於具體的情況。下面是一個簡單的同步函式例子：
 
 ```js
 var myNumber = 1
-function addOne() { myNumber++ } // define the function
-addOne() // run the function
-console.log(myNumber) // logs out 2
+function addOne() { myNumber++ } // 定義函式
+addOne() // 執行函式
+console.log(myNumber) // 輸出 2
 ```
 
-The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2.
+上面的程式碼定義了一個函式，然後呼叫該函式，之間沒有任何停留。當該函式被呼叫時，它立即把那個數字加上 1，所以我們可以預見到，呼叫過該函式後，那個數字的值會變成 2。
 
-Let's suppose that we want to instead store our number in a file called `number.txt`:
+現在假設我們把數字保存在一個叫 `numbr.txt` 的文件裡：
 
 ```js
-var fs = require('fs') // require is a special function provided by node
-var myNumber = undefined // we dont know what the number is yet since it is stored in a file
+var fs = require('fs') // require 是 Node 裡提供的一個特別函式
+var myNumber = undefined // 數字裡保存在文件裡，因此我們並不知道它的值
 
 function addOne() {
   fs.readFile('./number.txt', function doneReading(err, fileContents) {
@@ -112,17 +112,20 @@ function addOne() {
 
 addOne()
 
-console.log(myNumber) // logs out undefined
+console.log(myNumber) // 輸出 undefined
 ```
 
-Why do we get `undefined` when we log out the number this time? In this code we use the `fs.readFile` method, which happens to be an asynchronous method. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. The reason for this is that I/O is reallyyy reallyyy sloowwww. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (RAM).
+為什麼當我們輸出值的時候是顯示 `undefined` ? 因為在上面的程式碼中，我們使用了 `fs.readFile` 這個方法, 而它恰好是個非同步方法。 一般來說，需要和硬碟或網路通信的，都是非同步的。如果只需要從記憶體或 CPU 裡讀取的話，這就是同步的。這是因為 I/O（輸入／輸出）是非常非常非常慢的。如果要大概形容一下，從硬碟裡讀取大概比從記憶體（RAM）裡讀取慢了 10 萬倍。
 
-When we run this program all of the functions are immediately defined, but they don't all execute immediately. This is a fundamental thing to understand about async programming. When `addOne` is called it kicks off a `readFile` and then moves on to the next thing that is ready to execute. If there is nothing to execute node will either wait for pending fs/network operations to finish or it will stop running and exit to the command line.
+當這個程式執行的時候，所有的函式都馬上被定義，但它們不是馬上都被執行的。這是撰寫非同步程式時的一個基礎概念。當 `addOne` 被呼叫的時候，Node 執行 `readFile` 這個方法，但不等到 `readFile` 結束，它會繼續執行下一個準備好的函式。如果沒有可以執行的函式，Node 要麼會停下來，等待文件讀取或是網路通信結束，要麼就退出程式。
 
+當 `readFile` 把文件讀取完成（需要的時間從幾毫秒到幾秒到幾分鐘不等，要看硬碟有多快），Node 會執行 `doneReading` 這個函數，並把錯誤（如果讀取文件出現錯誤）和文件的內容傳給它。
 When `readFile` is done reading the file (this may take anywhere from milliseconds to seconds to minutes depending on how fast the hard drive is) it will run the `doneReading` function and give it an error (if there was an error) and the file contents.
 
+在上面程式中，之所以會顯示 `undefined` 是因為我們的程式碼在輸出數字之前，並沒有在任何地方告訴 `console.log` 等待 `readFile` 結束。
 The reason we got `undefined` above is that nowhere in our code exists logic that tells the `console.log` statement to wait until the `readFile` statement finishes before it prints out the number.
 
+如果你有一些想要反複執行的程式碼，你應該做的第一件就是把這些程式碼放在一個函數裡。然後，在你需要執行的時候，呼叫這個函數就行了。
 If you have some code that you want to be able to execute over and over again or at a later time the first step is to put that code inside a function. Then you can call the function whenever you want to run your code. It helps to give your functions descriptive names.
 
 Callbacks are just functions that get executed at some later time. The key to understanding callbacks is to realize that they are used when you don't know **when** some async operation will complete, but you do know **where** the operation will complete — the last line of the async function! The top-to-bottom order that you declare callbacks does not necessarily matter, only the logical/hierarchical nesting of them. First you split your code up into functions, and then use callbacks to declare if one function depends on another function finishing.
@@ -290,7 +293,7 @@ var chatClient = require('my-chat-client').connect()
 
 chatClient.on('connect', function() {
   // have the UI show we are connected
-}) 
+})
 
 chatClient.on('connectionError', function() {
   // show error to the user
@@ -325,7 +328,7 @@ MORE EVENTS CONTENT TODO
 
 ## Streams
 
-Early on in the project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
+Early on in the project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it.
 
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
 
