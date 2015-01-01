@@ -120,21 +120,18 @@ console.log(myNumber) // 輸出 undefined
 當這個程式執行的時候，所有的函式都馬上被定義，但它們不是馬上都被執行的。這是撰寫非同步程式時的一個基礎概念。當 `addOne` 被呼叫的時候，Node 執行 `readFile` 這個方法，但不等到 `readFile` 結束，它會繼續執行下一個準備好的函式。如果沒有可以執行的函式，Node 要麼會停下來，等待文件讀取或是網路通信結束，要麼就退出程式。
 
 當 `readFile` 把文件讀取完成（需要的時間從幾毫秒到幾秒到幾分鐘不等，要看硬碟有多快），Node 會執行 `doneReading` 這個函數，並把錯誤（如果讀取文件出現錯誤）和文件的內容傳給它。
-When `readFile` is done reading the file (this may take anywhere from milliseconds to seconds to minutes depending on how fast the hard drive is) it will run the `doneReading` function and give it an error (if there was an error) and the file contents.
 
 在上面程式中，之所以會顯示 `undefined` 是因為我們的程式碼在輸出數字之前，並沒有在任何地方告訴 `console.log` 等待 `readFile` 結束。
-The reason we got `undefined` above is that nowhere in our code exists logic that tells the `console.log` statement to wait until the `readFile` statement finishes before it prints out the number.
 
 如果你有一些想要反複執行的程式碼，你應該做的第一件就是把這些程式碼放在一個函數裡。然後，在你需要執行的時候，呼叫這個函數就行了。
-If you have some code that you want to be able to execute over and over again or at a later time the first step is to put that code inside a function. Then you can call the function whenever you want to run your code. It helps to give your functions descriptive names.
 
-Callbacks are just functions that get executed at some later time. The key to understanding callbacks is to realize that they are used when you don't know **when** some async operation will complete, but you do know **where** the operation will complete — the last line of the async function! The top-to-bottom order that you declare callbacks does not necessarily matter, only the logical/hierarchical nesting of them. First you split your code up into functions, and then use callbacks to declare if one function depends on another function finishing.
+回呼函式，只是一個在將來某個時間點會被執行的函式。要理解回呼函式，關鍵的一點是它被使用的時機。你使用回呼函式的前題是，你不知道**什麼時候**某個非同步操作會完成，但知道這個操作會在**哪裡**結束————就在那個非同步函式的最後一行！你在什麼地方宣告這些函式並不重要，重要的是這些函式之間的羅輯/階層。把程式碼拆成各個函式之後，如果一個函式的执行取決於另一個函式何時结束，就該使用回呼函式了。
 
-The `fs.readFile` method is provided by node, is asynchronous and happens to take a long time to finish. Consider what it does: it has to go to the operating system, which in turn has to go to the file system, which lives on a hard drive that may or may not be spinning at thousands of revolutions per minute. Then it has to use a laser to read data and send it back up through the layers back into your javascript program. You give `readFile` a function (known as a callback) that it will call after it has retrieved the data from the file system. It puts the data it retrieved into a javascript variable and calls your function (callback) with that variable, in this case the variable is called `fileContents` because it contains the contents of the file that was read.
+上面程式碼中 `fs.readFile` 方法是 Node 自帶的，這個方法是非同步的，而且要花費很長時間。想想看它要做多少事情：它要進入操作系统，進入文件系统，文件系统可是在硬碟上的，硬碟可能轉得飛快，也可能根本就不轉。然後它要用激光讀出資料，並把資料傳回你的 JavaScript 程式。當你给了它一個回呼函式後，它就可以在成功地從文件系統中取得資料以後，呼叫那個回呼函式。它會把資料放在一個變數裡，傳入你给的回呼函式，我们给這個參數起的名字叫做 `fileContents`，因為參數中包含的是讀取到的文件内容。
 
-Think of the restaurant example at the beginning of this tutorial. At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your cheeseburger is done.
+想想看本文剛開始的那個餐廳例子。在很多餐廳，你點的菜上來之前，服務生會放一個數字牌在你桌上。這個和回呼函式很類似。回呼函式的作用就是告訴服務員在你的起士漢堡好了後要做些什麼。
 
-Let's put our `console.log` statement into a function and pass it in as a callback.
+現在，讓我們把 `console.log` 放進一個函式裡作回呼函式使用吧。
 
 ```js
 var fs = require('fs')
@@ -154,23 +151,21 @@ function logMyNumber() {
 
 addOne(logMyNumber)
 ```
+现在 `logMyNumber` 這個函式可以被傳给 `addOne` 作為回呼函式了。在 `readFile` 完成後，`callback` 這個變數會被執行（也就是 `callback()`)。只有函式才能被執行，所以如果你提供一個不是函式的東西，程式會出錯。
 
-Now the `logMyNumber` function can get passed in an argument that will become the `callback` variable inside the `addOne` function. After `readFile` is done the `callback` variable will be invoked (`callback()`). Only functions can be invoked, so if you pass in anything other than a function it will cause an error.
+在 JavaScript 裡，當函式被呼叫，其包含的程式碼會立刻被執行。在這個例子裡，`console.log` 會被執行，因為 `callback` 其實就是 `logMyNumber`。要記得，你*定義*了一个函式，不代表它會執行！你一定得*呼叫*它才行。
 
-When a function get invoked in javascript the code inside that function will immediately get executed. In this case our log statement will execute since `callback` is actually `logMyNumber`. Remember, just because you *define* a function it doesn't mean it will execute. You have to *invoke* a function for that to happen.
+如果要更仔細地分析一下這個例子，下面是按時間順序排列的所有發生的事件：
+- 1: 程式碼被分析，此時，如果有任何語法錯誤，程式會中斷並報錯。
+  2: `addOne` 被呼叫，以 `logMyName` 作為它的回呼函式，也就是我們想在 `addOne` 结束後執行的函式。接下来，非同步的 `fs.readFile` 馬上開始執行。這個部分要花上點時間。
+- 3: 目前 Node 没事做，於是它就閒下來等待 `readFile` 結束。
+  4: `readFile` 結束了，`doneReading` 這個函式被呼叫，它把數字加上 1 然後馬上呼叫回呼函式————也就是我们傳给 `addOne` 的 `logMyNumber`。
 
-To break down this example even more, here is a timeline of events that happen when we run this program:
+也許關於回呼函式最難理解的部份是，為什麼函式可以存在變數裡被傳來傳去，而且還有著變來變去的名字。要讓你的程式碼更容易被看懂，給你的函式取簡單明瞭的名字是很重要的。總的來說，在使用 Node 時，如果你看見一個變數叫做 `callback` 或是它的縮寫 `cb`，你差不多可以確定它就是一個函式。
 
-- 1: the code is parsed, which means if there are any syntax errors they would make the program break.
-- 2: `addOne` gets invoked, getting passed in the `logMyNumber` function as `callback`, which is what we want to be called when `addOne` is complete. This immediately causes the asynchronous `fs.readFile` function to kick off. This part of the program takes a while to finish.
-- 3: with nothing to do, node idles for a bit as it waits for `readFile` to finish
-- 4: `readFile` finishes and calls its callback, `doneReading`, which then in turn increments the number and then immediately invokes the function that `addOne` passed in (its callback), `logMyNumber`.
+你可能聽過一個術語叫“事件驅動程式設計”，或者叫“事件循環”。`readFile` 這類的函式就利用了“事件循環”。Node 首先開始始執行 `readFile`，並等待著 `readFile` 傳回一個事件。在 Node 等待的這段時間，它可以繼續執行其他的程式碼。在 Node 裡有一個列表，裡面記下了所有開始執行卻還沒有傳回结束訊號的事，Node 就一遍遍循環檢查這個列表，看看有沒有事情完成了。它们執行完之後，就會被指定成處理完，接著執行依賴的回呼函式。
 
-Perhaps the most confusing part of programming with callbacks is how functions are just objects that be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
-
-You may have heard the terms 'evented programming' or 'event loop'. They refer to the way that `readFile` is implemented. Node first dispatches the `readFile` operation and then waits for `readFile` to send it an event that it has completed. While it is waiting node can go check on other things. Inside node there is a list of things that are dispatched but haven't reported back yet, so node loops over the list again and again checking to see if they are finished. After they finished they get 'processed', e.g. any callbacks that depended on them finishing will get invoked.
-
-Here is a pseudocode version of the above example:
+下面是上面的虛擬碼版本：
 
 ```js
 function addOne(thenRunThisFunction) {
@@ -182,7 +177,7 @@ function addOne(thenRunThisFunction) {
 addOne(function thisGetsRunAfterAddOneFinishes() {})
 ```
 
-Imagine you had 3 async functions `a`, `b` and `c`. Each one takes 1 minute to run and after it finishes it calls a callback (that gets passed in the first argument). If you wanted to tell node 'start running a, then run b after a finishes, and then run c after b finishes' it would look like this:
+試想你有三個非同步函式：`a`、`b`，和 `c`。它們執行時間都要花上一分鐘，執行完後會呼叫一个回呼函式（以第一個参數的形式被傳進函式）。如果你想讓 Node 先執行 `a`，`a` 執行完後執行 `b`，`b 執行完後再執行 `c`，那麼程式碼可以寫成下面這樣：
 
 ```js
 a(function() {
@@ -192,23 +187,22 @@ a(function() {
 })
 ```
 
-When this code gets executed, `a` will immediately start running, then a minute later it will finish and call `b`, then a minute later it will finish and call `c` and finally 3 minutes later node will stop running since there would be nothing more to do. There are definitely more elegant ways to write the above example, but the point is that if you have code that has to wait for some other async code to finish then you express that dependency by putting your code in functions that get passed around as callbacks.
+當這段程式碼被執行時，`a` 馬上就會被執行，一分鐘後 `a` 结束，`b` 開始執行，再一分鐘後，`b` 結束，`c` 開始執行。最後，也就是三分鐘後，Node 會終止，因為所有事都執行完畢。上面的程式碼可能看起来沒那麼漂亮，但重點是，如果有些程式碼需要在某些非同步的事情完成之後再執行，你需要做的是把那些程式碼放進一個函式，當作回呼函式傳给非同步函式，以表示回呼函式中的程式碼要依賴非同步的部份结束後才能執行。
 
-The design of node requires you to think non-linearly. Consider this list of operations:
+Node 要求你用非線性的思维思考。看看下面這兩件事：
 
 ```
 read a file
 process that file
 ```
-
-If you were to naively turn this into pseudocode you would end up with this:
+如果你只是不假思索地把這兩件事改成虛擬碼，你會這麼寫：
 
 ```
 var file = readFile()
 processFile(file)
 ```
 
-This kind of linear (step-by-step, in order) code is isn't the way that node works. If this code were to get executed then `readFile` and `processFile` would both get executed at the same exact time. This doesn't make sense since `readFile` will take a while to complete. Instead you need to express that `processFile` depends on `readFile` finishing. This is exactly what callbacks are for! And because of the way that JavaScript works you can write this dependency many different ways:
+這種線性的程式碼不是 Node 的風格。（線性是指一步接一步、按照順序地執行）。如果上面的程式碼被執行了。那麼 `readFile` 和 `processFile` 會同時被呼叫。這根本說不通，因為 `reafFile` 要花上一陣子才能完成執行。正確的做法是，表達清楚 `processFile` 是要依賴 `readFile` 结束才能運行的。這就是回呼函式的功用了！因為 JavaScript 的特點，有好幾種方法可以表達這種依賴性：
 
 ```js
 var fs = require('fs')
@@ -220,7 +214,7 @@ function finishedReading(error, movieData) {
 }
 ```
 
-But you could also structure your code like this and it would still work:
+不過你這樣寫也可以，照樣能成功執行：
 
 ```js
 var fs = require('fs')
@@ -233,7 +227,7 @@ function finishedReading(error, movieData) {
 fs.readFile('movie.mp4', finishedReading)
 ```
 
-Or even like this:
+甚至像下面這樣：
 
 ```js
 var fs = require('fs')
