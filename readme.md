@@ -152,7 +152,7 @@ The `fs.readFile` method is provided by node, is asynchronous and happens to tak
 
 Think of the restaurant example at the beginning of this tutorial. At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your cheeseburger is done.
 
-Let's put our `console.log` statement into a function and pass it in as a callback.
+Let's put our `console.log` statement into a function and pass it in as a callback:
 
 ```js
 var fs = require('fs')
