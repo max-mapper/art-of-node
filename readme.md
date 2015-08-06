@@ -1,4 +1,4 @@
-# The Art of Node
+﻿# The Art of Node
 ## An introduction to Node.js
 
 This document is intended for readers who know at least a little bit of a couple of things:
@@ -8,7 +8,7 @@ This document is intended for readers who know at least a little bit of a couple
 
 This short book is a work in progress. If you like it then please **give me a dollar** via [gittip](https://www.gittip.com/maxogden/) so that I can justify taking the time to write more!
 
-[![donate](donate.png)](https://www.gittip.com/maxogden/)
+[![donate](donate.png)](https://www.gratipay.com/maxogden/)
 
 ## Table of contents
 
