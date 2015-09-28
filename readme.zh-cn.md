@@ -247,11 +247,14 @@ In node if you require the [events](http://nodejs.org/api/events.html) module yo
 
 Events are a common pattern in programming, known more widely as the ['observer pattern'](http://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
 
+The easiest way to think about events is that they let you subscribe to things. You can say 'when X do Y', whereas with plain callbacks it is 'do X then Y'.
+
 Here are few common use cases for using events instead of plain callbacks:
 
 - Chat room where you want to broadcast messages to many listeners
 - Game server that needs to know when new players connect, disconnect, move, shoot and jump
-- Database connector that might need to know when the database connection opens, closes or sends an error
+- Game engine where you want to let game developers subscribe to events like `.on('jump', function() {})`
+- A low level web server that wants to expose an API to easily hook into events that happen like `.on('incomingRequest')` or `.on('serverError')`
 
 If we were trying to write a module that connects to a chat server using only callbacks it would look like this:
 
@@ -321,19 +324,218 @@ function storeMessage(message) {
 }
 ```
 
-MORE EVENTS CONTENT TODO
-
 ## Streams
 
-Early on in the project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
+Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
 
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
 
-THE REST IS TODO, in the meantime read the [streams handbook](https://github.com/substack/stream-handbook#introduction)
+There are already two great resources that you can use to learn about node streams. One is the stream-adventure (see the Learn Node Interactively section) and the other is a reference called the Stream Handbook.
+
+### Stream Handbook
+
+[stream-handbook](https://github.com/substack/stream-handbook#introduction) is a guide, similar to this one, that contains a reference for everything you could possibly need to know about streams.
+
+[![stream-handbook](stream-handbook.png)](https://github.com/substack/stream-handbook)
 
 ## Modules
 
-TODO
+Node core is made up of about two dozen modules, some lower level ones like `events` and `stream` some higher level ones like `http` and `crypto`.
+
+This design is intentional. Node core is supposed to be small, and the modules in core should be focused on providing tools for working with common I/O protocols and formats in a way that is cross-platform.
+
+For everything else there is [npm](https://npmjs.org/). Anyone can create a new node module that adds some functionality and publish it to npm. As of the time of this writing there are 34,000 modules on npm.
+
+### How to find a module
+
+Imagine you are trying to convert PDF files into TXT files. The best place to start is by doing `npm search pdf`:
+
+![pdfsearch](npm-search.png)
+
+There are a ton of results! npm is quite popular and you will usually be able to find multiple potential solutions. If you go through each module and whittle down the results into a more narrow set (filtering out things like PDF generation modules) you'll end up with these:
+
+- [hummus](https://github.com/galkahana/HummusJS/wiki/Features) - c++ pdf manipulator
+- [mimeograph](https://github.com/steelThread/mimeograph) - api on a conglomeration of tools (poppler, tesseract, imagemagick etc)
+- [pdftotextjs](https://npmjs.org/package/pdftotextjs) - wrapper around [pdftotext](https://en.wikipedia.org/wiki/Pdftotext)
+- [pdf-text-extract](https://npmjs.org/package/pdf-text-extract) - another wrapper around pdftotext
+- [pdf-extract](https://npmjs.org/package/pdf-extract) - wrapper around pdftotext, pdftk, tesseract, ghostscript
+- [pdfutils](https://npmjs.org/package/pdfutils) - poppler wrapper
+- [scissors](https://npmjs.org/package/scissors) - pdftk, ghostscript wrapper w/ high level api
+- [textract](https://npmjs.org/package/textract) - pdftotext wrapper
+- [pdfiijs](https://github.com/fagbokforlaget/pdfiijs) - pdf to inverted index using textiijs and poppler
+- [pdf2json](https://github.com/modesty/pdf2json/blob/master/readme.md) - pure js pdf to json
+
+A lot of the modules have overlapping functionality but present alternate APIs and most of them require external dependencies (like `apt-get install poppler`).
+
+Here are some different ways to interpret the modules:
+
+- `pdf2json` is the only one that is written in pure JavaScript, which means it is the easiest to install, especially on low power devices like the raspberry pi or on Windows where native code might not be cross platform.
+- modules like `mimeograph`, `hummus` and `pdf-extract` each combine multiple lower level modules to expose a high level API
+- a lot of modules seem to sit on top of the `pdftotext`/`poppler` unix command line tools
+
+Lets compare the differences between `pdftotextjs` and `pdf-text-extract`, both of which are are wrappers around the `pdftotext` utility.
+
+![pdf-modules](pdf-modules.png)
+
+Both of these:
+
+- were updated relatively recently
+- have github repositories linked (this is very important!)
+- have READMEs
+- have at least some number of people installing them every week
+- are liberally licensed (anyone can use them)
+
+Just looking at the `package.json` + module statistics it's hard to get a feeling about which one might be the right choice. Let's compare the READMEs:
+
+![pdf-readmes](pdf-readmes.png)
+
+Both have simple descriptions, CI badges, installation instructions, clear examples and instructions for running the tests. Great! But which one do we use? Let's compare the code:
+
+![pdf-code](pdf-code.png)
+
+`pdftotextjs` is around 110 lines of code, and `pdf-text-extract` is around 40, but both essentially boil down to this line:
+
+```
+var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
+```
+
+Does this make one any better than the other? Hard to say! It's important to actually *read* the code and make your own conclusions. If you find a module you like, use `npm star modulename` to give npm feedback about modules that you had a positive experience with.
+
+### Modular development workflow
+
+npm is different from most package managers in that it installs modules into a folder inside of other existing modules. The previous sentence might not make sense right now but it is the key to npm's success.
+
+Many package managers install things globally. For instance, if you `apt-get install couchdb` on Debian Linux it will try to install the latest stable version of CouchDB. If you are trying to install CouchDB as a dependency of some other piece of software and that software needs an older version of CouchDB, you have to uninstall the newer version of CouchDB and then install the older version. You can't have two versions of CouchDB installed because Debian only knows how to install things into one place.
+
+It's not just Debian that does this. Most programming language package managers work this way too. To address the global dependencies problem described above there have been virtual environment developed like [virtualenv](http://python-guide.readthedocs.org/en/latest/dev/virtualenvs/) for Python or [bundler](http://bundler.io/) for Ruby. These just split your environment up in to many virtual environments, one for each project, but inside each environment dependencies are still globally installed. Virtual environments don't always solve the problem, sometimes they just multiply it by adding additional layers of complexity.
+
+With npm installing global modules is an anti-pattern. Just like how you shouldn't use global variables in your JavaScript programs you also shouldn't install global modules (unless you need a module with an executable binary to show up in your global `PATH`, but you don't always need to do this -- more on this later).
+
+#### How `require` works
+
+When you call `require('some_module')` in node here is what happens:
+
+1. if a file called `some_module.js` exists in the current folder node will load that, otherwise:
+2. node looks in the current folder for a `node_modules` folder with a `some_module` folder in it
+3. if it doesn't find it, it will go up one folder and repeat step 2
+
+This cycle repeats until node reaches the root folder of the filesystem, at which point it will then check any global module folders (e.g. `/usr/local/node_modules` on Mac OS) and if it still doesn't find `some_module` it will throw an exception.
+
+Here's a visual example:
+
+![mod-diagram-01](mod-diagram-01.png)
+
+When the current working directory is `subsubfolder` and `require('foo')` is called, node will look for the folder called `subsubsubfolder/node_modules`. In this case it won't find it -- the folder there is mistakenly called `my_modules`. Then node will go up one folder and try again, meaning it then looks for `subfolder_B/node_modules`, which also doesn't exist. Third try is a charm, though, as `folder/node_modules` does exist *and* has a folder called `foo` inside of it. If `foo` wasn't in there node would continue its search up the directory tree.
+
+Note that if called from `subfolder_B` node will never find `subfolder_A/node_modules`, it can only see `folder/node_modules` on its way up the tree.
+
+One of the benefits of npm's approach is that modules can install their dependent modules at specific known working versions. In this case the module `foo` is quite popular - there are three copies of it, each one inside its parent module folder. The reasoning for this could be that each parent module needed a different version of `foo`, e.g. 'folder' needs `foo@0.0.1`, `subfolder_A` needs `foo@0.2.1` etc.
+
+Here's what happens when we fix the folder naming error by changing `my_modules` to the correct name `node_modules`:
+
+![mod-diagram-02](mod-diagram-02.png)
+
+To test out which module actually gets loaded by node, you can use the `require.resolve('some_module')` command, which will show you the path to the module that node finds as a result of the tree climbing process. `require.resolve` can be useful when double-checking that the module that you *think* is getting loaded is *actually* getting loaded -- sometimes there is another version of the same module closer to your current working directory than the one you intend to load.
+
+### How to write a module
+
+Now that you know how to find modules and require them you can start writing your own modules.
+
+#### The simplest possible module
+
+Node modules are radically lightweight. Here is one of the simplest possible node modules:
+
+`package.json`:
+```js
+{
+  "name": "number-one",
+  "version": "1.0.0"
+}
+```
+
+`index.js`:
+```js
+module.exports = 1
+```
+
+By default node tries to load `module/index.js` when you `require('module')`, any other file name won't work unless you set the `main` field of `package.json` to point to it.
+
+Put both of those files in a folder called `number-one` (the `id` in `package.json` must match the folder name) and you'll have a working node module.
+
+Calling the function `require('number-one')` returns the value of whatever `module.exports` is set to inside the module:
+
+![simple-module](simple-module.png)
+
+An even quicker way to create a module is to run these commands:
+
+```sh
+mkdir my_module
+cd my_module
+git init
+git remote add git@github.com:yourusername/my_module.git
+npm init
+```
+
+Running `npm init` will create a valid `package.json` for you and if you run it in an existing `git` repo it will set the `repositories` field inside `package.json` automatically as well!
+
+#### Adding dependencies
+
+A module can list any other modules from npm or GitHub in the `dependencies` field of `package.json`. To install the `request` module as a new dependency and automatically add it to `package.json` run this from your module root directory:
+
+```sh
+npm install --save request
+```
+
+This installs a copy of `request` into the closest `node_modules` folder and makes our `package.json` look something like this:
+
+```
+{
+  "id": "number-one",
+  "version": "1.0.0",
+  "dependencies": {
+    "request": "~2.22.0"
+  }
+}
+```
+
+By default `npm install` will grab the latest published version of a module.
+
+## Client side development with npm
+
+A common misconception about npm is that since it has 'Node' in the name that it must only be used for server side JS modules. This is completely untrue! npm actually stands for Node Packaged Modules, e.g. modules that Node packages together for you. The modules themselves can be whatever you want -- they are just a folder of files wrapped up in a .tar.gz, and a file called `package.json` that declares the module version and a list of all modules that are dependencies of the module (as well as their version numbers so the working versions get installed automatically). It's turtles all the way down - module dependencies are just modules, and those modules can have dependencies etc. etc. etc.
+
+[browserify](http://browserify.org/) is a utility written in Node that tries to convert any node module into code that can be run in browsers. Not all modules work (browsers can't do things like host an HTTP server), but a lot of modules on NPM *will* work.
+
+To try out npm in the browser you can use [RequireBin](http://requirebin.com/), an app I made that takes advantage of [Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn), which internally uses browserify but returns the output through HTTP (instead of the command line -- which is how browserify is usually used).
+
+Try putting this code into RequireBin and then hit the preview button:
+
+```js
+var reverse = require('ascii-art-reverse')
+
+// makes a visible HTML console
+require('console-log').show(true)
+
+var coolbear =
+  "    ('-^-/')  \n" +
+  "    `o__o' ]  \n" +
+  "    (_Y_) _/  \n" +
+  "  _..`--'-.`, \n" +
+  " (__)_,--(__) \n" +
+  "     7:   ; 1 \n" +
+  "   _/,`-.-' : \n" +
+  "  (_,)-~~(_,) \n"
+
+setInterval(function() { console.log(coolbear) }, 1000)
+
+setTimeout(function() {
+  setInterval(function() { console.log(reverse(coolbear)) }, 1000)
+}, 500)
+```
+
+Or check out a [more complicated example](http://requirebin.com/?gist=6031068) (feel free to change the code and see what happens):
+
+[![requirebin](requirebin.png)](http://requirebin.com/embed?gist=6031068)
 
 ## Going with the grain
 
@@ -392,10 +594,6 @@ Note: If you don't know what these things mean then you will likely have an easi
 
 Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
 
-## Real-time apps
-
-TODO - this section will have a non-contrived, functioning application with a web UI whose architecture will be dissected and discussed.
-
 ## License
 
 ![CCBY](CCBY.png)
@@ -403,4 +601,4 @@ TODO - this section will have a non-contrived, functioning application with a we
 Creative Commons Attribution License (do whatever, just attribute me)
 http://creativecommons.org/licenses/by/2.0/
 
-Donate icon is from the [http://thenounproject.com/noun/donate/#icon-No285](Noun Project)
+Donate icon is from the [Noun Project](http://thenounproject.com/term/donate/285/)
