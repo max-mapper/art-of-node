@@ -1,41 +1,40 @@
 # The Art of Node
-## Une introduction à Node.js
+## An introduction to Node.js
 
-Cet article s'adresse avant-tout aux lecteurs disposants des connaissances suivantes  :
+This document is intended for readers who know at least a little bit of a couple of things:
 
-- Au moins un langage de script, tel que JavaScript, Ruby, Python, Perl, etc. Si vous n'êtes pas programmeur, vous préfèrerez commencer par la lecture de [JavaScript for Cats](http://jsforcats.com/). :cat2:
-- Git & Github qui sont les outils de collaboration privilégiés par la communauté pour partager ses modules. Quelques connaissances basiques feront l'affaire. Au besoin, trois superbes tutos pour bien démarrer avec git : [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
+- a scripting language like JavaScript, Ruby, Python, Perl, etc. If you aren't a programmer yet then it is probably easier to start by reading [JavaScript for Cats](http://jsforcats.com/). :cat2:
+- git and github. These are the open source collaboration tools that people in the node community use to share modules. You just need to know the basics. Here are three great intro tutorials: [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
 
-Ci-après un livre sur lequel je travail en ce moment. Si vous l'aimez, **donnez moi un dollar** via
-[gittip](https://www.gittip.com/maxogden/) pour me permettre d'y consacrer mon temps !
+This short book is a work in progress. If you like it then please **give me a dollar** via [gittip](https://www.gittip.com/maxogden/) so that I can justify taking the time to write more!
 
 [![donate](donate.png)](https://www.gittip.com/maxogden/)
 
-## Sommaire
+## Table of contents
 
-- [Apprentissage Interactif de Node](#apprentissage-interactif-de-node)
-- [Comprendre Node](#comprendre-node)
-- [Modules de base](#modules-de-base)
+- [Learn node interactively](#learn-node-interactively)
+- [Understanding node](#understanding-node)
+- [Core modules](#core-modules)
 - [Callbacks](#callbacks)
-- [Evenements](#evenements)
+- [Events](#events)
 - [Streams](#streams)
 - [Modules and npm](#modules)
 - [Client side development with npm](#client-side-development-with-npm)
 - [Going with the grain](#going-with-the-grain)
 
-## Apprentissage Interactif de Node
+## Learn node interactively
 
-Par expérience, je sais que la simple lecture d'un guide ne se suffit pas à elle-même. Gardez votre éditeur de texte favoris sous la main et écrivez du node en parrallèle ! Apprendre en codant est un excellent moyen d'intégrer les concepts présentés.
+In addition to reading this guide it's super important to also bust out your favorite text editor and actually write some node code. I always find that when I just read some code in a book it never really clicks, but learning by writing code is a good way to grasp new programming concepts.
 
 ### NodeSchool.io
 
-[NodeSchool.io](http://nodeschool.io/) est une série d'ateliers opensource et gratuits qui vous enseignerons les principes de Node.js et plus encore.
+[NodeSchool.io](http://nodeschool.io/) is a series of free + open source interactive workshops that teach you the principles of Node.js and beyond.
 
-[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) est le cours d'introduction aux ateliers NodeSchool.io. Il s'agit de problèmes qui mettent en scène les principaux cas d'utilisation de Node.js. Il est packagé pour être utilisé en ligne de commande.
+[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) is the introductory NodeSchool.io workshop. It's a set of programming problems that introduce you to common node patterns. It comes packaged as a command line program.
 
 [![learnyounode](https://github.com/rvagg/learnyounode/raw/master/learnyounode.png)](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win)
 
-Vous pouvez l'installer avec npm:
+You can install it with npm:
 
 ```
 # install
@@ -45,56 +44,54 @@ npm install learnyounode -g
 learnyounode
 ```
 
-## Comprendre Node
+## Understanding node
 
-Node.js est un projet opensource prévu pour vous aider à écrire des programmes JavaScript qui interagissent avec des réseaux, des file systems out tout autre source d'I/O (entrée/sortie, lecture/ecriture). Et c'est tout! Ce n'est qu'une plateforme simple et stable qui vous encourage à construire des modules par dessus.
+Node.js is an open source project designed to help you write JavaScript programs that talk to networks, file systems or other I/O (input/output, reading/writing) sources. That's it! It is just a simple and stable I/O platform that you are encouraged to build modules on top of.
 
-Des exemples d'I/O ? Voici le diagramme d'une application que j'ai réalisé avec node qui présentent un bon nombre de sources d'I/O:
+What are some examples of I/O? Here is a diagram of an application that I made with node that shows many I/O sources:
 
 ![server diagram](server-diagram.png)
 
-Si vous ne comprenez pas tout ce qu'il y a sur ce diagramme, ce n'est pas un problème. Le but est de vous montrer qu'un simple processus node (l'hexagone au centre) peut agir comme un hub entre les différentes sources d'I/O (en orange et violet sur le diagramme).
+If you don't understand all of the different things in the diagram it is completely okay. The point is to show that a single node process (the hexagon in the middle) can act as the broker between all of the different I/O endpoints (orange and purple represent I/O).
 
-Usuellement, produire ce type de système induit :
+Usually building these kinds of systems is either:
 
-- D'excellentes performances, mais aux prix de difficultés dans l'écriture (comme partir de zero pour ecrire un serveur web en C)
-- Une simplicité d'écriture, mais de faibles performances, ou un manque de robustesse (comme quand quelqu'un essaye d'envoyer un fichier de 5GO et que votre serveur crash)
+- difficult to code but yields super fast results (like writing your web servers from scratch in C)
+- easy to code but not very speedy/robust (like when someone tries to upload a 5GB file and your server crashes)
 
-L'objectif poursuivit par Node est de trouver l'équilibre entre ces deux extrêmités : une simplicité dans sa compréhension et son utilisation, tout en offrant des performances optimales.
+Node's goal is to strike a balance between these two: relatively easy to understand and use and fast enough for most use cases.
 
-Attention, Node n'est ni :
+Node isn't either of the following:
 
-  - Un framework web (comme Rails ou Django, même s'il peut être utilisé pour produire ce genre de choses)
-  - Un langage de programmation (Il est basé sur JavaScript mais node n'est pas son propre langage)
+  - A web framework (like Rails or Django, though it can be used to make such things)
+  - A programming language (it uses JavaScript but node isn't its own language)
+  
+Instead, node is somewhere in the middle. It is:
 
-A la place, node se situe quelque part au milieu. Il est à la fois :
+  - Designed to be simple and therefore relatively easy to understand and use
+  - Useful for I/O based programs that need to be fast and/or handle lots of connections
+  
+At a lower level, node can be described as a tool for writing two major types of programs: 
 
-  - Conçi pour être simple et donc relative facile à comprendre et utiliser
-  - Utile pour les programmes fondés sur des I/O, et qui requièrent rapidité, et capacité à gérer de nombreuses connections
+  - Network programs using the protocols of the web: HTTP, TCP, UDP, DNS and SSL
+  - Programs that read and write data to the filesystem or local processes/memory
 
-A bas niveau, node peut être décrit comme un outil permettant l'écriture de deux types de programmes majeurs :
+What is an "I/O based program"? Here are some common I/O sources:
 
-  - Les programmes de Réseaux qui utilisent les protocoles du web: HTTP, TCP, UDP, DNS and SSL
-  - Les programmes qui lisent et écrivent des données dans les filesystem ou dans les processus locaux ou en mémoire.
-
-Qu'est-ce qu'un programme "fondé sur des I/O" ? Voici quelques exemples de sources d'I/O :
-
-  - Bases de données (e.g. MySQL, PostgreSQL, MongoDB, Redis, CouchDB)
-  - APIs (e.g. Twitter, Facebook, Notifications Push Apple)
-  - HTTP/connections WebSocket (des utilisateurs d'une application web)
-  - Fichiers (redimensionnement d'images, editeur video, radio internet)
-
-/********************* Fin de la traduction au 6/10/2015 *********************/
+  - Databases (e.g. MySQL, PostgreSQL, MongoDB, Redis, CouchDB)
+  - APIs (e.g. Twitter, Facebook, Apple Push Notifications)
+  - HTTP/WebSocket connections (from users of a web app)
+  - Files (image resizer, video editor, internet radio)
 
 Node does I/O in a way that is [asynchronous](http://en.wikipedia.org/wiki/Asynchronous_I/O) which lets it handle lots of different things simultaneously. For example, if you go down to a fast food joint and order a cheeseburger they will immediately take your order and then make you wait around until the cheeseburger is ready. In the meantime they can take other orders and start cooking cheeseburgers for other people. Imagine if you had to wait at the register for your cheeseburger, blocking all other people in line from ordering while they cooked your burger! This is called **blocking I/O** because all I/O (cooking cheeseburgers) happens one at a time. Node, on the other hand, is **non-blocking**, which means it can cook many cheeseburgers at once.
 
 Here are some fun things made easy with node thanks to its non-blocking nature:
-
+  
   - Control [flying quadcopters](http://nodecopter.com)
   - Write IRC chat bots
   - Create [walking biped robots](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
-## Modules de base
+## Core modules
 
 Firstly I would recommend that you get node installed on your computer. The easiest way is to visit [nodejs.org](http://nodejs.org) and click `Install`.
 
@@ -265,7 +262,7 @@ fs.readFile('movie.mp4', function finishedReading(error, movieData) {
 })
 ```
 
-## Evenements
+## Events
 
 In node if you require the [events](http://nodejs.org/api/events.html) module you can use the so-called 'event emitter' that node itself uses for all of its APIs that emit things.
 
@@ -317,7 +314,7 @@ var chatClient = require('my-chat-client').connect()
 
 chatClient.on('connect', function() {
   // have the UI show we are connected
-})
+}) 
 
 chatClient.on('connectionError', function() {
   // show error to the user
@@ -350,7 +347,7 @@ function storeMessage(message) {
 
 ## Streams
 
-Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it.
+Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
 
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
 
