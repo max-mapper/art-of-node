@@ -214,9 +214,9 @@ a(function() {
   })
 })
 ```
-Quand ce code est executé, `a` démarrera immédiatement, puis une minute plus tard il appelera `b`, qui une minute plus tard appelera `c`. Au bout de 3 minutes, node s'arrêtera puisqu'uil n'y aura plus rien à faire. Il y a bien évidemment des méthodes plus élégantes pour écrire le code ci-dessus, mais le but est de montrer que si vous avez du code qui doit attendre un autre code asynchrone pour s'éxecuter, alors il faut exprimer cette dépendance en placant votre code dans une fonction qui sera passé comme callback.
+Quand ce code est executé, `a` démarrera immédiatement, puis une minute plus tard il appelera `b`, qui une minute plus tard appelera `c`. Au bout de 3 minutes, node s'arrêtera puisqu'il n'y aura plus rien à faire. Il y a bien évidemment des méthodes plus élégantes pour écrire le code ci-dessus, mais le but est de montrer que si vous avez du code qui doit attendre un autre code asynchrone pour s'éxecuter, alors il faut exprimer cette dépendance en placant votre code dans une fonction qui sera passé comme callback.
 
-Le design de node requière que vous pensions non-linéairement. Considérez cette liste d'opérations:
+Le design de node requière que vous pensiez non-linéairement. Considérez cette liste d'opérations:
 
 ```
 read a file
