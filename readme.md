@@ -1,3 +1,7 @@
+************************** NOTE DU TRADUCTEUR **************************
+Ce document est une traduction du document 'Art of Node' de maxogden.
+[Vous pouvez le retrouver en version originale en cliquant ici](http://github.com/maxogden/art-of-node)
+
 # The Art of Node
 ## Une introduction à Node.js
 
@@ -6,8 +10,8 @@ Cet article s'adresse avant-tout aux lecteurs disposants des connaissances suiva
 - Au moins un langage de script, tel que JavaScript, Ruby, Python, Perl, etc. Si vous n'êtes pas programmeur, vous préfèrerez commencer par la lecture de [JavaScript for Cats](http://jsforcats.com/). :cat2:
 - Git & Github qui sont les outils de collaboration privilégiés par la communauté pour partager ses modules. Quelques connaissances basiques feront l'affaire. Au besoin, trois superbes tutos pour bien démarrer avec git : [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
 
-Ci-après un livre sur lequel je travail en ce moment. Si vous l'aimez, **donnez moi un dollar** via
-[gittip](https://www.gittip.com/maxogden/) pour me permettre d'y consacrer mon temps !
+Ce court livre est encore en cours de réalisation. Si vous l'aimez, **donnez-moi un dollar** via
+[gittip](https://www.gittip.com/maxogden/) pour me permettre d'y consacrer du temps !
 
 [![donate](donate.png)](https://www.gittip.com/maxogden/)
 
