@@ -1,4 +1,4 @@
-************************** NOTE DU TRADUCTEUR **************************
+****************************** NOTE DU TRADUCTEUR ******************************
 Ce document est une traduction du document 'Art of Node' de maxogden.
 [Vous pouvez le retrouver en version originale en cliquant ici](http://github.com/maxogden/art-of-node)
 
@@ -527,14 +527,13 @@ Cela installera une copie de `request` dans le `node_modules` le plus proche et 
 Par défaut `npm install` récupèrera la dernière version publiée du module.
 
 ## Développement coté Client avec npm
-/********************* Fin de la traduction au 10/10/2015 *********************/
-A common misconception about npm is that since it has 'Node' in the name that it must only be used for server side JS modules. This is completely untrue! npm actually stands for Node Packaged Modules, e.g. modules that Node packages together for you. The modules themselves can be whatever you want -- they are just a folder of files wrapped up in a .tar.gz, and a file called `package.json` that declares the module version and a list of all modules that are dependencies of the module (as well as their version numbers so the working versions get installed automatically). It's turtles all the way down - module dependencies are just modules, and those modules can have dependencies etc. etc. etc.
+npm est victime d'un vice de pensé assez fréquent. `Node`faisant parti de son nom, il est courant de penser qu'il ne gère que des modules JS côté serveur, ce qui est absolumen faux! npm signifie Node Packaged Module, c'est-à-dire des module que Node package pour vous. Ces modules peuvent être n'importe quoi - Ce ne sont que des repertoires ou des fichiers encapsulés dans des .tar.gz et un fichié nommé `package.json` qui explicite la version du module ainsi que la liste de toutes ses dépendances (ainsi que leur propre version de module pour que seules les versions connues pour fonctionner avec notre module ne soient installées automatiquement). Les dépendances ne sont que des modules, qui peuvent eux mêmes avoir des dépendances, et ainsi de suite.
 
-[browserify](http://browserify.org/) is a utility written in Node that tries to convert any node module into code that can be run in browsers. Not all modules work (browsers can't do things like host an HTTP server), but a lot of modules on NPM *will* work.
+[browserify](http://browserify.org/) est un utilitaire écrit en node qui tente de convertir n'importe que module node en code capable d'être lancé par un un browser. Bien que *beaucoup fonctionneront*, tous les modules ne peuvent cependant êtres compatibles avec les navigateurs (Les browsers ne peuvent pas exemple pas heberger un serveur HTTP).
 
-To try out npm in the browser you can use [RequireBin](http://requirebin.com/), an app I made that takes advantage of [Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn), which internally uses browserify but returns the output through HTTP (instead of the command line -- which is how browserify is usually used).
+Pour essayer npm en browser, vous pouvez utiliser [RequireBin](http://requirebin.com/), qui est une application que j'ai réalisé qui tire profit de [Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn),  qui utilise browserify en interne et renvoi l'output à travers HTTP (en lieu et place de la ligne de commande communément utilisé par browserify.)
 
-Try putting this code into RequireBin and then hit the preview button:
+Essayez maintenant de mettre ce code dans RequireBin et lancez le boutton de preview:
 
 ```js
 var reverse = require('ascii-art-reverse')
@@ -559,36 +558,35 @@ setTimeout(function() {
 }, 500)
 ```
 
-Or check out a [more complicated example](http://requirebin.com/?gist=6031068) (feel free to change the code and see what happens):
-
+Ou testez [un exemple plus complexe](http://requirebin.com/?gist=6031068) (Vous êtes libre de changer le code pour voir ce qu'il se produit):
 [![requirebin](requirebin.png)](http://requirebin.com/embed?gist=6031068)
 
 ## Going with the grain
 
-Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](http://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
+Comme tous les bons outils, node est particulièrement à certains cas d'utilisation. Par exemple: Rails, le framework web populaire, est fantastique pour modeliser de la [logique métier complexe](http://en.wikipedia.org/wiki/Business_logic), c'est-à-dire utiliser le code pour représenter des objets métiers comme des comptes clients, des prêts, des itinéraires, ou encore des stocks. Tandis que l'on peut techniquement faire la même chose avec node, nous rencontrerions quelques désagréments puisque node est conçu pour résoudre des problèmes d'I/O and ne connait absolument rien de la logique métier. Chaque outil se concentre sur des problèmes différents. Fort heureusement, ce guide vous aidera à comprendre intuitivement les forces de node pour que vous sachiez avec exactitude quand il vous sera utilise.
 
-### What is outside of node's scope?
+### Quelles sont les limites du scope de node ?
 
-Fundamentally node is just a tool used for managing I/O across file systems and networks, and it leaves other more fancy functionality up to third party modules. Here are some things that are outside the scope of node:
+Node n'est fondamentalement conçu que pour gérer les I/O à travers le file system et les réseaux, et laisse les fonctionnalités plus fantaisistes aux modules tiers. Voici quelques exemples de choses qui dépassent le perimètre d'action de node:
 
-#### Web frameworks
+#### Frameworks Web
 
-There are a number of web frameworks built on top of node (framework meaning a bundle of solutions that attempts to address some high level problem like modeling business logic), but node is not a web framework. Web frameworks that are written using node don't always make the same kind of decisions about adding complexity, abstractions and tradeoffs that node does and may have other priorities.
+Il existe des frameworks web basés sur node (framework signifiant un agglomérat de solutions qui cherchent à solutionner des problèmes au niveau comme de la logique métier), mais node n'est pas un framework à lui seul. Les frameworks web conçu par dessus node ne prennent pas les mêmes décisions concernant l'ajout de complexité, d'abstraction ou de compromis que node, et ont souvent d'autres priorités que les simples problématiques d'I/O.
 
-#### Language syntax
+#### Syntaxe du langage
 
-Node uses JavaScript and doesn't change anything about it. Felix Geisendörfer has a pretty good write-up of the 'node style' [here](https://github.com/felixge/node-style-guide).
+Node utilise JavaScript et adopte donc sa syntaxe. Felix Geisendörfer présente une synthèse plutôt bonne du 'style node' [here](https://github.com/felixge/node-style-guide).
 
 #### Language abstraction
 
-When possible node will use the simplest possible way of accomplishing something. The 'fancier' you make your JavaScript the more complexity and tradeoffs you introduce. Programming is hard, especially in JS where there are 1000 solutions to every problem! It is for this reason that node tries to always pick the simplest, most universal option. If you are solving a problem that calls for a complex solution and you are unsatisfied with the 'vanilla JS solutions' that node implements, you are free to solve it inside your app or module using whichever abstractions you prefer.
+Quand cela est possible, node utilisera le moyen le plus simple possible d'accomplir quelque chose. Plus fantaisiste sera votre JavaScript plus vous apportez de complexité. Programmer est difficile, particulièrement en JavaScript où vous avez 1000 manières différentes de solutionner un même problème ! C'est pourquoi node essaye toujours d'utiliser la solution la plus simple universelle. Si vous tentez de résoudre un problème qui appelle une solution complexe, et que vous n'êtes pas satisfait des solutions en pure JS que node implémente, vous êtes libre de les résoudre à l'interieur de votre module en utilisant le niveau d'abstraction que vous souhaitez.
 
-A great example of this is node's use of callbacks. Early on node experimented with a feature called 'promises' that added a number of features to make async code appear more linear. It was taken out of node core for a few reasons:
+Un exemple parfait pour cela est l'utilisation que node fait des callbacks. Plus tôt, node a fait l'experience d'une feature nommé 'promesses' qui ajoutaient un certain nombre de features pour rendre le code asynchrone plus linéaire. Les promesses furent retirées du coeur node pour plusieurs raisons :
 
-- they are more complex than callbacks
-- they can be implemented in userland (distributed on npm as third party modules)
+- Elles sont plus complexes que les callbacks
+- Elles peuvent être implémentées avec userland (distribué en module tiers via npm)
 
-Consider one of the most universal and basic things that node does: reading a file. When you read a file you want to know when errors happen, like when your hard drive dies in the middle of your read. If node had promises everyone would have to branch their code like this:
+Considérez une des choses les plus universelles et basique proposée par node: lire un fichier. Quand vous lisez un fichier vous voulez être au courant de l'apparition d'une erreur, comme lorsque votre disque dur meurt au milieu d'une lecture. Si node possédait des promesses, tout le monde devrait produire un code comme ceci :
 
 ```js
 fs.readFile('movie.mp4')
@@ -600,13 +598,13 @@ fs.readFile('movie.mp4')
   })
 ```
 
-This adds complexity, and not everyone wants that. Instead of two separate functions node just uses a single callback function. Here are the rules:
+Cela ajouterait de la complexité, et tout le monde ne souhaite pas cela. A la place de deux fonctions différentes, node n'appelle qu'une fonction de callback. Les règles sont les suivantes :
 
-- When there is no error pass null as the first argument
-- When there is an error, pass it as the first argument
-- The rest of the arguments can be used for anything (usually data or responses since most stuff in node is reading or writing things)
+- Quan il n'y a pas d'erreur, passez null en premier argument
+- Quand il y a une erreur, passez la en premier argument
+- Le reste des arguments peut être utilisé pour ce que vous désirez (en général les données ou réponses de vos flux d'I/O, puisque vous utiliserez généralement node à cet fin).
 
-Hence, the node callback style:
+En conséquence, voila le style node en callback:
 
 ```js
 fs.readFile('movie.mp4', function(err, data) {
