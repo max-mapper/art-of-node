@@ -1,16 +1,12 @@
-****************************** NOTE DU TRADUCTEUR ******************************
-Ce document est une traduction du document 'Art of Node' de maxogden.
-[Vous pouvez le retrouver en version originale en cliquant ici](http://github.com/maxogden/art-of-node)
-
 # The Art of Node
 ## Une introduction à Node.js
 
-Cet article s'adresse avant-tout aux lecteurs disposants des connaissances suivantes  :
+Ce document s'adresse à celles et ceux désireux de découvrir node et disposants, de préférence, des connaissances suivantes  :
 
-- Au moins un langage de script, tel que JavaScript, Ruby, Python, Perl, etc. Si vous n'êtes pas programmeur, vous préfèrerez commencer par la lecture de [JavaScript for Cats](http://jsforcats.com/). :cat2:
-- Git & Github qui sont les outils de collaboration privilégiés par la communauté pour partager ses modules. Quelques connaissances basiques feront l'affaire. Au besoin, trois superbes tutos pour bien démarrer avec git : [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
+- Un langage de script, tel que JavaScript, Ruby, Python, Perl, etc. Si vous n'êtes pas programmeur, vous préfèrerez sans doute commencer par la lecture de [JavaScript for Cats](http://jsforcats.com/). :cat2:
+- Git & Github qui sont les outils de collaboration privilégiés par la communauté. Rassurez-vous, pas besoin d'être expert, quelques connaissances suffiront. Au besoin, voila trois superbes tutos pour bien démarrer avec git : [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
 
-Ce court livre est encore en cours de réalisation. Si vous l'aimez, **donnez-moi un dollar** via
+Ce court livre est une oeuvre en cours de réalisation. Si vous l'aimez, **donnez-moi un dollar** via
 [gittip](https://www.gittip.com/maxogden/) pour me permettre d'y consacrer du temps !
 
 [![donate](donate.png)](https://www.gittip.com/maxogden/)
@@ -22,24 +18,24 @@ Ce court livre est encore en cours de réalisation. Si vous l'aimez, **donnez-mo
 - [Modules de base](#modules-de-base)
 - [Callbacks](#callbacks)
 - [Evenements](#evenements)
-- [Streams](#streams)
+- [Flux](#streams)
 - [Modules and npm](#modules)
 - [Client side development with npm](#client-side-development-with-npm)
 - [Going with the grain](#going-with-the-grain)
 
 ## Apprentissage Interactif de Node
 
-Par expérience, je sais que la simple lecture d'un guide ne se suffit pas à elle-même. Gardez votre éditeur de texte favoris sous la main et écrivez du node en parrallèle ! Apprendre en codant est un excellent moyen d'intégrer les concepts présentés.
+Par expérience, j'ai appris que la simple lecture d'un guide ne se suffit pas à elle-même. Gardez votre éditeur de texte favoris sous la main et écrivez du node en parrallèle ! Apprendre en codant est le meilleur moyen d'intégrer les concepts que vous découvrirez.
 
 ### NodeSchool.io
 
-[NodeSchool.io](http://nodeschool.io/) est une série d'ateliers opensource et gratuits qui vous enseignerons les principes de Node.js et plus encore.
+[NodeSchool.io](http://nodeschool.io/) est une série d'ateliers opensource et gratuits qui vous enseignerons les principes de Node.js, et plus encore pour les curieux !
 
-[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) est le cours d'introduction aux ateliers NodeSchool.io. Il s'agit de problèmes qui mettent en scène les principaux cas d'utilisation de Node.js. Il est packagé pour être utilisé en ligne de commande.
+[Learn You The Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) est le cours introfuctif aux ateliers NodeSchool.io. Il met en scène les principaux cas d'utilisation de Node.js. Il est conçu pour être utilisé directement en ligne de commande.
 
 [![learnyounode](https://github.com/rvagg/learnyounode/raw/master/learnyounode.png)](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win)
 
-Vous pouvez l'installer avec npm:
+Installez-le avec npm:
 
 ```
 # install
@@ -51,15 +47,15 @@ learnyounode
 
 ## Comprendre Node
 
-Node.js est un projet opensource prévu pour vous aider à écrire des programmes JavaScript qui interagissent avec des réseaux, des file systems out tout autre source d'I/O (entrée/sortie, lecture/ecriture). Et c'est tout! Ce n'est qu'une plateforme simple et stable qui vous encourage à construire des modules par dessus.
+Node.js est un projet opensource conçu pour vous aider à écrire des programmes JavaScript qui interagissent avec des réseaux, des Filesystems out tout autre source d'I/O (entrée/sortie, lecture/ecriture). Et c'est tout! Node n'est qu'une plateforme simple et stable qui vous encourage à construire des modules par dessus.
 
 Des exemples d'I/O ? Voici le diagramme d'une application que j'ai réalisé avec node qui présentent un bon nombre de sources d'I/O:
 
 ![server diagram](server-diagram.png)
 
-Si vous ne comprenez pas tout ce qu'il y a sur ce diagramme, ce n'est pas un problème. Le but est de vous montrer qu'un simple processus node (l'hexagone au centre) peut agir comme un hub entre les différentes sources d'I/O (en orange et violet sur le diagramme).
+Si tout ne vous parait pas clair, rassurez-vous. Le but est de vous montrer qu'un simple processus node (l'hexagone au centre) peut agir comme un hub entre les différentes sources d'I/O (en orange et violet sur le diagramme).
 
-Usuellement, produire ce type de système induit :
+Usuellement, produire ce type de système induit deux conséquences probables:
 
 - D'excellentes performances, mais aux prix de difficultés dans l'écriture (comme partir de zero pour ecrire un serveur web en C)
 - Une simplicité d'écriture, mais de faibles performances, ou un manque de robustesse (comme quand quelqu'un essaye d'envoyer un fichier de 5GO et que votre serveur crash)
@@ -71,12 +67,12 @@ Attention, Node n'est ni :
   - Un framework web (comme Rails ou Django, même s'il peut être utilisé pour produire ce genre de choses)
   - Un langage de programmation (Il est basé sur JavaScript mais node n'est pas son propre langage)
 
-A la place, node se situe quelque part au milieu. Il est à la fois :
+A la place, node se situe quelque part au milieu. On peut dire qu'il est à la fois :
 
   - Conçu pour être simple et donc relative facile à comprendre et utiliser
   - Utile pour les programmes fondés sur des I/O, et qui requièrent rapidité, et capacité à gérer de nombreuses connections
 
-A bas niveau, node peut être décrit comme un outil permettant l'écriture de deux types de programmes majeurs :
+A bas niveau, node peut se décrire comme un outil permettant l'écriture de deux types de programmes majeurs :
 
   - Les programmes de Réseaux qui utilisent les protocoles du web: HTTP, TCP, UDP, DNS and SSL
   - Les programmes qui lisent et écrivent des données dans les filesystem ou dans les processus locaux ou en mémoire.
@@ -88,9 +84,9 @@ Qu'est-ce qu'un programme "fondé sur des I/O" ? Voici quelques exemples de sour
   - HTTP/connections WebSocket (des utilisateurs d'une application web)
   - Fichiers (redimensionnement d'images, editeur video, radio internet)
 
-Node gère les I/O de manière [asynchrone](http://en.wikipedia.org/wiki/Asynchronous_I/O) ce qui le laisse gérer beaucoup de choses différentes simultanément. Par exemple, si vous commander un cheeseburger dans fast-food, ils prendront votre ordre et vous feront patienter le temps que votre plat soit prêt. Pendant ce temps, ils continueront à prendre les commandes des autres clients et pourront tout autant démarrer la cuissons de leur cheeseburger. Maintenant imaginez un peu si vous deviez attendre votre sandwich au comptoire, empêchant tous les clients derrière vous de commander jusqu'à ce que votre produit soit prêt ! On appelle cela l'**I/O Bloquante** car toutes les I/O se produisent l'une après l'autre. Node, à contrario, est **non-bloquante**, ce qui signifie qu'il peut cuire plusieurs cheeseburgers à la fois !
+Node gère les I/O de manière [asynchrone](http://en.wikipedia.org/wiki/Asynchronous_I/O) ce qui le rend très efficace dans la gestion de processus simultanés. Prenons un exemple: si vous commander un cheeseburger dans un fast-food, ils prendront votre commande et vous feront patienter le temps que votre plat soit prêt. Pendant ce temps, ils prendront les commandes des autres clients et n'auront aucun mal à démarrer la cuissons de leur cheeseburger en parralèle. Maintenant imaginez un peu si vous deviez attendre votre sandwich au comptoire, empêchant tous les clients derrière vous de commander jusqu'à ce que votre produit soit prêt ! On appelle cela l'**I/O Bloquante** car toutes les I/O se produisent l'une après l'autre. Node, à contrario, est **non-bloquante**, ce qui signifie qu'il peut cuire plusieurs cheeseburgers à la fois !
 
-Quelques exemples amusants de choses facilitées par la nature non-bloquante de node :
+Quelques exemples amusants de ces choses facilitées par la nature non-bloquante de node :
 
   - Control [flying quadcopters](http://nodecopter.com)
   - Ecrire des bots IRC
@@ -98,13 +94,13 @@ Quelques exemples amusants de choses facilitées par la nature non-bloquante de 
 
 ## Modules de base
 
-Pour commencer, je vous suggère d'installer node sur votre machine. La manière la plus simple est de visiter [nodejs.org](http://nodejs.org) est de cliquer sur 'Install'.
+Pour commencer, je vous suggère d'installer node sur votre machine. La manière la plus simple est de vous rendre sur [nodejs.org](http://nodejs.org) et de cliquer sur 'Install'.
 
-Node possède un petit groupe de modules (qui réponds communément au nom de 'node core') qui sont présenté en temps qu'API publique, et avec lesquels nous sommes censés écrire nos programmes. Pour travailler avec un file system, il y a le module 'fs', et pour les réseaux, les modules comme `net` (TCP), `http`, `dgram` (UDP).
+Node possède un petit groupe de modules (qui réponds communément au nom de 'node core') qui sont présenté en tant qu'API publique, et avec lesquels nous sommes censés écrire nos programmes. Pour travailler avec un file system, il y a le module 'fs', et pour les réseaux, les modules comme `net` (TCP), `http`, `dgram` (UDP).
 
-En sus de `fs` et des modules de réseau, node core propose d'autres modules de base. Il existe un module pour gérer les requêtes DNS de manière asynchrones nommé `dns`, un module pour récupérer les informations spécifiques à l'OS nommé comme la path du tmpdir nommé `os`, un module pour allouer des morceaux de mémoire nommé `buffer`, d'autres pour parser les url et les paths (`url`, `querystring`, `path`), etc. La plus part, sinon tous, sont là pour gérer le principal cas d'utilisation de node: Ecrire rapidement des programmes qui parkent aux files systems et aux réseaux.
+En sus de `fs` et des modules de réseau, le coeur de node propose d'autres modules de base. Il existe un module pour gérer les requêtes DNS de manière asynchrones nommé `dns`, un autre pour récupérer les informations spécifiques à l'OS nommé comme la path du tmpdir nommé `os`, encore un pour allouer des morceaux de mémoire nommé `buffer`, d'autres pour parser les url et les paths (`url`, `querystring`, `path`), etc. La plus part, sinon tous, sont là pour gérer le principal cas d'utilisation de node: Ecrire rapidement des programmes qui parlent aux files systems et aux réseaux.
 
-Node gère l'I/O avec: callbacks, évènements, streams et modules. Si vous aprennez comment ces quatre choses fonctionnent, alors vous serez capable d'aller dans n'importe lequel des module core de node, et de comprendre comment vous interfacer avec eux.
+Node gère l'I/O avec: des callbacks, des évènements, des streams et des modules. Si vous aprennez comment ces quatre structures fonctionnent, alors vous serez capable d'aller dans n'importe lequel des module core de node, et de comprendre comment vous interfacer avec eux.
 
 ## Callbacks
 
@@ -349,7 +345,7 @@ function storeMessage(message) {
 }
 ```
 
-## Streams
+## Flux
 
 Plus tôt dans le projet node, le file system et les APIs de réseaux avaient leurs schemas de fonctionnements séparés pour gérer les flux d'I/O. Par exemple, les fichiers du file system avaient des 'file descriptors', le module `fs` nécessitaient de la logique supplémentaire pour garder des traces de toutes ces choses, tandis que les modules de réseau ignoraient ces concepts. En dépit de différences sémantiques mineurs comme celles ci, au niveau fondamental, les deux groupes de code duplicaient beaucoup de fonctionnalités quand il s'agissait de lire les données en entrée et en sortir. Les équipes développant node on réalisé qu'il serait confus d'avoir à apprendre deux groupes sémantiques pour faire relativement la même chose, ils ont alors créée une nouvelle API nommé `Stream` à la fois pour le File system et pour le réseau.
 
