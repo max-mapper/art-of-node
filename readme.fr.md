@@ -1,7 +1,7 @@
 # The Art of Node
 ## Une introduction à Node.js
 
-Si vous souhaitez découvrir Node et que les connaissances énnoncées ci-après vous sont familières, ce document est fait pour vous :
+Si vous souhaitez découvrir Node et que les connaissances énoncées ci-après vous sont familières, ce document est fait pour vous :
 
 - Un langage de script, tel que JavaScript, Ruby, Python, Perl, etc. Si vous n'êtes pas programmeur, vous préfèrerez sans doute précéder cette lecture par la découverte de [JavaScript for Cats](http://jsforcats.com/). :cat2:
 - Git & Github qui sont les outils de collaboration privilégiés par la communauté. Rassurez-vous, pas besoin d'être expert, quelques connaissances basiques suffiront. Au besoin, voici trois superbes tutos pour bien démarrer avec git : [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
@@ -25,7 +25,7 @@ Ce court livre est une oeuvre en cours de réalisation. Si vous l'aimez, **donne
 
 ## Apprentissage Interactif de Node
 
-Par expérience, j'ai appris que la simple lecture d'un guide ne se suffit pas à elle-même. Gardez votre éditeur de texte favoris sous la main et écrivez du node en parrallèle ! Apprendre en codant est le meilleur moyen d'intégrer les concepts que vous lirez.
+Par expérience, j'ai appris que la simple lecture d'un guide ne se suffit pas à elle-même. Gardez votre éditeur de texte favoris sous la main et écrivez du node en parallèle ! Apprendre en codant est le meilleur moyen d'intégrer les concepts que vous lirez.
 
 ### NodeSchool.io
 
@@ -57,7 +57,7 @@ Rassurez-vous, vous n'avez pas besoin de tout comprendre à ce graphe. Le but es
 
 Usuellement, produire ce type de système induit deux conséquences probables:
 
-- D'excellentes performances a l'exécution, mais aux prix de difficultés dans l'écriture (comme partir de zero pour ecrire un serveur web en C)
+- D'excellentes performances a l'exécution, mais aux prix de difficultés dans l'écriture (comme partir de zéro pour écrire un serveur web en C)
 - Une simplicité d'écriture, mais de faibles performances, ou un manque de robustesse (comme quand quelqu'un essaye d'envoyer un fichier de 5Go sur votre serveur et qu'il crash)
 
 L'objectif poursuivit par Node est de trouver l'équilibre entre ces deux situations : Être accessible tout en offrant des performances optimales.
@@ -98,7 +98,7 @@ Pour commencer, je vous suggère d'installer Node sur votre machine. Le plus sim
 
 Node possède nativement un petit groupe de modules (qui réponds communément au nom de 'Node core' - 'Coeur de Node') qui sont présenté en tant qu'API publique, et avec lesquels nous sommes censés écrire nos programmes. Pour travailler avec un file system, il y a le module 'fs', et pour les réseaux, les modules comme `net` (TCP), `http`, `dgram` (UDP).
 
-En sus de `fs` et des modules de réseau, le Coeur de Node propose d'autres modules de base. Il existe un module pour gérer les requêtes DNS de manière asynchrones nommé `dns`, un autre pour récupérer les informations spécifiques à l'OS comme la path du tmpdir nommé `os`, encore un pour allouer des morceaux de mémoire nommé `buffer`, d'autres pour parser les url et les paths (`url`, `querystring`, `path`), etc. La plus part, sinon tous, sont là pour gérer le principal cas d'utilisation de node: Ecrire rapidement des programmes qui parlent aux files systems et aux réseaux.
+En sus de `fs` et des modules de réseau, le Coeur de Node propose d'autres modules de base. Il existe un module pour gérer les requêtesDNS de manière asynchrones nommé `dns`, un autre pour récupérer les informations spécifiques à l'OS comme la path du tmpdir nommé `os`, encore un pour allouer des morceaux de mémoire nommé `buffer`, d'autres pour parser les url et les paths (`url`, `querystring`, `path`), etc. La plus part, sinon tous, sont là pour gérer le principal cas d'utilisation de node: Ecrire rapidement des programmes qui parlent aux files systems et aux réseaux.
 
 Node possède plusieurs cordes à son arc pour gérer les 'I/O: des callbacks, des évènements, des streams - 'flux' et des modules. Si vous arrivez à apprendre comment ces quatre structures fonctionnent, alors vous serez capable d'aller dans n'importe lequel des module core de Node, et de comprendre comment vous interfacer avec eux.
 
@@ -106,9 +106,9 @@ Node possède plusieurs cordes à son arc pour gérer les 'I/O: des callbacks, d
 
 Voilà le sujet le plus important si vous voulez comprendre comment utiliser node. On retrouve les callbacks à peu près partout dans Node. Ils n'ont pas été inventés par node cependant, ils font simplement parti intégrante de JavaScript.
 
-Les Callbacks sont des fonctions qui s'exécutent de manière asynchrone ou plus tard dans le temps. Au lieu de lire le code de haut en bas de manière procédurale, les programmes asynchrones peuvent executer différentes fonctions à différents moments. Cet ordre sera définit en fonction de l'ordre et de la vitesse des précédents appels, comme les requetes HTTP ou bien encore la lecture du file system.
+Les Callbacks sont des fonctions qui s'exécutent de manière asynchrone ou plus tard dans le temps. Au lieu de lire le code de haut en bas de manière procédurale, les programmes asynchrones peuvent exécuter différentes fonctions à différents moments. Cet ordre sera définit en fonction de l'ordre et de la vitesse des précédents appels, comme les requetes HTTP ou bien encore la lecture du file system.
 
-Cette différence peut entrainer des confusions, car déterminer si une fonction est asynchrone our non dépend beaucoup de son contexte. Voici un exemple synchrone, ce qui signifie que vous pouvez lire ce code de haut en bas comme un livre:
+Cette différence peut entrainer des confusions, car déterminer si une fonction est asynchrone our non dépend beaucoup de son contexte. Voici un exemple synchrone, ce qui signifie que que vous pouvez lire ce code de haut en bas comme un livre:
 
 ```js
 var myNumber = 1
@@ -139,17 +139,17 @@ console.log(myNumber) // logs out undefined -- this line gets run before readFil
 
 Pourquoi obtenons nous `undefined` quand nous affichons le chiffre cette fois ci ? Dans ce code, nous utilisons la méthode`fs.readFile`, qui est une méthode asynchrone. Tout ce qui doit parler à un disque dur ou à un réseau aura tendance à être asynchrone. Si leur objectif est simplement d'accéder à la mémoire, ou travailler avec le processeur, alors ils seront synchrone. La raison est que l'I/O est effroyablement lent! En guise d'illustration, dites vous que parler avec un disque dur est environ 100,000 fois plus lent qu'une communication avec la mémoire(e.g. RAM).
 
-Quand nous lançons ce programme, toutes ses fonctions sont immédiatement définies, mais elles n'ont pas besoin de s'éxecuter immédiatement. C'est un élément fondamental à comprendre en programmation asynchrone. Quand `addOne` est appelé, il démarre `readFile` et enchaine avec le prochain élément prêt à être executé. S'il n'y a rien dans la file d'attente, Node attendra les opérations fs/réseau en attente pour terminer, ou il s'arrêtera simplement de tourner et sortira sur la ligne de commande.
+Quand nous lançons ce programme, toutes ses fonctions sont immédiatement définies, mais elles n'ont pas besoin de s'exécuter immédiatement. C'est un élément fondamental à comprendre en programmation asynchrone. Quand `addOne` est appelé, il démarre `readFile` et enchaine avec le prochain élément prêt à être exécuté. S'il n'y a rien dans la file d'attente, Node attendra les opérations fs/réseau en attente pour terminer, ou il s'arrêtera simplement de tourner et sortira sur la ligne de commande.
 
 Quand `readFile` aura terminé de lire le fichier (cela peut prendre entre quelques millisecondes et plusieurs minutes, en fonction de la vitesse du disque dur) il lancera la fonction `doneReading`, puis lui donnera une erreur (s'il y en a une) ainsi que le contenu du fichier.
 
 La raison pour laquelle nous obtenons `undefined` ci-dessus est qu'il n'existe aucune logique dans notre code pour dire à notre `console.log` d'attendre que le `readFile` ait terminé avant de sortir notre chiffre.
 
-Si vous avez du code que vous voulez pouvoir executer encore et encore, ou simplement plus tard, la première étape consiste à encapsuler ce code dans une fonction. Ensuite, vous pouvez indiquer à votre fonction le moment où elle devra l'éxecuter. Bien évidemment, donner des noms descriptifs et verbeux à vos fonction aidera grandement.
+Si vous avez du code que vous voulez pouvoir exécuter encore et encore, ou simplement plus tard, la première étape consiste à encapsuler ce code dans une fonction. Ensuite, vous pouvez indiquer à votre fonction le moment où elle devra l'exécuter. Bien évidemment, donner des noms descriptifs et verbeux à vos fonction aidera grandement.
 
-Les Callbacks ne sont que des fonctions qui s'executent plus tard. La clef pour comprendre les callbacks est de réaliser que vous ne savez pas **quand** une opération asynchrone sera terminée, mais vous savez **où** cette opération doit se compléter - la dernière ligne de votre fonction asynchrone ! L'ordre haut-en-bas de déclaration de vos callbacks n'a pas d'importance, seul l'encapsulation logique compte. Commencez par découper votre code en fonction, puis utilisez vos callbacks pour déclarer qu'une fonction requiert qu'une autre se termine.
+Les Callbacks ne sont que des fonctions qui s'exécutent plus tard. La clef pour comprendre les callbacks est de réaliser que vous ne savez pas **quand** une opération asynchrone sera terminée, mais vous savez **où** cette opération doit se compléter - la dernière ligne de votre fonction asynchrone ! L'ordre haut-en-bas de déclaration de vos callbacks n'a pas d'importance, seul l'encapsulation logique compte. Commencez par découper votre code en fonction, puis utilisez vos callbacks pour déclarer qu'une fonction requiert qu'une autre se termine.
 
-La méthode `fs.readFile` fournie par node est asynchrone et il se trouve qu'elle prend beaucoup de temps pour se terminer. Mettez-vous à sa place: elle doit aller interroger l'OS, qui à son tour doit se renseigner auprès du file système, qui vit sur le disque dur, qui peut ne pas en trainer de tourner à des miliers de tours par minute. Ensuite il doit utiliser un laser pour lire une donnée, puis la renvoyer à travers toutes les strates successives de votre programme JavaScript. Vous donnez donc à `readFile` une fonction (aussi appelé callback) qu'il appelera une fois qu'il aura récupéré les données de votre file system. Il placera les données qu'il a récupéré dans une variable JavaScript et appelera votre callback avec cette variable. Dans ce cas, la variable est nommé `fileContents` car elle détient le contenu du fichier qui a été lu.
+La méthode `fs.readFile` fournie par node est asynchrone et il se trouve qu'elle prend beaucoup de temps pour se terminer. Mettez-vous à sa place: elle doit aller interroger l'OS, qui à son tour doit se renseigner auprès du file système, qui vit sur le disque dur, qui peut ne pas en trainer de tourner à des miliers de tours par minute. Ensuite il doit utiliser un laser pour lire une donnée, puis la renvoyer à travers toutes les strates successives de votre programme JavaScript. Vous donnez donc à `readFile` une fonction (aussi appelé callback) qu'il appellera une fois qu'il aura récupéré les données de votre file system. Il placera les données qu'il a récupéré dans une variable JavaScript et appellera votre callback avec cette variable. Dans ce cas, la variable est nommé `fileContents` car elle détient le contenu du fichier qui a été lu.
 
 Reprenez l'exemple du restaurant cité au début de ce tuto. Très souvent, vous trouverez dans les restaurant des numéros à poser sur votre table pendant que vous patientez. Ces numéros sont comme des callbacks. Ils indiquent au serveur ce qu'ils doivent faire une fois que votre sandwich est prêt.
 
@@ -176,18 +176,18 @@ addOne(logMyNumber)
 
 La fonction `logMyNumber` peut désormais être passée en argument qui deviendra la variable de `callback` dans la fonction `addOne`. Une fois que `readFile` en a terminé, la variable `callback` sera invoquée (`callback()`). Seules les fonctions peuvent être invoquées, donc si vous passez n'importe quoi d'autre qu'une fonction, il en résultera une erreur.
 
-Quand une fonction est invoquée en JavaScript, le code qu'elle renferme est immédiatement executé. Dans notre cas, notre console log s'éxecutera puisque `callback` est `logMyNumber`. Rappelez-vous, le simple fait de *define* une fonction ne signifie pas qu'elle s'éxecutera. Pour ce faire, vous devez *invoke* une fonction.
+Quand une fonction est invoquée en JavaScript, le code qu'elle renferme est immédiatement exécuté. Dans notre cas, notre console log s'exécutera puisque `callback` est `logMyNumber`. Rappelez-vous, le simple fait de *define* une fonction ne signifie pas qu'elle s'exécutera. Pour ce faire, vous devez *invoke* une fonction.
 
 Pour aller encore plus loin avec cet exemple, voici une liste chronique des évènements qui se produisent à l'éxécution de ce code:
 
-- 1: Le code est parsé, ce qui signifique qu'une quelconque erreur syntaxique casserait le programme. Durant cette phase initiale, il y a 4 choses qui sont définies: `fs`, `myNumber`, `addOne`, and `logMyNumber`. Notez qu'elles sont simplement définies. Aucune fonction n'a encore été invoquée ou appellée pour le moment.
-- 2: Quand la derniere ligne de notre programme est executée `addOne` est invoqué, puis est passé dans la fonction `logMyNumber` comme 'callback', ce qui est bien ce que nous demandons quand `addOne` est terminé. Cela entraine immédiatement le démarrage de la fonction asynchrone `fs.readFile`. Cette partie du programme prend un peu de temps à se terminer.
+- 1: Le code est parsé, ce qui signifique qu'une quelconque erreur syntaxique casserait le programme. Durant cette phase initiale, il y a 4 choses qui sont définies: `fs`, `myNumber`, `addOne`, and `logMyNumber`. Notez qu'elles sont simplement définies. Aucune fonction n'a encore été invoquée ou appelée pour le moment.
+- 2: Quand la dernière ligne de notre programme est exécutée `addOne` est invoqué, puis est passé dans la fonction `logMyNumber` comme 'callback', ce qui est bien ce que nous demandons quand `addOne` est terminé. Cela entraine immédiatement le démarrage de la fonction asynchrone `fs.readFile`. Cette partie du programme prend un peu de temps à se terminer.
 - 3: Puisqu'il n'a rien à faire, Node patiente pendant que `readFile` se termine. S'il y avait une quelconque autre tache à réaliser, Node serait disponible pour faire le boulot.
 - 4: `readFile` se termine et appelle son callback, `doneReading`, qui à son tour incrémente le nombre et invoque immédiatement la fonction qu'`addOne` a passé, `logMyNumber` (son callback).
 
-La chose la plus troublante quand on programme avec des callbacks est probablement le fait que les fonctions sont de simples objets, encapsulables dans des variables et que l'on peut passer n'importe où avec des noms différents. Affecter des noms simples et descriptifs à vos variables est primordiable pour rendre votre code lisible pour les autres comme pour vous-même. D'une manière générale, si vous voyez une variable comme `callback` ou `cb` vous pouvez partir du principe qu'il s'agit d'une fonction.
+La chose la plus troublante quand on programme avec des callbacks est probablement le fait que les fonctions sont de simples objets, encapsulables dans des variables et que l'on peut passer n'importe où avec des noms différents. Affecter des noms simples et descriptifs à vos variables est primordiale pour rendre votre code lisible pour les autres comme pour vous-même. D'une manière générale, si vous voyez une variable comme `callback` ou `cb` vous pouvez partir du principe qu'il s'agit d'une fonction.
 
-Vous avez peut-être entendu les termes de 'evented programming' (programmation évènementielle) ou 'event loop' (boucle d'évènement). Ils se réfèrent à la manière dont `readFile` est implémenté. Node dispatch d'abord les opérations `readFile` puis attends que `readFile` envoi un évènement qu'il a cloturé.
+Vous avez peut-être entendu les termes de 'evented programming' (programmation évènementielle) ou 'event loop' (boucle d'évènement). Ils se réfèrent à la manière dont `readFile` est implémenté. Node dispatch d'abord les opérations `readFile` puis attends que `readFile` envoi un évènement qu'il a clôturé.
 Pendant qu'il patiente, Node peut tranquillement s'affairer ailleurs. Pour s'y retrouver, Node maintient une liste de tâches qui ont été dispatchées mais qui n'ont pas encore reçu de feedback, et boucle dessus indéfiniment jusqu'à ce que l'une d'entre elle soit terminée. Une fois chose faite, Node invoque les éventuels callbacks qui lui sont rattachés.
 
 Voila une version de l'exemple précédent en pseudocode:
@@ -211,7 +211,7 @@ a(function() {
   })
 })
 ```
-Quand ce code est executé, `a` démarrera immédiatement, puis une minute plus tard il appelera `b`, qui une minute plus tard lancera `c`. Au bout de 3 minutes, node s'arrêtera puisqu'il n'y aura plus rien à faire. Bien évidemment, il existe des méthodes plus élégantes pour écrire le code ci-dessus, mais le but est de montrer que si vous avez du code qui doit attendre un autre code asynchrone pour s'éxecuter, alors il faut exprimer cette dépendance en disposant votre code dans une fonction qui sera alors passé comme callback.
+Quand ce code est exécuté, `a` démarrera immédiatement, puis une minute plus tard il appellera `b`, qui une minute plus tard lancera `c`. Au bout de 3 minutes, node s'arrêtera puisqu'il n'y aura plus rien à faire. Bien évidemment, il existe des méthodes plus élégantes pour écrire le code ci-dessus, mais le but est de montrer que si vous avez du code qui doit attendre un autre code asynchrone pour s'exécuter, alors il faut exprimer cette dépendance en disposant votre code dans une fonction qui sera alors passé comme callback.
 
 Le design de node requière un mode de pensé non-linéaire. Considérez donc cette liste d'opérations:
 
@@ -227,7 +227,7 @@ var file = readFile()
 processFile(file)
 ```
 
-Ce type de code non-linéaire (étape par étape, dans l'ordre) n'est pas la manière dont Node fonctionne. Si ce code devait être executé, alors `readFile` et `processFile` devraient être lancés au même moment. Cela n'aurait aucun sens puisque `readFile` mettra du temps à se terminer. A la place, vous devez signifier que `processFile` dépend de `readFile`. C'est exactement à cela que servent les callbacks ! Et parce que javascript fonctionne ainsi, vous pourrez écrire cette dépendance de plusieurs manières:
+Ce type de code non-linéaire (étape par étape, dans l'ordre) n'est pas la manière dont Node fonctionne. Si ce code devait être exécuté, alors `readFile` et `processFile` devraient être lancés au même moment. Cela n'aurait aucun sens puisque `readFile` mettra du temps à se terminer. A la place, vous devez signifier que `processFile` dépend de `readFile`. C'est exactement à cela que servent les callbacks ! Et parce que javascript fonctionne ainsi, vous pourrez écrire cette dépendance de plusieurs manières:
 
 ```js
 var fs = require('fs')
@@ -264,7 +264,7 @@ fs.readFile('movie.mp4', function finishedReading(error, movieData) {
 ```
 
 ## Evenements
-Dans le cas où vous auriez besoin du module d'[evenements](http://nodejs.org/api/events.html), node vous propose 'event emitter', un module utilisé nativement par Node pour l'ensemble des ses API émettrices.
+Dans le cas où vous auriez besoin du module d'[evenements](http://nodejs.org/api/events.html), node vous propose 'event emitter', un module utilisé nativement par Node pour l'ensemble des ses API crée.
 
 L'utilisation d'évènements est chose très commune en programmation, plus connu en tant que patron de conception ['Observation'](https://fr.wikipedia.org/wiki/Observateur_(patron_de_conception)) ou encore 'Observateur/Observable'. Tandis que les callbacks sont des relation one-to-one entre la chose qui attend le callback et celle qui appelle ce callback, les évènements répondent au même schema, a l'exception de leur système relationnel many-to-many.
 
@@ -350,7 +350,7 @@ function storeMessage(message) {
 
 Plus tôt dans le projet node, le file system et les APIs de réseaux avaient leurs schemas de fonctionnement séparés pour gérer les flux d'I/O. Par exemple, les fichiers du file system avaient des 'file descriptors', le module `fs` nécessitaient de la logique supplémentaire pour garder des traces de toutes ces choses, tandis que les modules de réseau ignoraient ces concepts. En dépit de différences sémantiques mineurs comme celles ci, au niveau fondamental, les deux groupes de code duplicaient beaucoup de fonctionnalités quand il s'agissait de lire les données en entrée et en sortir. Les équipes développant node on réalisé qu'il serait confus d'avoir à apprendre deux groupes sémantiques pour faire relativement la même chose, ils ont alors créée une nouvelle API nommé `Stream` à la fois pour le File system et pour le réseau.
 
-Tout l'intéret de node réside dans sa capacité à faciliter l'interaction avec les file system et les réseaux, il était donc sensé d'avoir un seule schema de fonctionnement valable pour toutes les situations. La bonne nouvelle est que la plus part des cas d'utilisation (et il sont peu nombreux quoi qu'il en soit) on été couvert par node, et il est fort peu probable que node évolue de ce côté à l'avenir.
+Tout l'intéret de node réside dans sa capacité à faciliter l'interaction avec les file system et les réseaux, il était donc sensé d'avoir un seul schema de fonctionnement valable pour toutes les situations. La bonne nouvelle est que la plus part des cas d'utilisation (et il sont peu nombreux quoi qu'il en soit) on été couvert par node, et il est fort peu probable que node évolue de ce côté à l'avenir.
 
 Il y a deux ressources formidables dont vous pouvez commencer à apprendre l'utilisation des flux node. La première est stream-adventure (cf. Apprentissage de Node Interactif), et la seconde s'appelle Stream Handbook.
 
@@ -374,7 +374,7 @@ Imaginez que vous souhaitez convertir un fichier PDF en TXT. Le meilleur moyen e
 
 ![pdfsearch](npm-search.png)
 
-Et il y a des tonnes de résultats! npm est relativement populaire, et vous trouverez généralement de multiples solutions potentielles pour vos besoins. Si vous filtrez suffisament bien vos résultats vous devriez vous retrouver avec ceci :
+Et il y a des tonnes de résultats! npm est relativement populaire, et vous trouverez généralement de multiples solutions potentielles pour vos besoins. Si vous filtrez suffisamment bien vos résultats vous devriez vous retrouver avec ceci :
 
 - [hummus](https://github.com/galkahana/HummusJS/wiki/Features) - c++ pdf manipulator
 - [mimeograph](https://github.com/steelThread/mimeograph) - api on a conglomeration of tools (poppler, tesseract, imagemagick etc)
@@ -439,7 +439,7 @@ Avec npm, l'installation de modules globaux est contre-nature. De la même mani�
 Quand vous faites appel à `require('some_module')` voila ce qui se passe dans node:
 
 1. Si un fichier qui s'appelle `some_module.js` existe dans le dossier courant, node le lancera. Autrement:
-2. Node rechercha dans le dossier en cours pour pour dossier nommé `node_modules` contenant un fichier `some_module` à l'interieur.
+2. Node recherchera un dossier nommé `node_modules` dans le repertoire en cours, contenant un fichier `some_module` à l'interieur.
 3. Si il ne trouve toujours pas, il montera d'un niveau et répètera l'opération 2.
 
 Ce cycle se répètera jusqu'à ce que node atteignent le dossier root du filesystem. A ce moment, il continuera sa recherche dans les repertoires de modules globaux (comme `/usr/local/node_modules` sur Mac OS). Enfin, s'il ne trouve toujours rien, il enverra une erreur.
@@ -613,7 +613,7 @@ fs.readFile('movie.mp4', function(err, data) {
 
 Note : Si vous ne savez pas ce que ces choses signifient, il sera probablement plus simple d'apprendre node, puisque désapprendre constitue tout autant de travail qu'apprendre.
 
-Node utilise des threads internes pour accélerer les choses, mais ne les expose par à l'utilisateur. Si vous êtes un utilisateur technique et que vous vous demandez pourquoi node est conçu ainsi, alors vous devriez absolument lire [the design of libuv](http://nikhilm.github.com/uvbook/), la couche I/O en C++ sur laquelle node est fondé.
+Node utilise des threads internes pour accelérer les choses, mais ne les expose par à l'utilisateur. Si vous êtes un utilisateur technique et que vous demandez pourquoi node est conçu ainsi, alors vous devriez absolument lire [the design of libuv](http://nikhilm.github.com/uvbook/), la couche I/O en C++ sur laquelle node est fondé.
 
 ## License
 
