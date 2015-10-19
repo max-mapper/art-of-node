@@ -18,10 +18,10 @@ Ce court livre est une oeuvre en cours de réalisation. Si vous l'aimez, **donne
 - [Modules de base](#modules-de-base)
 - [Callbacks](#callbacks)
 - [Evenements](#evenements)
-- [Flux](#streams)
-- [Modules and npm](#modules)
-- [Client side development with npm](#client-side-development-with-npm)
-- [Going with the grain](#going-with-the-grain)
+- [Flux](#flux)
+- [Modules & npm](#modules)
+- [Développement côté client avec npm](#developpez-cote-client-avec-npm)
+- [Suivez le mouvement !](#suivez-le-mouvement)
 
 ## Apprentissage Interactif de Node
 
@@ -523,7 +523,7 @@ Cela installera une copie de `request` dans le `node_modules` le plus proche et 
 
 Par défaut `npm install` récupèrera la dernière version publiée du module.
 
-## Développement coté Client avec npm
+## Developpez cote client avec npm
 npm est victime d'un vice de pensé assez fréquent. `Node` faisant parti de son nom, il est courant de penser qu'il ne gère que des modules JS côté serveur, ce qui est absolument faux! npm signifie Node Packaged Module, c'est-à-dire des module que Node package pour vous. Ces modules peuvent être n'importe quoi - Ce ne sont que des repertoires ou des fichiers encapsulés dans des .tar.gz et un fichié nommé `package.json` qui explicite la version du module ainsi que la liste de toutes ses dépendances (ainsi que leur propre version de module pour que seules les versions connues pour fonctionner avec notre module ne soient installées automatiquement). Les dépendances ne sont que des modules, qui peuvent eux mêmes avoir des dépendances, et ainsi de suite.
 
 [browserify](http://browserify.org/) est un utilitaire écrit en node qui tente de traduire n'importe quel module node en code lisible par un browser. Bien que *beaucoup de modules soient compatibles*, tous ne le sont pas (Les browsers ne peuvent par exemple pas heberger un serveur HTTP).
@@ -558,9 +558,9 @@ setTimeout(function() {
 Ou testez [un exemple plus complexe](http://requirebin.com/?gist=6031068) (Vous êtes libre de changer le code pour voir ce qu'il se produit):
 [![requirebin](requirebin.png)](http://requirebin.com/embed?gist=6031068)
 
-## Going with the grain
+## Suivez le mouvement
 
-Comme tous les bons outils, node est particulièrement adapté à certains cas d'utilisation. Par exemple: Rails, le framework web populaire, est fantastique pour modeliser de la [logique métier complexe](http://en.wikipedia.org/wiki/Business_logic), c'est-à-dire utiliser le code pour représenter des objets métiers comme des comptes clients, des prêts, des itinéraires, ou encore des stocks. Tandis que l'on peut techniquement faire la même chose avec node, nous rencontrerions quelques désagréments puisque node est conçu pour résoudre des problèmes d'I/O and ne connait absolument rien de la logique métier. Chaque outil se concentre sur des problèmes différents. Fort heureusement, ce guide vous aidera à comprendre intuitivement les forces de node pour que vous sachiez avec exactitude quand il vous sera utilise.
+Comme tous les bons outils, node est particulièrement adapté à certains cas d'utilisation. Par exemple: Rails, le framework web populaire, est fantastique pour modeliser de la [logique métier complexe](http://en.wikipedia.org/wiki/Business_logic), c'est-à-dire utiliser le code pour représenter des objets métiers comme des comptes clients, des prêts, des itinéraires, ou encore des stocks. Tandis qu'il est techniquement possible de faire la même chose avec Node, nous rencontrerions quelques désagréments car Node n'a pas été conçu pour résoudre ce type de problématiques. Retenez que chaque outil se concentre sur des problèmes différents! Fort heureusement, ce guide vous aidera à comprendre les forces de node afin que vous sachiez intuitivement à quel moment y avoir recours.
 
 ### Quelles sont les limites du scope de node ?
 
@@ -574,7 +574,7 @@ Il existe des frameworks web basés sur node (framework signifiant un aggloméra
 
 Node utilise JavaScript et adopte donc sa syntaxe. Felix Geisendörfer présente une synthèse plutôt bonne du 'style node' [here](https://github.com/felixge/node-style-guide).
 
-#### Language abstraction
+#### Niveau d'abstraction du langage
 
 Quand cela est possible, node utilisera le moyen le plus simple possible d'accomplir quelque chose. Plus fantaisiste sera votre JavaScript plus vous apportez de complexité. Programmer est difficile, particulièrement en JavaScript où vous avez 1000 manières différentes de solutionner un même problème ! C'est pourquoi node essaye toujours d'utiliser la solution la plus simple universelle. Si vous tentez de résoudre un problème qui appelle une solution complexe, et que vous n'êtes pas satisfait des solutions en pure JS que node implémente, vous êtes libre de les résoudre à l'interieur de votre module en utilisant le niveau d'abstraction que vous souhaitez.
 
