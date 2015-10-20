@@ -14,10 +14,10 @@ This short book is a work in progress + I don't have a job right now (if I did I
 
 ## 目录
 
-- [了解Node](#node-1)
-- [核心模块](#-1)
-- [Callbacks](#callbacks)
-- [Events](#events) (not written yet)
+- [了解Node](#了解Node)
+- [核心模块](#核心模块)
+- [回调函数](#回调函数)
+- [事件](#事件)
 - [Streams](#streams) (not written yet)
 - [Modules and NPM](#modules) (not written yet)
 - [Going with the grain](#going-with-the-grain)
