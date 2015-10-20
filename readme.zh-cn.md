@@ -241,20 +241,28 @@ fs.readFile('movie.mp4', function finishedReading(error, movieData) {
 })
 ```
 
-## Events
-
+## 事件
+在Node中如果你调用了[events](http://nodejs.org/api/events.html)模块， 就可以用被称作`事件触发器`的功能。 Node在它的API中使用这一功能触发事件。  
 In node if you require the [events](http://nodejs.org/api/events.html) module you can use the so-called 'event emitter' that node itself uses for all of its APIs that emit things.
 
+在编程中运用`事件`是一种常见的方法。它还有一个我们更为熟知的名字[观察者模式](https://zh.wikipedia.org/wiki/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F)，或者`发布／订阅`模式。在回调函数的模式中，调用回调函数的命令与等待回调函数的命令间的关系是一一对应的，而在事件模式中这两种命令的关系可以是多对多的。  
 Events are a common pattern in programming, known more widely as the ['observer pattern'](http://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
+理解事件最简单的方式，就是把它当成一个你订阅的东西。如果说在回调函数里面我们的逻辑是`先做X，再做Y`，那么在事件中我们的逻辑是`当X发生时，做Y`。  
 
 The easiest way to think about events is that they let you subscribe to things. You can say 'when X do Y', whereas with plain callbacks it is 'do X then Y'.
-
+以下是一些常见的用事件取代回调函数的例子：
 Here are few common use cases for using events instead of plain callbacks:
 
+- 需要向所有听众广播的聊天室
 - Chat room where you want to broadcast messages to many listeners
+- 需要及时了解玩家上线、下线、运动、设计、跳跃等动作的游戏服务器
 - Game server that needs to know when new players connect, disconnect, move, shoot and jump
+- 需要能让开发者执行`.on('jump', function() {})`这种命令的游戏引擎
 - Game engine where you want to let game developers subscribe to events like `.on('jump', function() {})`
+- 能够执行`.on('incomingRequest')` 或 `.on('serverError')`这一API的低端web服务器。
 - A low level web server that wants to expose an API to easily hook into events that happen like `.on('incomingRequest')` or `.on('serverError')`
+
+如果我们想只用回调函数写一个连接聊天服务器的模块的话，代码会长这样：
 
 If we were trying to write a module that connects to a chat server using only callbacks it would look like this:
 
@@ -286,6 +294,8 @@ chatClient.connect(
 )
 ```
 
+正如你所见，用回调函数写会变得十分笨拙。你需要把所有的功能函数按特定的顺序传给`.connect`来执行。但是将上面所写的功能用事件来实现，就会变成这样：
+
 As you can see this is really cumbersome because of all of the functions that you have to pass in a specific order to the `.connect` function. Writing this with events would look like this:
 
 ```js
@@ -307,6 +317,8 @@ chatClient.on('message', function() {
   // show the chat room message in the UI
 })
 ```
+
+这种写法和回调函数很像，但是运用了高大上的`.on`功能，它会让一个回调函数‘订阅’一个事件。 这意味着你可以在`chatClient`中选择任意一个想要订阅的事件。 你甚至可以为多个回调函数订阅同一个事件：
 
 This approach is similar to the pure-callback approach but introduces the `.on` method, which subscribes a callback to an event. This means you can choose which events you want to subscribe to from the `chatClient`. You can also subscribe to the same event multiple times with different callbacks:
 
