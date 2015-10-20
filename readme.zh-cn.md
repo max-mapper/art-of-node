@@ -329,21 +329,13 @@ function storeMessage(message) {
 
 在早期的node项目中，文件系统和网络API有各自处理I/O流的方式。比如，在文件系统中，文件有一个‘文件描述器’的东西，因此`fs`模块需要调用额外的逻辑来跟踪这个东西。然而在网络模块中根本没有’xx描述器‘这样的概念。尽管在语义上有像这样较小的区别，在最底层这两种模块（文件系统、网络模块）在重复着同样的数据读写操作。Node的维护们很快意识到这样的重复很容易迷惑开发者，于是他们造了这么个叫`流`（Stream）的东西，使网络与文件系统的代码可以同样工作。
 
-Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
-
 Node的理念就是以更简单的方式来处理文件系统和网络，所有理所应当的应该有一个通用的模式，可以在不同的场景中运用。好消息是，类似的大多数模式（尽管数量很少）现在已经被认为node在未来不会去更改。
 
-The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
-
 已经有两个很棒的资源可以用来学习node的流对象。一个叫‘stream-adventure’（参考‘[了解Node](#了解Node)’部分),另一个叫‘Stream Handbook’。
-
-There are already two great resources that you can use to learn about node streams. One is the stream-adventure (see the Learn Node Interactively section) and the other is a reference called the Stream Handbook.
 
 ### Stream Handbook
 
 [stream-handbook](https://github.com/substack/stream-handbook#introduction) 是一个与本项目相似的，包含所有你需要、想要了解的有关流对象的内容的教程。
-
-[stream-handbook](https://github.com/substack/stream-handbook#introduction) is a guide, similar to this one, that contains a reference for everything you could possibly need to know about streams.
 
 [![stream-handbook](stream-handbook.png)](https://github.com/substack/stream-handbook)
 
