@@ -20,8 +20,9 @@ This short book is a work in progress + I don't have a job right now (if I did I
 - [事件](#事件)
 - [流](#流)
 - [模块](#模块) 
-- [Going with the grain](#going-with-the-grain)
-- [Real-time apps](#realtime) (not written yet)
+- [用npm在客户端开发](#用npm在客户端开发)
+- [析薪杝矣](#析薪杝矣)
+
 
 ## 了解Node
 
@@ -500,13 +501,21 @@ npm install --save request
 ```
 默认情况下 `npm install`会安装模块的最新版本。
 
-## Client side development with npm
+## 用npm在客户端开发
+
+人们对npm有一个常见的错误观念，认为npm的名字中有一个Node，所以只能用于服务器端的JS模块。一派胡言！npm的全称是Node Packaged Modules，是由node为你打包过的模块。而模块本身可以是任何东西－－本质上只是一个被打包成.tar.gz的文件夹，和一个声明了模块版本和模块依赖项的配置文件`package.json` （也包括依赖项的版本，这样对应版本的依赖项会被自动安装）。这是无穷无尽的－－模块可以有依赖，模块的依赖项也可以有依赖，依赖项的依赖项也可以有依赖。。。
 
 A common misconception about npm is that since it has 'Node' in the name that it must only be used for server side JS modules. This is completely untrue! npm actually stands for Node Packaged Modules, e.g. modules that Node packages together for you. The modules themselves can be whatever you want -- they are just a folder of files wrapped up in a .tar.gz, and a file called `package.json` that declares the module version and a list of all modules that are dependencies of the module (as well as their version numbers so the working versions get installed automatically). It's turtles all the way down - module dependencies are just modules, and those modules can have dependencies etc. etc. etc.
 
+[browserify](http://browserify.org/) 是一个用Node写的实用工具，可以讲任何node模块转换成可以在浏览器上运行的代码。当然，并不是所有模块都能工作（比如浏览器无法搭一个HTTP服务器），但是很多NPM上的模块*可以*。
+
 [browserify](http://browserify.org/) is a utility written in Node that tries to convert any node module into code that can be run in browsers. Not all modules work (browsers can't do things like host an HTTP server), but a lot of modules on NPM *will* work.
 
+你可以用[RequireBin](http://requirebin.com/)来尝试在浏览器上使用npm的模块，这是一个[原作者](https://github.com/maxogden)写的应用，它在[Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn)的基础上完成。原作在RequireBin中使用了browserify，并通过HTTP返回输出结果（而不是通过命令后－－browserify通常都是用来干这个）
+
 To try out npm in the browser you can use [RequireBin](http://requirebin.com/), an app I made that takes advantage of [Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn), which internally uses browserify but returns the output through HTTP (instead of the command line -- which is how browserify is usually used).
+
+试着将下面的代码粘贴到[RequireBin](http://requirebin.com/)并点`preview`按钮：
 
 Try putting this code into RequireBin and then hit the preview button:
 
@@ -533,34 +542,59 @@ setTimeout(function() {
 }, 500)
 ```
 
+或者看这个[更复杂的例子](http://requirebin.com/?gist=6031068)（可以随意改变它的颜色）：
+
 Or check out a [more complicated example](http://requirebin.com/?gist=6031068) (feel free to change the code and see what happens):
 
 [![requirebin](requirebin.png)](http://requirebin.com/embed?gist=6031068)
 
-## Going with the grain
+## 析薪杝矣
+```
+原文的标题是Going with the Grain，大意是顺应着木材的纹理(刨木)，不违背它
+此处的'析薪杝矣'出自詩·小雅：
+	伐木掎矣，析薪杝矣
+大意为，砍伐树木时,要撑住使大树不致突然倒下;劈木材,要依循木材的纹理,才比较容易
+
+```
+
+像任意一个顺手的工具一样，node非常强大，但也只适用于特定的应用场景。比如，Rails这个网络架构，非常适合做一些复杂的[框架]((http://en.wikipedia.org/wiki/Business_logic))，比如用代码来构建生活中的业务对象：帐户、借贷、流程图、存货清单等等。虽然从技术上讲，用node可以完成同样的工作，但这并不是node的强项，node更适合去做一些处理I/O问题的工作。希望这个教程能够帮你获得对node适用方案的直觉。
 
 Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](http://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
 
-### What is outside of node's scope?
+### node外的世界
+
+node只是一个处理文件系统和网络I/O的工具，它把更多有趣的功能留给第三方模块来处理。以下是node核心模块之外奇妙世界的一些介绍：
 
 Fundamentally node is just a tool used for managing I/O across file systems and networks, and it leaves other more fancy functionality up to third party modules. Here are some things that are outside the scope of node:
 
-#### Web frameworks
+#### 网络框架
+
+有许多搭建在node之上的网络框架（框架是一种解决特定高层应用问题的功能集合），但是node自身并不是一个网络框架。一些搭建在node之上的网络框架有自己的特性、抽象和权衡，这些和node自身的理念与开发优先级不一定相同。
 
 There are a number of web frameworks built on top of node (framework meaning a bundle of solutions that attempts to address some high level problem like modeling business logic), but node is not a web framework. Web frameworks that are written using node don't always make the same kind of decisions about adding complexity, abstractions and tradeoffs that node does and may have other priorities.
 
-#### Language syntax
+#### 编程语法
+
+Node适用Javascript的语法并且没有加以修饰。 Felix Geisendörfer针对node的风格有一篇很棒的[介绍](https://github.com/felixge/node-style-guide)。
 
 Node uses JavaScript and doesn't change anything about it. Felix Geisendörfer has a pretty good write-up of the 'node style' [here](https://github.com/felixge/node-style-guide).
 
-#### Language abstraction
+#### 语言的抽象
+
+node用最简单的方式来完成任务。在Javascirpt中，你想把它做的越有趣，就会带来更大的复杂度。编程是有难度的，尤其是在写js的时候更有这种体会，因为你应对的每一个问题都可能有1000种解决方案。正是因为如此，node试图用最简单、通用的方式来解决问题。如果你在处理一个很复杂的问题，并且你并不满意node应用的‘vanilla JS’解决方案，你大可不用它，并且自己写一个模块，用你自己喜欢的方法来解决它。
 
 When possible node will use the simplest possible way of accomplishing something. The 'fancier' you make your JavaScript the more complexity and tradeoffs you introduce. Programming is hard, especially in JS where there are 1000 solutions to every problem! It is for this reason that node tries to always pick the simplest, most universal option. If you are solving a problem that calls for a complex solution and you are unsatisfied with the 'vanilla JS solutions' that node implements, you are free to solve it inside your app or module using whichever abstractions you prefer.
 
+一个很棒的例子就是node中的回调函数。 早期node的一些实验中，有一个特性叫做‘promises’。它被用来使异步运行的代码看上去更线性。但是出于以下原因，这个特性后来被移除了：
+
 A great example of this is node's use of callbacks. Early on node experimented with a feature called 'promises' that added a number of features to make async code appear more linear. It was taken out of node core for a few reasons:
 
+- 它比回调函数更复杂
+- 它可以让用户来选择应用（在npm上以第三方模块的形式发布）
 - they are more complex than callbacks
 - they can be implemented in userland (distributed on npm as third party modules)
+
+试着考虑node处理的最基本最通用的事情：读取一个文件，当你读一个文件的时候，你希望在诸如硬盘错误这种事件发生的时候能及时知道。如果node用了上述的’promises‘特性，那么每个人的代码就会变成这样：
 
 Consider one of the most universal and basic things that node does: reading a file. When you read a file you want to know when errors happen, like when your hard drive dies in the middle of your read. If node had promises everyone would have to branch their code like this:
 
@@ -574,11 +608,18 @@ fs.readFile('movie.mp4')
   })
 ```
 
+这添加了复杂度，而且并不是所有人都想要这个特性。 node会用一个简单的回调函数来完成这两个独立的功能。其它的诸如此的规则还有：
+
 This adds complexity, and not everyone wants that. Instead of two separate functions node just uses a single callback function. Here are the rules:
 
+- 当没有错误的时候，对第一个参数返回null
+- 当有错误的时候，对第一个参数返回错误代码
+- 其它的变量可以用来做任何事情（node多数情况下在读写东西，所以这些变量通常被用来传数据或响应）
 - When there is no error pass null as the first argument
 - When there is an error, pass it as the first argument
 - The rest of the arguments can be used for anything (usually data or responses since most stuff in node is reading or writing things)
+
+基于上述规则写出来的回调函数则应是这样的：
 
 Hence, the node callback style:
 
@@ -588,17 +629,20 @@ fs.readFile('movie.mp4', function(err, data) {
 })
 ```
 
-#### Threads/fibers/non-event-based concurrency solutions
+#### 线程/纤程/非事件的并发处理
+注意：如果你并不知道这些词的含义，你可能会学Node学的更轻松一些。
 
 Note: If you don't know what these things mean then you will likely have an easier time learning node, since unlearning things is just as much work as learning things.
 
+Node内部使用线程来加速操作，但是这些部分并不会暴露给用户。如果你是专业人员，并且对node的设计理念十分好奇的话，推荐你阅读这篇[the design of libuv](http://nikhilm.github.com/uvbook/)，这个是node使用的C++ I/O层。
+
 Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
 
-## License
+## 使用许可
 
 ![CCBY](CCBY.png)
 
-Creative Commons Attribution License (do whatever, just attribute me)
+原文适用知识共享许可协议
 http://creativecommons.org/licenses/by/2.0/
 
-Donate icon is from the [Noun Project](http://thenounproject.com/term/donate/285/)
+捐款图标来源于 [Noun Project](http://thenounproject.com/term/donate/285/)
