@@ -19,7 +19,7 @@ This short book is a work in progress + I don't have a job right now (if I did I
 - [回调函数](#回调函数)
 - [事件](#事件)
 - [流](#流)
-- [Modules and NPM](#modules) (not written yet)
+- [模块](#模块) 
 - [Going with the grain](#going-with-the-grain)
 - [Real-time apps](#realtime) (not written yet)
 
@@ -339,19 +339,29 @@ Node的理念就是以更简单的方式来处理文件系统和网络，所有�
 
 [![stream-handbook](stream-handbook.png)](https://github.com/substack/stream-handbook)
 
-## Modules
+## 模块
+
+Node的核心是由许多模块（modules）组成，像底层的[事件](#事件)和[流](#流)，高一些层次的`http`和`crypto`。
 
 Node core is made up of about two dozen modules, some lower level ones like `events` and `stream` some higher level ones like `http` and `crypto`.
 
+Node有意被设计成这样，使它的核心模块轻量化，并注重于提供跨平台的处理普通I/O协议和类型的最基本工具。
+
 This design is intentional. Node core is supposed to be small, and the modules in core should be focused on providing tools for working with common I/O protocols and formats in a way that is cross-platform.
+
+除此之外，你可以在[npm](https://npmjs.org/)上找到其它需要了解的东西。任何人都可以创建一个新的模块，添加一些功能，并发布到`npm`上。到目前为止，npm上已经有196,950个模块可供下载。
 
 For everything else there is [npm](https://npmjs.org/). Anyone can create a new node module that adds some functionality and publish it to npm. As of the time of this writing there are 34,000 modules on npm.
 
-### How to find a module
+### 如何找到心怡的模块
+
+想象一下你在试图把一个PDF文件转换成一个TXT文本。最好的方式就是执行这样一个搜索命令`npm search pdf`：
 
 Imagine you are trying to convert PDF files into TXT files. The best place to start is by doing `npm search pdf`:
 
 ![pdfsearch](npm-search.png)
+
+这里有数以千计的结果！ npm十分热门，所以通常你都可以找到许多可能的解决方案。 如果你把以上的搜索结果浓缩一下（比如过滤掉PDF生成模块），你会得到这样的一些结果：
 
 There are a ton of results! npm is quite popular and you will usually be able to find multiple potential solutions. If you go through each module and whittle down the results into a more narrow set (filtering out things like PDF generation modules) you'll end up with these:
 
@@ -366,33 +376,53 @@ There are a ton of results! npm is quite popular and you will usually be able to
 - [pdfiijs](https://github.com/fagbokforlaget/pdfiijs) - pdf to inverted index using textiijs and poppler
 - [pdf2json](https://github.com/modesty/pdf2json/blob/master/readme.md) - pure js pdf to json
 
+在这之中许多模块都有重复的功能，并且使用了不同的API。很多模块可能会依赖外部的库，你需要先安装这些库（比如 `apt-get install poppler`）才能使用这些模块。
+
 A lot of the modules have overlapping functionality but present alternate APIs and most of them require external dependencies (like `apt-get install poppler`).
+
+以下是对上述这些模块的一些说明：
 
 Here are some different ways to interpret the modules:
 
+- `pdf2json`是唯一一个用纯JavaScript写的模块，所以他没有依赖并且很容易安装。特别是在一些低功耗的设备上，像树莓派，或者像Windoes这样没有跨平台库支持的操作系统。
 - `pdf2json` is the only one that is written in pure JavaScript, which means it is the easiest to install, especially on low power devices like the raspberry pi or on Windows where native code might not be cross platform.
+- `mimeograph`, `hummus` 和`pdf-extract` ，这几个模块集合了许多底层的模块，并抽象出高层的API
 - modules like `mimeograph`, `hummus` and `pdf-extract` each combine multiple lower level modules to expose a high level API
+- 许多模块实际上都是在unix命令后工具`pdftotext`/`poppler`上搭建的
 - a lot of modules seem to sit on top of the `pdftotext`/`poppler` unix command line tools
+
+让我们来比较一下`pdftotextjs` 和 `pdf-text-extract`这两个工具，他们都是在`pdftotext`的基础上打包而成的。
 
 Lets compare the differences between `pdftotextjs` and `pdf-text-extract`, both of which are are wrappers around the `pdftotext` utility.
 
 ![pdf-modules](pdf-modules.png)
 
-Both of these:
+这两个模块:
 
+- 最近都有更新
 - were updated relatively recently
+- 有github的项目链接（这一点很重要！）
 - have github repositories linked (this is very important!)
+- 有说明文档
 - have READMEs
+- 每周都有一定的新安装用户
 - have at least some number of people installing them every week
+- 非常宽松的使用许可（所有人都可以使用）
 - are liberally licensed (anyone can use them)
+
+仅依靠`package.json`文件和模块的统计数据很难说哪一个最正确的选择。所以我们来对比一下说明文档吧：
 
 Just looking at the `package.json` + module statistics it's hard to get a feeling about which one might be the right choice. Let's compare the READMEs:
 
 ![pdf-readmes](pdf-readmes.png)
 
+两个文档都有简单的介绍，CI编译通过的标志，安装命令，清晰的例子和一些测试命令。赞！但是我们要选哪一个呢？我们来对比一下代码吧：
+
 Both have simple descriptions, CI badges, installation instructions, clear examples and instructions for running the tests. Great! But which one do we use? Let's compare the code:
 
 ![pdf-code](pdf-code.png)
+
+`pdftotextjs` 有110行代码，而`pdf-text-extract`则只有40行。其实这两个模块最核心的操作可以归结为这一行代码：
 
 `pdftotextjs` is around 110 lines of code, and `pdf-text-extract` is around 40, but both essentially boil down to this line:
 
@@ -400,49 +430,82 @@ Both have simple descriptions, CI badges, installation instructions, clear examp
 var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
 ```
 
+通过这一点能判断出哪一个更好吗？很难说诶！所以*读*代码再下结论是很重要的。如果你找到了想要的模块，执行`npm star modulename`来给你喜欢的模块一个正面的反馈信息吧。
+
 Does this make one any better than the other? Hard to say! It's important to actually *read* the code and make your own conclusions. If you find a module you like, use `npm star modulename` to give npm feedback about modules that you had a positive experience with.
 
-### Modular development workflow
+### 模块开发流程
+
+npm和大多数的包管理软件不同，它会将模块安装在另一个已有模块的目录中。这句话可能很难以理解，但知道这是npm成功的关键就好。
 
 npm is different from most package managers in that it installs modules into a folder inside of other existing modules. The previous sentence might not make sense right now but it is the key to npm's success.
 
+许多包管理软件会全局安装。比如你在Debian系统上执行`apt-get install couchdb`，apt-get会试图安装最新的CouchDB。如果你再试图安装一个依赖旧版本CouchDB的软件，你就得卸载掉新的版本，再安装旧版本的CouchDB。你无法同时保留新旧两个版本的CouchDB，因为Debian(apt-get)只知道将软件安到同一个位置。
+
 Many package managers install things globally. For instance, if you `apt-get install couchdb` on Debian Linux it will try to install the latest stable version of CouchDB. If you are trying to install CouchDB as a dependency of some other piece of software and that software needs an older version of CouchDB, you have to uninstall the newer version of CouchDB and then install the older version. You can't have two versions of CouchDB installed because Debian only knows how to install things into one place.
+
+当然这不是Debian一个系统的错，绝大多数语言的包管理软件都这样。 为了解决这种全局依赖的问题，已经有了许多虚拟环境的项目被创建出来。比如针对Python的 [virtualenv](http://python-guide.readthedocs.org/en/latest/dev/virtualenvs/)，或者针对Ruby的[bundler](http://bundler.io/)。然而这些只是把你的环境配置划分成不同的虚拟环境，每个工程对应一个，但实际上每个环境配置依旧是全局安装的。而且虚拟环境不总是能解决问题，有时候只是增加了多一层的复杂度。
 
 It's not just Debian that does this. Most programming language package managers work this way too. To address the global dependencies problem described above there have been virtual environment developed like [virtualenv](http://python-guide.readthedocs.org/en/latest/dev/virtualenvs/) for Python or [bundler](http://bundler.io/) for Ruby. These just split your environment up in to many virtual environments, one for each project, but inside each environment dependencies are still globally installed. Virtual environments don't always solve the problem, sometimes they just multiply it by adding additional layers of complexity.
 
+用npm来安装全局模块是反人类的。就像你不应该在你的JavaScript代码中使用全局变量一样。（除非你需要一个可执行的二进制文件集成进`PATH`中，但你不总需要这样做－－在后面我们会解释这一点）。
+
 With npm installing global modules is an anti-pattern. Just like how you shouldn't use global variables in your JavaScript programs you also shouldn't install global modules (unless you need a module with an executable binary to show up in your global `PATH`, but you don't always need to do this -- more on this later).
 
-#### How `require` works
+#### `require`命令是如何工作的
+
+当我们加载一个模块的时候，我们调用`require('some_module')`，以下是在node中会发生的事情：
 
 When you call `require('some_module')` in node here is what happens:
+
+1. 如果`some_module.js`文件在当前目录下，node会加载它，否则
+2. node会在当前目录下寻找 `node_modules` 文件夹，然后在其中找`some_module`
+3. 如果还没找到，node会跳到上一层文件夹，然后重复步骤2
 
 1. if a file called `some_module.js` exists in the current folder node will load that, otherwise:
 2. node looks in the current folder for a `node_modules` folder with a `some_module` folder in it
 3. if it doesn't find it, it will go up one folder and repeat step 2
 
+这一操作会不断循环直到node找到根目录是还没有找的这个模块，在那之后node回去找全局安装时的文件夹（比如Mac OS系统上的 `/usr/local/node_modules`），如果还没有找到这个`some_module`，node会报错。
 This cycle repeats until node reaches the root folder of the filesystem, at which point it will then check any global module folders (e.g. `/usr/local/node_modules` on Mac OS) and if it still doesn't find `some_module` it will throw an exception.
+
+这里有一个上述操作的可视化说明：
 
 Here's a visual example:
 
 ![mod-diagram-01](mod-diagram-01.png)
 
+当前的工作目录为`subsubfolder`，并且`require('foo')`被执行时，node会查找 `subsubsubfolder/node_modules`这个子目录。在这个例子中，由于这个子目录被错误地命名为`my_modules`了，因而node找不到它，只好跳到`subsubfolder`的上一级目录`subfolder_B`寻找`subfolder_B/node_modules`，然而这个文件夹不存在；于是node再往上一级目录寻找，在`subfolder_B`的上一级目录`folder`中找到了`folder/node_modules`，*并且*`foo`文件夹在其中。至此搜索便结束了，但如果`foo`并不在那个目录里，node会继续往上一层目录搜索。
+
 When the current working directory is `subsubfolder` and `require('foo')` is called, node will look for the folder called `subsubsubfolder/node_modules`. In this case it won't find it -- the folder there is mistakenly called `my_modules`. Then node will go up one folder and try again, meaning it then looks for `subfolder_B/node_modules`, which also doesn't exist. Third try is a charm, though, as `folder/node_modules` does exist *and* has a folder called `foo` inside of it. If `foo` wasn't in there node would continue its search up the directory tree.
+
+注意这点，我们在`subfolder_B`中没找到`foo`模块并向上一级目录寻找的时候，并不会向同一级的 `subfolder_A/node_modules`中寻找。在它的搜索树中只有 `folder/node_modules`。
 
 Note that if called from `subfolder_B` node will never find `subfolder_A/node_modules`, it can only see `folder/node_modules` on its way up the tree.
 
+使用npm的一个好处就是，模块可以安装自己依赖的特定版本模块。 在这个例子中，`foo`模块特别流行，以至于我们将三个版本安装在不同位置。这样做的原因是调用它们的模块依赖特定版本的`foo`，比如`folder`依赖`foo@0.0.1`, `subfolder_A` 依赖 `foo@0.2.1` 等等.
+
 One of the benefits of npm's approach is that modules can install their dependent modules at specific known working versions. In this case the module `foo` is quite popular - there are three copies of it, each one inside its parent module folder. The reasoning for this could be that each parent module needed a different version of `foo`, e.g. 'folder' needs `foo@0.0.1`, `subfolder_A` needs `foo@0.2.1` etc.
+
+如果我们把刚才的那个错误的文件夹名称改过来，从`my_modules`改成`node_modules`，那么搜索过程就会变成这样:
 
 Here's what happens when we fix the folder naming error by changing `my_modules` to the correct name `node_modules`:
 
 ![mod-diagram-02](mod-diagram-02.png)
 
+为了测试node到底加载了哪个模块，可以执行`require.resolve('some_module')` 命令，这会告诉你哪个文件路径下的模块被node找到并调用了。`require.resolve` 非常有用，尤其是在确认你*认为*被夹在的模块是*实际上*被加载的模块的时候－－有时候一个不同版本的模块可能被存在了被更先查找的位置，导致你的代码调用了错误版本的模块。
+
 To test out which module actually gets loaded by node, you can use the `require.resolve('some_module')` command, which will show you the path to the module that node finds as a result of the tree climbing process. `require.resolve` can be useful when double-checking that the module that you *think* is getting loaded is *actually* getting loaded -- sometimes there is another version of the same module closer to your current working directory than the one you intend to load.
 
-### How to write a module
+### 如何写一个模块
+
+现在你已经知道了如何找一个模块了，在这之后你就可以开始开发自己的模块了！
 
 Now that you know how to find modules and require them you can start writing your own modules.
 
 #### The simplest possible module
+
+Node的模块十分的轻量化。这里有一个最简单的node模块：
 
 Node modules are radically lightweight. Here is one of the simplest possible node modules:
 
@@ -459,13 +522,21 @@ Node modules are radically lightweight. Here is one of the simplest possible nod
 module.exports = 1
 ```
 
+默认情况下，当你调用`require('module')`时node会试图加载`module/index.js`，除非你在`package.json`中设定了`main`一项内容指向你的代码，不然用的名称的文件无法被node识别。
+
 By default node tries to load `module/index.js` when you `require('module')`, any other file name won't work unless you set the `main` field of `package.json` to point to it.
 
+把这两个文件放到`number-one`目录下（`package.json`中的`id`一项必须和目录的名称相同），然后你就可以加载他们了。
+
 Put both of those files in a folder called `number-one` (the `id` in `package.json` must match the folder name) and you'll have a working node module.
+
+调用`require('number-one')` 这一命令会返回你在模块中`module.exports`输出的内容：
 
 Calling the function `require('number-one')` returns the value of whatever `module.exports` is set to inside the module:
 
 ![simple-module](simple-module.png)
+
+一个更快捷的创建模块的方法是，执行以下命令：
 
 An even quicker way to create a module is to run these commands:
 
@@ -476,16 +547,20 @@ git init
 git remote add git@github.com:yourusername/my_module.git
 npm init
 ```
+执行`npm init`会生成一个`package.json`，如果你是在一个`git`项目里执行，它还会在`package.json`中自动帮你把`repositories`设成你的git repo地址！
 
 Running `npm init` will create a valid `package.json` for you and if you run it in an existing `git` repo it will set the `repositories` field inside `package.json` automatically as well!
 
-#### Adding dependencies
+#### 添加依赖项
+
+一个模块可以添加其它在npm上或是在Github上的模块到他的配置文件`package.json`中的`dependencies`项。如果你想安装一个新的依赖项，并把它自动添加到`package.json`中，在你的模块的根目录中执行这个命令：
 
 A module can list any other modules from npm or GitHub in the `dependencies` field of `package.json`. To install the `request` module as a new dependency and automatically add it to `package.json` run this from your module root directory:
 
 ```sh
 npm install --save request
 ```
+这个命令会安装`request`模块到最近的`node_modules`文件夹中，并会把`package.json`改成这样：
 
 This installs a copy of `request` into the closest `node_modules` folder and makes our `package.json` look something like this:
 
@@ -498,6 +573,7 @@ This installs a copy of `request` into the closest `node_modules` folder and mak
   }
 }
 ```
+默认情况下 `npm install`会安装模块的最新版本。
 
 By default `npm install` will grab the latest published version of a module.
 
