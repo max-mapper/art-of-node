@@ -585,7 +585,7 @@ Fundamentalmente o Node é somente usado como uma ferramenta para gerenciar I/O 
 
 #### Web frameworks
 
-Existe uma boa quantidade de web frameworks construidos em cima do node (framework é um pacote que tenta resolver um problema de alto nível e problemas similares à modelagem de lógica de negócios), mas o Node não é um framework para web. Frameworks web são escritos para serem utilizado no Node e nem sempre tomam o mesmo tipo de decisões sobre a adição de complexidade, abstração e compreensão que o Node faz e podem ter outras prioridades.
+Existe uma boa quantidade de web frameworks construidos em cima do node (framework é um pacote que tenta resolver um problema de alto nível e problemas similares à modelagem de lógica de negócios), mas o Node não é um framework para web. Frameworks web são escritos para serem utilizados no Node e nem sempre tomam o mesmo tipo de decisões sobre a adição de complexidade, abstração e compreensão que o Node faz e podem ter outras prioridades.
 
 #### Sintaxe da linguagem
 
@@ -593,14 +593,14 @@ O Node usa JavaScript e não muda nada sobre isso. Felix Geisendörfer tem um be
 
 #### Abstração da linguagem
 
-Quando possivel, o Node vai usar a maneira mais simples para fazer algo. Código mais "bonito" faz do seu JavaScript mais complexo e compromissado com vantagens e desvantagens. Programar é difícil, especialmente em JS onde você tem 1000 soluções para o mesmo problema! Essa é a principal razão para o Node optar pela simplicidade sempre que possivel e que pode ser uma opção universal. Se você está resolvendo um problema complexo e esta insatisfeito com o modo como o Node implementa as coisas com "soluções de JS com gosto de baunilha" sinta-se livre para resolver isso dentro do seu app ou módulo usando quaisquer abstrações que você preferir.
+Quando possivel, o Node vai usar a maneira mais simples para fazer algo. Código mais "bonito" faz do seu JavaScript mais complexo e compromissado com vantagens e desvantagens. Programar é difícil, especialmente em JS onde você tem 1000 soluções para o mesmo problema! Essa é a principal razão para o Node optar pela simplicidade sempre que possível e que pode ser uma opção universal. Se você está resolvendo um problema complexo e está insatisfeito com o modo como o Node implementa as coisas com "soluções de JS com gosto de baunilha", sinta-se livre para resolver isso dentro do seu app ou módulo usando quaisquer abstrações que você preferir.
 
-Um grande exemplo é como o Node usa os callbacks. Logo no inicio foi experimentado a caracteristica chamada *promises* que adicionava algumas funcionalidades para fazer o código assíncrono parecer mais linear. Ele foi levado para o fora do núcleo do Node por algumas razões:
+Um grande exemplo é como o Node usa os callbacks. Logo no início foi experimentado a característica chamada *promises* que adicionava algumas funcionalidades para fazer o código assíncrono parecer mais linear. Ele foi levado para o fora do núcleo do Node por algumas razões:
 
 - eles são mais complexos que callbacks
 - ele podem ser implementados na *userland* (distriuído no npm como módulo de terceiros)
 
-Considere uma das mais universais e básicas ideias que o Node faz: ler um arquivo. Onde você lê um arquivo e precisa saber onde os erros acontecem, como quando o disco rigido morre no meio da sua leitura. Se Node tivesse *promises* todo mundo teria que criar um *branch* como o código abaixo:
+Considere uma das mais universais e básicas ideias que o Node faz: ler um arquivo. Onde você lê um arquivo e precisa saber onde os erros acontecem, como quando o disco rígido morre no meio da sua leitura. Se Node tivesse *promises* todo mundo teria que criar um *branch* como o código abaixo:
 
 ```js
 fs.readFile('movie.mp4')
@@ -630,7 +630,7 @@ fs.readFile('movie.mp4', function(err, data) {
 
 Nota: Se você não sabe o que isso tudo significa você terá uma facilidade maior com o tempo para aprender como o Node funciona, visto que desaprender coisas leva o mesmo tempo que aprender.
 
-O Node usa *threads* internamente para fazer coisas de uma forma rápida mas não expõe isso ao usuário. Se você é um usuário técnico e esta perguntando-se o porque dele ser projetado desta maneira esta leitura é 100% sobre [o design de libuv](http://nikhilm.github.com/uvbook/), que onde a camada de I/O feita em C++ e pela qual o Node é concebido.
+O Node usa *threads* internamente para fazer coisas de uma forma rápida mas não expõe isso ao usuário. Se você é um usuário técnico e está perguntando-se o porquê dele ser projetado desta maneira, esta leitura é 100% sobre [o design de libuv](http://nikhilm.github.com/uvbook/), que onde a camada de I/O feita em C++ e pela qual o Node é concebido.
 
 ## Licença
 
