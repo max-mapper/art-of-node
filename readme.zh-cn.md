@@ -14,14 +14,15 @@ This short book is a work in progress + I don't have a job right now (if I did I
 
 ## 目录
 
-- [了解Node](#node-1)
-- [核心模块](#-1)
-- [Callbacks](#callbacks)
-- [Events](#events) (not written yet)
-- [Streams](#streams) (not written yet)
-- [Modules and NPM](#modules) (not written yet)
-- [Going with the grain](#going-with-the-grain)
-- [Real-time apps](#realtime) (not written yet)
+- [了解Node](#了解Node)
+- [核心模块](#核心模块)
+- [回调函数](#回调函数)
+- [事件](#事件)
+- [流](#流)
+- [模块](#模块) 
+- [用npm在客户端开发](#用npm在客户端开发)
+- [析薪杝矣](#析薪杝矣)
+
 
 ## 了解Node
 
@@ -241,19 +242,23 @@ fs.readFile('movie.mp4', function finishedReading(error, movieData) {
 })
 ```
 
-## Events
+## 事件
+在Node中如果你加载了[events](http://nodejs.org/api/events.html)模块， 就可以用被称作`event emitter`（事件分发器）的功能。 Node在它的API中使用这一功能分发事件。
 
-In node if you require the [events](http://nodejs.org/api/events.html) module you can use the so-called 'event emitter' that node itself uses for all of its APIs that emit things.
+在编程中运用`事件`是一种常见的方法。它还有一个我们更为熟知的名字[观察者模式](https://zh.wikipedia.org/wiki/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F)，或者`发布／监听`模式。在回调函数的模式中，调用回调函数的命令与等待回调函数的命令间的关系是一一对应的，而在事件模式中这两种命令的关系可以是多对多的。
 
-Events are a common pattern in programming, known more widely as the ['observer pattern'](http://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
+理解事件最简单的方式，就是把它当成一个你监听的东西。如果说在回调函数里面我们的逻辑是`先做X，再做Y`，那么在事件中我们的逻辑是`当X发生时，做Y`。
 
-Here are few common use cases for using events instead of plain callbacks:
+以下是一些常见的用事件取代回调函数的例子：
 
-- Chat room where you want to broadcast messages to many listeners
-- Game server that needs to know when new players connect, disconnect, move, shoot and jump
-- Database connector that might need to know when the database connection opens, closes or sends an error
 
-If we were trying to write a module that connects to a chat server using only callbacks it would look like this:
+- 需要向所有听众广播的聊天室
+- 需要及时了解玩家上线、下线、运动、设计、跳跃等动作的游戏服务器
+- 需要能让开发者执行`.on('jump', function() {})`这种命令的游戏引擎
+- 能够执行`.on('incomingRequest')` 或 `.on('serverError')`这一API的低端web服务器。
+
+如果我们想只用回调函数写一个连接聊天服务器的模块的话，代码会长这样：
+
 
 ```js
 var chatClient = require('my-chat-client')
@@ -283,7 +288,7 @@ chatClient.connect(
 )
 ```
 
-As you can see this is really cumbersome because of all of the functions that you have to pass in a specific order to the `.connect` function. Writing this with events would look like this:
+正如你所见，用回调函数写会变得十分笨拙。你需要把所有的功能函数按特定的顺序传给`.connect`来执行。但是将上面所写的功能用事件来实现，就会变成这样：
 
 ```js
 var chatClient = require('my-chat-client').connect()
@@ -305,7 +310,7 @@ chatClient.on('message', function() {
 })
 ```
 
-This approach is similar to the pure-callback approach but introduces the `.on` method, which subscribes a callback to an event. This means you can choose which events you want to subscribe to from the `chatClient`. You can also subscribe to the same event multiple times with different callbacks:
+这种写法和回调函数很像，但是运用了高大上的`.on`功能，它会让一个回调函数‘监听’一个事件。 这意味着你可以在`chatClient`中选择任意一个想要监听的事件。 你甚至可以为多个回调函数监听同一个事件：
 
 ```js
 var chatClient = require('my-chat-client').connect()
@@ -321,46 +326,252 @@ function storeMessage(message) {
 }
 ```
 
-MORE EVENTS CONTENT TODO
+## 流
 
-## Streams
+在早期的node项目中，文件系统和网络API有各自处理I/O流的方式。比如，在文件系统中，文件有一个‘文件描述器’的东西，因此`fs`模块需要调用额外的逻辑来跟踪这个东西。然而在网络模块中根本没有’xx描述器‘这样的概念。尽管在语义上有像这样较小的区别，在最底层这两种模块（文件系统、网络模块）在重复着同样的数据读写操作。Node的维护们很快意识到这样的重复很容易迷惑开发者，于是他们造了这么个叫`流`（Stream）的东西，使网络与文件系统的代码可以同样工作。
 
-Early on in the project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
+Node的理念就是以更简单的方式来处理文件系统和网络，所有理所应当的应该有一个通用的模式，可以在不同的场景中运用。好消息是，类似的大多数模式（尽管数量很少）现在已经被认为node在未来不会去更改。
 
-The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
+已经有两个很棒的资源可以用来学习node的流对象。一个叫‘stream-adventure’（参考‘[了解Node](#了解Node)’部分),另一个叫‘Stream Handbook’。
 
-THE REST IS TODO, in the meantime read the [streams handbook](https://github.com/substack/stream-handbook#introduction)
+### Stream Handbook
 
-## Modules
+[stream-handbook](https://github.com/substack/stream-handbook#introduction) 是一个与本项目相似的，包含所有你需要、想要了解的有关流对象的内容的教程。
 
-TODO
+[![stream-handbook](stream-handbook.png)](https://github.com/substack/stream-handbook)
 
-## Going with the grain
+## 模块
 
-Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](http://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
+Node的核心是由许多模块（modules）组成，像底层的[事件](#事件)和[流](#流)，高一些层次的`http`和`crypto`。
 
-### What is outside of node's scope?
+Node有意被设计成这样，使它的核心模块轻量化，并注重于提供跨平台的处理普通I/O协议和类型的最基本工具。
 
-Fundamentally node is just a tool used for managing I/O across file systems and networks, and it leaves other more fancy functionality up to third party modules. Here are some things that are outside the scope of node:
+除此之外，你可以在[npm](https://npmjs.org/)上找到其它需要了解的东西。任何人都可以创建一个新的模块，添加一些功能，并发布到`npm`上。到目前为止，npm上已经有196,950个模块可供下载。
 
-#### Web frameworks
+### 如何找到心怡的模块
 
-There are a number of web frameworks built on top of node (framework meaning a bundle of solutions that attempts to address some high level problem like modeling business logic), but node is not a web framework. Web frameworks that are written using node don't always make the same kind of decisions about adding complexity, abstractions and tradeoffs that node does and may have other priorities.
+想象一下你在试图把一个PDF文件转换成一个TXT文本。最好的方式就是执行这样一个搜索命令`npm search pdf`：
 
-#### Language syntax
+![pdfsearch](npm-search.png)
 
-Node uses JavaScript and doesn't change anything about it. Felix Geisendörfer has a pretty good write-up of the 'node style' [here](https://github.com/felixge/node-style-guide).
+这里有数以千计的结果！ npm十分热门，所以通常你都可以找到许多可能的解决方案。 如果你把以上的搜索结果浓缩一下（比如过滤掉PDF生成模块），你会得到这样的一些结果：
 
-#### Language abstraction
+- [hummus](https://github.com/galkahana/HummusJS/wiki/Features) - c++ pdf manipulator
+- [mimeograph](https://github.com/steelThread/mimeograph) - api on a conglomeration of tools (poppler, tesseract, imagemagick etc)
+- [pdftotextjs](https://npmjs.org/package/pdftotextjs) - wrapper around [pdftotext](https://en.wikipedia.org/wiki/Pdftotext)
+- [pdf-text-extract](https://npmjs.org/package/pdf-text-extract) - another wrapper around pdftotext
+- [pdf-extract](https://npmjs.org/package/pdf-extract) - wrapper around pdftotext, pdftk, tesseract, ghostscript
+- [pdfutils](https://npmjs.org/package/pdfutils) - poppler wrapper
+- [scissors](https://npmjs.org/package/scissors) - pdftk, ghostscript wrapper w/ high level api
+- [textract](https://npmjs.org/package/textract) - pdftotext wrapper
+- [pdfiijs](https://github.com/fagbokforlaget/pdfiijs) - pdf to inverted index using textiijs and poppler
+- [pdf2json](https://github.com/modesty/pdf2json/blob/master/readme.md) - pure js pdf to json
 
-When possible node will use the simplest possible way of accomplishing something. The 'fancier' you make your JavaScript the more complexity and tradeoffs you introduce. Programming is hard, especially in JS where there are 1000 solutions to every problem! It is for this reason that node tries to always pick the simplest, most universal option. If you are solving a problem that calls for a complex solution and you are unsatisfied with the 'vanilla JS solutions' that node implements, you are free to solve it inside your app or module using whichever abstractions you prefer.
+在这之中许多模块都有重复的功能，并且使用了不同的API。很多模块可能会依赖外部的库，你需要先安装这些库（比如 `apt-get install poppler`）才能使用这些模块。
 
-A great example of this is node's use of callbacks. Early on node experimented with a feature called 'promises' that added a number of features to make async code appear more linear. It was taken out of node core for a few reasons:
+以下是对上述这些模块的一些说明：
 
-- they are more complex than callbacks
-- they can be implemented in userland (distributed on npm as third party modules)
+- `pdf2json`是唯一一个用纯JavaScript写的模块，所以他没有依赖并且很容易安装。特别是在一些低功耗的设备上，像树莓派，或者像Windoes这样没有跨平台库支持的操作系统。
+- `mimeograph`, `hummus` 和`pdf-extract` ，这几个模块集合了许多底层的模块，并抽象出高层的API
+- 许多模块实际上都是在unix命令后工具`pdftotext`/`poppler`上搭建的
 
-Consider one of the most universal and basic things that node does: reading a file. When you read a file you want to know when errors happen, like when your hard drive dies in the middle of your read. If node had promises everyone would have to branch their code like this:
+让我们来比较一下`pdftotextjs` 和 `pdf-text-extract`这两个工具，他们都是在`pdftotext`的基础上打包而成的。
+
+![pdf-modules](pdf-modules.png)
+
+这两个模块:
+
+- 最近都有更新
+- 有github的项目链接（这一点很重要！）
+- 有说明文档
+- 每周都有一定的新安装用户
+- 非常宽松的使用许可（所有人都可以使用）
+
+仅依靠`package.json`文件和模块的统计数据很难说哪一个最正确的选择。所以我们来对比一下说明文档吧：
+
+![pdf-readmes](pdf-readmes.png)
+
+两个文档都有简单的介绍，CI编译通过的标志，安装命令，清晰的例子和一些测试命令。赞！但是我们要选哪一个呢？我们来对比一下代码吧：
+
+![pdf-code](pdf-code.png)
+
+`pdftotextjs` 有110行代码，而`pdf-text-extract`则只有40行。其实这两个模块最核心的操作可以归结为这一行代码：
+
+```
+var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
+```
+
+通过这一点能判断出哪一个更好吗？很难说诶！所以*读*代码再下结论是很重要的。如果你找到了想要的模块，执行`npm star modulename`来给你喜欢的模块一个正面的反馈信息吧。
+
+### 模块开发流程
+
+npm和大多数的包管理软件不同，它会将模块安装在另一个已有模块的目录中。这句话可能很难以理解，但知道这是npm成功的关键就好。
+
+许多包管理软件会全局安装。比如你在Debian系统上执行`apt-get install couchdb`，apt-get会试图安装最新的CouchDB。如果你再试图安装一个依赖旧版本CouchDB的软件，你就得卸载掉新的版本，再安装旧版本的CouchDB。你无法同时保留新旧两个版本的CouchDB，因为Debian(apt-get)只知道将软件安到同一个位置。
+
+当然这不是Debian一个系统的错，绝大多数语言的包管理软件都这样。 为了解决这种全局依赖的问题，已经有了许多虚拟环境的项目被创建出来。比如针对Python的 [virtualenv](http://python-guide.readthedocs.org/en/latest/dev/virtualenvs/)，或者针对Ruby的[bundler](http://bundler.io/)。然而这些只是把你的环境配置划分成不同的虚拟环境，每个工程对应一个，但实际上每个环境配置依旧是全局安装的。而且虚拟环境不总是能解决问题，有时候只是增加了多一层的复杂度。
+
+用npm来安装全局模块是反人类的。就像你不应该在你的JavaScript代码中使用全局变量一样。（除非你需要一个可执行的二进制文件集成进`PATH`中，但你不总需要这样做－－在后面我们会解释这一点）。
+
+#### `require`命令是如何工作的
+
+当我们加载一个模块的时候，我们调用`require('some_module')`，以下是在node中会发生的事情：
+
+1. 如果`some_module.js`文件在当前目录下，node会加载它，否则
+2. node会在当前目录下寻找 `node_modules` 文件夹，然后在其中找`some_module`
+3. 如果还没找到，node会跳到上一层文件夹，然后重复步骤2
+
+这一操作会不断循环直到node找到根目录是还没有找的这个模块，在那之后node回去找全局安装时的文件夹（比如Mac OS系统上的 `/usr/local/node_modules`），如果还没有找到这个`some_module`，node会报错。
+
+这里有一个上述操作的可视化说明：
+
+![mod-diagram-01](mod-diagram-01.png)
+
+当前的工作目录为`subsubfolder`，并且`require('foo')`被执行时，node会查找 `subsubsubfolder/node_modules`这个子目录。在这个例子中，由于这个子目录被错误地命名为`my_modules`了，因而node找不到它，只好跳到`subsubfolder`的上一级目录`subfolder_B`寻找`subfolder_B/node_modules`，然而这个文件夹不存在；于是node再往上一级目录寻找，在`subfolder_B`的上一级目录`folder`中找到了`folder/node_modules`，*并且*`foo`文件夹在其中。至此搜索便结束了，但如果`foo`并不在那个目录里，node会继续往上一层目录搜索。
+
+注意这点，我们在`subfolder_B`中没找到`foo`模块并向上一级目录寻找的时候，并不会向同一级的 `subfolder_A/node_modules`中寻找。在它的搜索树中只有 `folder/node_modules`。
+
+使用npm的一个好处就是，模块可以安装自己依赖的特定版本模块。 在这个例子中，`foo`模块特别流行，以至于我们将三个版本安装在不同位置。这样做的原因是调用它们的模块依赖特定版本的`foo`，比如`folder`依赖`foo@0.0.1`, `subfolder_A` 依赖 `foo@0.2.1` 等等.
+
+如果我们把刚才的那个错误的文件夹名称改过来，从`my_modules`改成`node_modules`，那么搜索过程就会变成这样:
+
+![mod-diagram-02](mod-diagram-02.png)
+
+为了测试node到底加载了哪个模块，可以执行`require.resolve('some_module')` 命令，这会告诉你哪个文件路径下的模块被node找到并调用了。`require.resolve` 非常有用，尤其是在确认你*认为*被夹在的模块是*实际上*被加载的模块的时候－－有时候一个不同版本的模块可能被存在了被更先查找的位置，导致你的代码调用了错误版本的模块。
+
+### 如何写一个模块
+
+现在你已经知道了如何找一个模块了，在这之后你就可以开始开发自己的模块了！
+
+#### The simplest possible module
+
+Node的模块十分的轻量化。这里有一个最简单的node模块：
+
+`package.json`:
+
+```js
+{
+  "name": "number-one",
+  "version": "1.0.0"
+}
+```
+
+`index.js`:
+
+```js
+module.exports = 1
+```
+
+默认情况下，当你调用`require('module')`时node会试图加载`module/index.js`，除非你在`package.json`中设定了`main`一项内容指向你的代码，不然用的名称的文件无法被node识别。
+
+把这两个文件放到`number-one`目录下（`package.json`中的`id`一项必须和目录的名称相同），然后你就可以加载他们了。
+
+调用`require('number-one')` 这一命令会返回你在模块中`module.exports`输出的内容：
+
+![simple-module](simple-module.png)
+
+一个更快捷的创建模块的方法是，执行以下命令：
+
+```sh
+mkdir my_module
+cd my_module
+git init
+git remote add git@github.com:yourusername/my_module.git
+npm init
+```
+执行`npm init`会生成一个`package.json`，如果你是在一个`git`项目里执行，它还会在`package.json`中自动帮你把`repositories`设成你的git repo地址！
+
+#### 添加依赖项
+
+一个模块可以添加其它在npm上或是在Github上的模块到他的配置文件`package.json`中的`dependencies`项。如果你想安装一个新的依赖项，并把它自动添加到`package.json`中，在你的模块的根目录中执行这个命令：
+
+```sh
+npm install --save request
+```
+这个命令会安装`request`模块到最近的`node_modules`文件夹中，并会把`package.json`改成这样：
+
+```
+{
+  "id": "number-one",
+  "version": "1.0.0",
+  "dependencies": {
+    "request": "~2.22.0"
+  }
+}
+```
+默认情况下 `npm install`会安装模块的最新版本。
+
+## 用npm在客户端开发
+
+人们对npm有一个常见的错误观念，认为npm的名字中有一个Node，所以只能用于服务器端的JS模块。一派胡言！npm的全称是Node Packaged Modules，是由node为你打包过的模块。而模块本身可以是任何东西－－本质上只是一个被打包成.tar.gz的文件夹，和一个声明了模块版本和模块依赖项的配置文件`package.json` （也包括依赖项的版本，这样对应版本的依赖项会被自动安装）。这是无穷无尽的－－模块可以有依赖，模块的依赖项也可以有依赖，依赖项的依赖项也可以有依赖。。。
+
+[browserify](http://browserify.org/) 是一个用Node写的实用工具，可以讲任何node模块转换成可以在浏览器上运行的代码。当然，并不是所有模块都能工作（比如浏览器无法搭一个HTTP服务器），但是很多NPM上的模块*可以*。
+
+你可以用[RequireBin](http://requirebin.com/)来尝试在浏览器上使用npm的模块，这是一个[原作者](https://github.com/maxogden)写的应用，它在[Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn)的基础上完成。原作在RequireBin中使用了browserify，并通过HTTP返回输出结果（而不是通过命令后－－browserify通常都是用来干这个）
+
+
+试着将下面的代码粘贴到[RequireBin](http://requirebin.com/)并点`preview`按钮：
+
+```js
+var reverse = require('ascii-art-reverse')
+
+// makes a visible HTML console
+require('console-log').show(true)
+
+var coolbear =
+  "    ('-^-/')  \n" +
+  "    `o__o' ]  \n" +
+  "    (_Y_) _/  \n" +
+  "  _..`--'-.`, \n" +
+  " (__)_,--(__) \n" +
+  "     7:   ; 1 \n" +
+  "   _/,`-.-' : \n" +
+  "  (_,)-~~(_,) \n"
+
+setInterval(function() { console.log(coolbear) }, 1000)
+
+setTimeout(function() {
+  setInterval(function() { console.log(reverse(coolbear)) }, 1000)
+}, 500)
+```
+
+或者看这个[更复杂的例子](http://requirebin.com/?gist=6031068)（可以随意改变它的颜色）：
+
+[![requirebin](requirebin.png)](http://requirebin.com/embed?gist=6031068)
+
+## 析薪杝矣
+```
+原文的标题是Going with the Grain，大意是顺应着木材的纹理(刨木)，不违背它
+此处的'析薪杝矣'出自詩·小雅：
+	伐木掎矣，析薪杝矣
+大意为，砍伐树木时,要撑住使大树不致突然倒下;劈木材,要依循木材的纹理,才比较容易
+
+```
+
+像任意一个顺手的工具一样，node非常强大，但也只适用于特定的应用场景。比如，Rails这个网络架构，非常适合做一些复杂的[框架]((http://en.wikipedia.org/wiki/Business_logic))，比如用代码来构建生活中的业务对象：帐户、借贷、流程图、存货清单等等。虽然从技术上讲，用node可以完成同样的工作，但这并不是node的强项，node更适合去做一些处理I/O问题的工作。希望这个教程能够帮你获得对node适用方案的直觉。
+
+### node外的世界
+
+node只是一个处理文件系统和网络I/O的工具，它把更多有趣的功能留给第三方模块来处理。以下是node核心模块之外奇妙世界的一些介绍：
+
+#### 网络框架
+
+有许多搭建在node之上的网络框架（框架是一种解决特定高层应用问题的功能集合），但是node自身并不是一个网络框架。一些搭建在node之上的网络框架有自己的特性、抽象和权衡，这些和node自身的理念与开发优先级不一定相同。
+
+#### 编程语法
+
+Node适用Javascript的语法并且没有加以修饰。 Felix Geisendörfer针对node的风格有一篇很棒的[介绍](https://github.com/felixge/node-style-guide)。
+
+#### 语言的抽象
+
+node用最简单的方式来完成任务。在Javascirpt中，你想把它做的越有趣，就会带来更大的复杂度。编程是有难度的，尤其是在写js的时候更有这种体会，因为你应对的每一个问题都可能有1000种解决方案。正是因为如此，node试图用最简单、通用的方式来解决问题。如果你在处理一个很复杂的问题，并且你并不满意node应用的‘vanilla JS’解决方案，你大可不用它，并且自己写一个模块，用你自己喜欢的方法来解决它。
+
+一个很棒的例子就是node中的回调函数。 早期node的一些实验中，有一个特性叫做‘promises’。它被用来使异步运行的代码看上去更线性。但是出于以下原因，这个特性后来被移除了：
+
+- 它比回调函数更复杂
+- 它可以让用户来选择应用（在npm上以第三方模块的形式发布）
+
+试着考虑node处理的最基本最通用的事情：读取一个文件，当你读一个文件的时候，你希望在诸如硬盘错误这种事件发生的时候能及时知道。如果node用了上述的’promises‘特性，那么每个人的代码就会变成这样：
 
 ```js
 fs.readFile('movie.mp4')
@@ -372,13 +583,13 @@ fs.readFile('movie.mp4')
   })
 ```
 
-This adds complexity, and not everyone wants that. Instead of two separate functions node just uses a single callback function. Here are the rules:
+这添加了复杂度，而且并不是所有人都想要这个特性。 node会用一个简单的回调函数来完成这两个独立的功能。其它的诸如此的规则还有：
 
-- When there is no error pass null as the first argument
-- When there is an error, pass it as the first argument
-- The rest of the arguments can be used for anything (usually data or responses since most stuff in node is reading or writing things)
+- 当没有错误的时候，对第一个参数返回null
+- 当有错误的时候，对第一个参数返回错误代码
+- 其它的变量可以用来做任何事情（node多数情况下在读写东西，所以这些变量通常被用来传数据或响应）
 
-Hence, the node callback style:
+基于上述规则写出来的回调函数则应是这样的：
 
 ```js
 fs.readFile('movie.mp4', function(err, data) {
@@ -386,21 +597,16 @@ fs.readFile('movie.mp4', function(err, data) {
 })
 ```
 
-#### Threads/fibers/non-event-based concurrency solutions
+#### 线程/纤程/非事件的并发处理
+注意：如果你并不知道这些词的含义，你可能会学Node学的更轻松一些。
 
-Note: If you don't know what these things mean then you will likely have an easier time learning node, since unlearning things is just as much work as learning things.
+Node内部使用线程来加速操作，但是这些部分并不会暴露给用户。如果你是专业人员，并且对node的设计理念十分好奇的话，推荐你阅读这篇[the design of libuv](http://nikhilm.github.com/uvbook/)，这个是node使用的C++ I/O层。
 
-Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
-
-## Real-time apps
-
-TODO - this section will have a non-contrived, functioning application with a web UI whose architecture will be dissected and discussed.
-
-## License
+## 使用许可
 
 ![CCBY](CCBY.png)
 
-Creative Commons Attribution License (do whatever, just attribute me)
+原文适用知识共享许可协议
 http://creativecommons.org/licenses/by/2.0/
 
-Donate icon is from the [http://thenounproject.com/noun/donate/#icon-No285](Noun Project)
+捐款图标来源于 [Noun Project](http://thenounproject.com/term/donate/285/)
