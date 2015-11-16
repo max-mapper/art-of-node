@@ -4,7 +4,7 @@
 本文件假設讀者已經懂了以下的兩樣東西：
 
 - 至少懂得一種程式語言。例如：JavaScript，Ruby，Python，Perl 或其他程式語言。如果你還不是程式設計師，你也不懂程式語言，你可以閱讀 [JavaScript for Cats](http://jsforcats.com/)。:cat2:
-- git 和 github。這是一個開源的協作工具，Node 社群的參與者使用 git 共享模組。你只需要懂得基本操作就夠了。這裏有三篇很好的入門教學：[1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
+- git 和 github。這是一個開源的協作工具，Node 社群的參與者使用 git 共享模組。你只需要懂得基本操作就夠了。這裏有三篇很好的入門教學：[1](https://github.com/jlord/git-it-electron#readme), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
 
 This short book is a work in progress + I don't have a job right now (if I did I wouldn't have the time to write this). If you like it then please consider donating via [gittip](https://www.gittip.com/maxogden/) so that I can write more!
 
