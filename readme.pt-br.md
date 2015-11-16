@@ -207,7 +207,7 @@ Aqui temos a versão de um pseudocódigo do exemplo acima:
 
 ```js
 function addOne(thenRunThisFunction) {
-  waitAMinute(function waitedAMinute() {
+  waitAMinuteAsync(function waitedAMinute() {
     thenRunThisFunction()
   })
 }
