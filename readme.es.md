@@ -14,7 +14,7 @@ Este corto libro es un trabajo en progeso + No tengo trabajo en este momento (si
 
 - [Entendiendo node](#entendiendo-node)
 - [Módulos en el core](#mdulos-en-el-core)
-- [Callbacks](#callbacks)
+- [Retrollamadas](#retrollamadas)
 - [Events](#events) (not written yet)
 - [Streams](#streams) (not written yet)
 - [Modules and NPM](#modules) (not written yet)
@@ -78,20 +78,23 @@ Adicionalmente a los módulos `fs` y de redes, hay otros módulos base en el cor
 
 Node maneja E/S con: callbacks, eventos, streams (flujos) y módulos. Si aprendes cómo trabajan esos cuatro elementos entonces serás capaz de ir dentro de cualquier módulo en el core de Node y entender básicamente sobre cómo interactuar con él.
 
-## Callbacks
+## Retrollamadas
 
-This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just a particularly useful way to use JavaScript functions.
+Este es el tema más importante para entender si quieres entender cómo utilizar node. Casi todo en node utiliza retrollamadas. No fueron inventadas por node, y son una forma particularmente útil para utilizar las funciones en JavaScript.
 
-Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
+Las retrollamadas son funciones que se ejecutan de forma asíncrona, o en un momento posterior. En lugar de leer el código de arriba a abajo, programas asincrónicos pueden ejecutar diferentes funciones en diferentes momentos basado en el orden y la velocidad que ocurren las  funciones que leen el sistema de archivo o los pedidos de http.
 
-The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example:
+Determinando si una función es asíncrona o no puede crear confusión ya que depende mucho en el contexto donde se presenta. Aquí sigue un ejemplo simple de una  función sincrónica:
+
 
 ```js
-var myNumber = 1
-function addOne() { myNumber++ } // define the function
-addOne() // run the function
-console.log(myNumber) // logs out 2
+var miNumero = 1
+function agregaUno() { miNumeror++ } // define la  función
+agregaUno() // ejecuta la  función
+console.log(miNumero) // registra 2
 ```
+
+++++++++++++++++++++++++Continue Translation+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2.
 
