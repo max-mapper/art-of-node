@@ -3,114 +3,151 @@
 
 Este documento está destinado a aquellos lectores que saben al menos un poco de esto:
 
-- un lenguaje tipo script como JavaScript, Ruby, Python, Perl, etc. Si aun no eres programador entonces probablemente será más fácil empezar por leer [JavaScript for Cats](http://jsforcats.com/). :cat2:
-- git y github. Éstas son herramientas colaborativas de código abierto usadas por las personas en la comunidad de Node para compartir módulos. Sólo necesitas conocer lo básico. Aquí hay tres tutoriales introductorios: [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
+- un lenguaje de script como JavaScript, Ruby, Python, Perl, etc. Si aun no eres programador entonces probablemente será más fácil empezar por leer [JavaScript for Cats](http://jsforcats.com/). :cat2:
+- git y github. Éstas son herramientas colaborativas de código abierto usadas por las personas en la comunidad de Node para compartir módulos. Sólo necesitas conocer lo básico. Aquí hay tres tutoriales de introducción: [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
 
-Este corto libro es un trabajo en progeso + No tengo trabajo en este momento (si tuviera no tendría el tiempo para escribir esto). Si te gusta este trabajo considera realizar una donación via [gittip](https://www.gittip.com/maxogden/) para poder escribir mucho más!
+Este libro corto, es un trabajo en progeso. Si te gusta este trabajo entonces por favor **dame un dolar** a través de [gittip](https://www.gittip.com/maxogden/) así puedo justificar el tiempo para escribir ¡más!
 
-[![donate](donate.png)](https://www.gittip.com/maxogden/)
+[![dona](donate.png)](https://www.gittip.com/maxogden/)
 
 ## Tabla de contenidos
 
-- [Entendiendo node](#entendiendo-node)
-- [Módulos en el core](#mdulos-en-el-core)
-- [Callbacks](#callbacks)
-- [Events](#events) (not written yet)
-- [Streams](#streams) (not written yet)
-- [Modules and NPM](#modules) (not written yet)
+- [Aprende node de manera interactiva](#learn-node-interactively)
+- [Entendiendo node](#understanding-node)
+- [Módulos del núcleo](#core-modules)
+- [Retrollamadas](#callbacks)
+- [Eventos](#events)
+- [Flujos](#streams)
+- [Módulos y npm](#modules)
+- [Desarrollo del lado del cliente con npm](#client-side-development-with-npm)
 - [Going with the grain](#going-with-the-grain)
-- [Real-time apps](#realtime) (not written yet)
+
+## Aprende node de manera interactiva
+
+Ademas de leer esta guia, es super importante también reventar tu editor de texto favorito y escribir algo de código node. I always find that when I just read some code in a book it never really clicks, pero el aprendizaje escribiendo código es una buena manera de captar nuevos conceptos de programación.
+
+Aquí hay dos tutoriales a modo de programas totalmente geniales que puedes instalar en tu computadora, con lo cuál podras aprender Node en una forma mucho más interactiva: 
+
+### Aprente Node.js
+
+[Aprende Node.js](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win) es un conjunto de problemas de programación, que te introduce a los patrones comunes de node. Viene como un conjunto de tutoriales en linea de comandos interactivos.
+
+[![learnyounode](https://github.com/rvagg/learnyounode/raw/master/learnyounode.png)](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win)
+
+Puedes instalarlo con npm:
+
+```
+# instalación
+npm install learnyounode -g
+
+# arrancar el menú
+learnyounode
+```
+
+### Stream Adventure
+
+Una vez que hayas terminado `learnyounode`, graduate to [stream-adventure](https://github.com/substack/stream-adventure) for a set of exercises that dig in to node's streams.
+
+```
+# instalación
+npm install stream-adventure -g
+
+# empezar la aventura
+stream-adventure
+```
+
+[![stream-adventure](stream-adventure.png)](https://github.com/substack/stream-adventure)
 
 ## Entendiendo node
 
-Node.js es un proyecto de código abierto diseñado para ayudarte a escribir código JavaScript que se comunique con redes, archivos del sistema y otras E/S (entrada/salida, lectura/escritura) fuentes. Eso es! Node.js es simplemente una sencilla y estable plataforma E/S que anima a construir módulos sobre ella misma.
+Node.js es un proyecto de código abierto diseñado para ayudarte a escribir programas en JavaScript que se comuniquen con redes, archivos del sistema y otras E/S (entrada/salida, lectura/escritura) fuentes. ¡Eso es! Node.js es simplemente una sencilla y estable plataforma E/S que anima a construir módulos encima de ella.
 
-¿Cuáles son algunos de E/S? Aquí hay un diagrama de una aplicación que hice con Node y que muestra algunas fuentes de E/S:
+¿Cuáles son algunos ejemplos de E/S? Aquí hay un diagrama de una aplicación que hice con Node y que muestra algunas fuentes de E/S:
 
 ![server diagram](server-diagram.png)
 
-Si no entiendes todos los elementos en el diagrama está bien. El punto es mostrar que un único proceso en Node (el hexágono en la mitad) puede actuar como agente entre todos los diferentes puntos finales de E/S (naranja y púrpura representan E/S).
+Si no entiendes todos los diferentes elementos en el diagrama está bien. El punto es mostrar que un único proceso en Node (el hexágono en la mitad) puede actuar como agente entre todos los diferentes puntos finales de E/S (naranja y púrpura representan las E/S).
 
-Al construir uno de estos tipos de sistemas usualmente se presenta uno de estos casos:
+Por lo general al construir este tipos de sistemas se presenta uno de estos casos:
 
-- dificultad para programar pero con muy buenos y rápidos resultados (como escribir tus servidores web desde cero en C)
-- Fácil de codificar pero no muy rápido/robusto (como cuando intentas subir un archivo de 5GB y tu servidor colapsa)
+- dificultad para programar pero entregando resultados muy buenos (como escribir tus servidores web desde cero en C)
+- fácil de codificar pero no muy rápido/robusto (como cuando alguien intenta subir un archivo de 5GB y tu servidor colapsa)
 
-El objetivo de Node es proveer un balance entre: relativamente fácil de entender y usar, y lo suficientemente rápido para la mayoría de los casos.
+El objetivo de Node es proveer un balance entre estas dos: relativamente fácil de entender y usar, y lo suficientemente rápido para la mayoría de los casos de uso.
 
 Node no es ninguno de los siguientes:
 
   - Un framework web (como Rails o Django, sin embargo puede ser usado para hacer tales cosas)
-  - Un lenguaje de programación (Node usa JavaScript pero no es en sí mismo un lenguaje)
+  - Un lenguaje de programación (usa JavaScript pero no es en sí mismo un lenguaje)
 
-En su lugar, Node es algo en la mitad:
+En su lugar, Node es algo a la mitad:
 
   - Diseñado para ser simple y por lo tanto relativamente fácil de entender y usar
-  - Útil para programas basados en E/S que necesitan ser rápidos y/o manejar muchas conecciones
+  - Útil para programas basados en E/S que necesitan ser rápidos y/o manejar muchas conexiones
 
 A un nivel más bajo, Node puede ser descrito como una herramienta para escribir dos grandes tipos de programas:
 
   - Programas de red que usen los protocolos de la web: HTTP, TCP, UDP, DNS and SSL
-  - Programas que lean y escriban información al sistema de archivos o a los procesos/memoria local
+  - Programas que lean y escriban información a los archivos del sistema o a los procesos locales/memoria  
 
 ¿Qué es un "programa basado en E/S"? Aquí hay alguna fuentes comunes de E/S:
 
-  - Bases de datos (MySQL, PostgreSQL, MongoDB, Redis, CouchDB)
+  - Bases de datos (ejemplos: MySQL, PostgreSQL, MongoDB, Redis, CouchDB)
   - APIs (Twitter, Facebook, Apple Push Notifications)
-  - Conecciones HTTP/WebSocket (desde usuarios de una aplicación web)
+  - Conexiones HTTP/WebSocket (desde usuarios de una aplicación web)
   - Archivos (editor de imágenes, editor de videos, radio por internet)
 
-Node procesa E/S en una forma llamada [asíncrona](http://en.wikipedia.org/wiki/Asynchronous_I/O) el cual le permite manejar muchas cosas diferentes simultáneamente. Por ejemplo, si vas a un restaurante de comida rápida y ordenas una hamburguesa ellos tomarán tu orden inmediatamente y te harán esperar hasta que tu hamburguesa esté lista. Mientras tanto ellos pueden tomar otras órdenes y empezar a preparar hamburguesas para otras personas. Imagina si tuvieras que esperar en la caja registradora por tu hamburguesa, bloqueando a todas las otras personas en la fila para ordenar, mientras preparan tu hamburguesa! Esto es llamado **bloqueo de E/S** porque toda E/S (preparación de hamburguesas) suceden una vez al tiempo. Node, por otro lado, es de **no-bloque**, que significa que puede preparar muchas hamburguesas al tiempo.
+Node procesa E/S en una forma llamada [asíncrona](http://en.wikipedia.org/wiki/Asynchronous_I/O) la cuál le permite manejar muchas cosas diferentes simultáneamente. Por ejemplo, si vas a un restaurante de comida rápida y ordenas una hamburguesa ellos tomarán tu orden inmediatamente y te harán esperar hasta que tu hamburguesa esté lista. Mientras tanto ellos pueden tomar otras órdenes y empezar a preparar hamburguesas para otras personas. Imagina si tuvieras que esperar en la caja registradora por tu hamburguesa, bloqueando a todas las otras personas en la fila para ordenar, mientras preparan ¡tu hamburguesa!. Esto es llamado **bloqueo de E/S** porque toda E/S (preparación de hamburguesas) suceden una vez al tiempo. Node, por otro lado, es de **no-bloque**, lo que significa que se pueden preparar muchas hamburguesas a la vez.
 
-Aquí hay algunas cosas divertidas hechas de manera fácil con Node gracias a su naturaleza de no-bloque:
+Aquí hay algunas cosas divertidas hechas de manera fácil con Node gracias a su naturaleza de no-bloqueo:
   
   - Control [volando quadcopters](http://nodecopter.com)
   - Escribir bots para chat IRC
   - Crear [robots bípedos](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
-## Módulos en el core
+## Módulos en el núcleo
 
-Primero que todo recomiendo tener instalado Node en tu computadora. La forma más fácil es visitar [nodejs.org](http://nodejs.org) y dar click en `Install`.
+Primero que todo recomiendo tener instalado Node en tu computadora. La forma más fácil es visitar [nodejs.org](http://nodejs.org) y hacer clic en `Install`.
 
-Node tiene un pequeño grupo de módulos en el core (comunmente referenciados como 'core de node') los cuales son presentados como la API pública que tienen por objeto el escribir programas con ellos. Para trabajar con sistemas de archivos está el módulo `fs` y para redes existen módulos como `net` (TCP), `http`, `dgram` (UDP).
+Node tiene un pequeño grupo de módulos en el núcleo (comunmente referenciados como 'núcleo de node') los cuales son presentados como la API pública que tienen por objeto el escribir programas con ellos. Para trabajar con sistemas de archivos está el módulo `fs` y para redes existen módulos como `net` (TCP), `http`, `dgram` (UDP).
 
-Adicionalmente a los módulos `fs` y de redes, hay otros módulos base en el core de node. Existe un módulo para resolver consultas DNS asincronamente llamado `dns`, un módulo para obtener información específica del SO como el directorio temporal, llamado `os`, un módulo para asignar pedazos binarios de memoria llamado `buffer`, algunos módulos para parsear urls y caminos (`url`, `querystring`, `path`), etc. La mayoría si no todos los módulos en el core de Node, están para soportar los casos de uso principales de Node: Escribir programas rápidos que se comuniquen con sistemas de archivos o redes.
+Adicionalmente a los módulos `fs` y de redes, hay otros módulos base en el núcleo de node. Existe un módulo para resolver consultas DNS asincronamente llamado `dns`, un módulo para obtener información específica del SO como el directorio temporal, llamado `os`, un módulo para asignar pedazos binarios de memoria llamado `buffer`, algunos módulos para parsear urls y caminos (`url`, `querystring`, `path`), etc. La mayoría si no todos los módulos en el núcleo de Node, están para soportar los casos de uso principales de Node: Escribir programas rápidos que se comuniquen con sistemas de archivos o redes.
 
-Node maneja E/S con: callbacks, eventos, streams (flujos) y módulos. Si aprendes cómo trabajan esos cuatro elementos entonces serás capaz de ir dentro de cualquier módulo en el core de Node y entender básicamente sobre cómo interactuar con él.
+Node maneja E/S con: callbacks, eventos, streams (flujos) y módulos. Si aprendes cómo trabajan esos cuatro elementos entonces serás capaz de ir dentro de cualquier módulo en el núcleo de Node y entender básicamente sobre cómo interactuar con él.
 
-## Callbacks
+## Retrollamadas
 
-This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just a particularly useful way to use JavaScript functions.
+Este es el tema más importante de entender si quieres entender como usar node. Casi todo en Node utiliza retrolllamdas. No fuerón inventadas por node, son una forma particularmente util de usar las funciones de JavaScript.
 
-Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
+Las retrollamadas son funciones que son executadas de manera asíncrona, o en un momento más tarde. En lugar de la lectura del código por procedimientos de arriba hacia abajo, los programas asíncronos pueden executar diferentes funciones en diferentes tiempos basadas en el orden y la velocidad de la ocurrencia de las funciones anteriores como peticiones http o lectura de archivos de sistema. 
 
-The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example:
+La diferencia puede ser confusa desde la determinación si una función es asíncrona o no depende mucho del contexto. Aquí hay un ejemplo simple de una función asíncrona. 
 
 ```js
-var myNumber = 1
-function addOne() { myNumber++ } // define the function
-addOne() // run the function
-console.log(myNumber) // logs out 2
+var miNumero = 1
+function agregarUno() { miNumero++ } // define la funcion
+agregarUno() // executa la funcion
+console.log(miNumero) // registra la salida 2
 ```
 
-The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2.
+Este código define una función y en la siguiente linea llama a esa función, sin esperar por nada. Cuando la función es llamada inmediatamente agregar 1 a el número, así que podemos esperar que después de la llamada a la función el número debería ser 2.
 
-Let's suppose that we want to instead store our number in a file called `number.txt`:
+Supongamos que queremos en lugar de almacenar nuestro numero en un archivo llamado  `numero.txt`: 
 
 ```js
-var fs = require('fs') // require is a special function provided by node
-var myNumber = undefined // we dont know what the number is yet since it is stored in a file
+var fs = require('fs') // require es una funcion especial que provee node
+var miNumero = undefined // no sabemos cual es el numero debido a que esta guardado en un archivo
 
-function addOne() {
-  fs.readFile('./number.txt', function doneReading(err, fileContents) {
-    myNumber = parseInt(fileContents)
-    myNumber++
+function agregarUno() {
+  fs.readFile('./numero.txt', function doneReading(err, fileContents) {
+    miNumero = parseInt(fileContents)
+    miNUmeror++
   })
 }
 
-addOne()
+agregarUno()
 
-console.log(myNumber) // logs out undefined
+console.log(miNumero) // registra la salida
 ```
 
 Why do we get `undefined` when we log out the number this time? In this code we use the `fs.readFile` method, which happens to be an asynchronous method. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. The reason for this is that I/O is reallyyy reallyyy sloowwww. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (RAM).
@@ -390,15 +427,15 @@ Note: If you don't know what these things mean then you will likely have an easi
 
 Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
 
-## Real-time apps
+## Aplicaciones en tiempo real
 
 TODO - this section will have a non-contrived, functioning application with a web UI whose architecture will be dissected and discussed.
 
-## License
+## Licencia
 
 ![CCBY](CCBY.png)
 
-Creative Commons Attribution License (do whatever, just attribute me)
+Creative Commons Attribution License (haz lo que quieras, solo atribuyeme)
 http://creativecommons.org/licenses/by/2.0/
 
-Donate icon is from the [http://thenounproject.com/noun/donate/#icon-No285](Noun Project)
+El icono de donación es de [http://thenounproject.com/noun/donate/#icon-No285](Noun Project)
