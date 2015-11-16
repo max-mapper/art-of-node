@@ -194,7 +194,7 @@ Voila une version de l'exemple précédent en pseudocode:
 
 ```js
 function addOne(thenRunThisFunction) {
-  waitAMinute(function waitedAMinute() {
+  waitAMinuteAsync(function waitedAMinute() {
     thenRunThisFunction()
   })
 }
