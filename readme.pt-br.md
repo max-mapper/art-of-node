@@ -461,7 +461,7 @@ Aqui temos um exemplo prático:
 
 ![mod-diagram-01](mod-diagram-01.png)
 
-Quando o diretório de trabalho atual é `subsubfolder` e `require('foo')` é chamado, o Node vai procurar pelo diretório chamado `subsubsubfolder/node_modules`. Neste caso, não será encontrado - o diretório foi nomeado incorretamente como `my_modules`. Então, o Node vai procurar no diretório pai e tentar novamente, o que significa que ele vai procurar no diretório `subfolder_B/node_modules` , o qual também não existe. Já a terceira tentativa funciona perfeitamente, pois `folder/node_modules` existe e possui uma pasta chamada `foo` dentro dela. Se `foo` não estivesse neste local, o Node continuaria a sua busca no diretório pai do diretório atual onde a busca está sendo feita.
+Quando o diretório de trabalho atual é `subsubfolder` e `require('foo')` é chamado, o Node vai procurar pelo diretório chamado `subsubfolder/node_modules`. Neste caso, não será encontrado - o diretório foi nomeado incorretamente como `my_modules`. Então, o Node vai procurar no diretório pai e tentar novamente, o que significa que ele vai procurar no diretório `subfolder_B/node_modules` , o qual também não existe. Já a terceira tentativa funciona perfeitamente, pois `folder/node_modules` existe e possui uma pasta chamada `foo` dentro dela. Se `foo` não estivesse neste local, o Node continuaria a sua busca no diretório pai do diretório atual onde a busca está sendo feita.
 
 Observe que se chamarmos do diretório `subfolder_B` o Node nunca vai encontar `subfolder_A/node_modules`, ele apenas pode visualizar `folder/node_modules` e o que estiver nos diretórios acima dele.
 
