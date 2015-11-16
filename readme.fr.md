@@ -4,7 +4,7 @@
 Si vous souhaitez découvrir Node et que les connaissances énoncées ci-après vous sont familières, ce document est fait pour vous :
 
 - Un langage de script, tel que JavaScript, Ruby, Python, Perl, etc. Si vous n'êtes pas programmeur, vous préfèrerez sans doute précéder cette lecture par la découverte de [JavaScript for Cats](http://jsforcats.com/). :cat2:
-- Git & Github qui sont les outils de collaboration privilégiés par la communauté. Rassurez-vous, pas besoin d'être expert, quelques connaissances basiques suffiront. Au besoin, voici trois superbes tutos pour bien démarrer avec git : [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
+- Git & Github qui sont les outils de collaboration privilégiés par la communauté. Rassurez-vous, pas besoin d'être expert, quelques connaissances basiques suffiront. Au besoin, voici trois superbes tutos pour bien démarrer avec git : [1](https://github.com/jlord/git-it-electron#readme), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
 
 Ce court livre est une oeuvre en cours de réalisation. Si vous l'aimez, **donnez-moi un dollar** via
 [gittip](https://www.gittip.com/maxogden/) pour me permettre d'y consacrer du temps !

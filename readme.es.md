@@ -4,7 +4,7 @@
 Este documento está destinado a aquellos lectores que saben al menos un poco de esto:
 
 - un lenguaje tipo script como JavaScript, Ruby, Python, Perl, etc. Si aun no eres programador entonces probablemente será más fácil empezar por leer [JavaScript for Cats](http://jsforcats.com/). :cat2:
-- git y github. Éstas son herramientas colaborativas de código abierto usadas por las personas en la comunidad de Node para compartir módulos. Sólo necesitas conocer lo básico. Aquí hay tres tutoriales introductorios: [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
+- git y github. Éstas son herramientas colaborativas de código abierto usadas por las personas en la comunidad de Node para compartir módulos. Sólo necesitas conocer lo básico. Aquí hay tres tutoriales introductorios: [1](https://github.com/jlord/git-it-electron#readme), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/)
 
 Este corto libro es un trabajo en progeso + No tengo trabajo en este momento (si tuviera no tendría el tiempo para escribir esto). Si te gusta este trabajo considera realizar una donación via [gittip](https://www.gittip.com/maxogden/) para poder escribir mucho más!
 
@@ -63,7 +63,7 @@ A un nivel más bajo, Node puede ser descrito como una herramienta para escribir
 Node procesa E/S en una forma llamada [asíncrona](http://en.wikipedia.org/wiki/Asynchronous_I/O) el cual le permite manejar muchas cosas diferentes simultáneamente. Por ejemplo, si vas a un restaurante de comida rápida y ordenas una hamburguesa ellos tomarán tu orden inmediatamente y te harán esperar hasta que tu hamburguesa esté lista. Mientras tanto ellos pueden tomar otras órdenes y empezar a preparar hamburguesas para otras personas. Imagina si tuvieras que esperar en la caja registradora por tu hamburguesa, bloqueando a todas las otras personas en la fila para ordenar, mientras preparan tu hamburguesa! Esto es llamado **bloqueo de E/S** porque toda E/S (preparación de hamburguesas) suceden una vez al tiempo. Node, por otro lado, es de **no-bloque**, que significa que puede preparar muchas hamburguesas al tiempo.
 
 Aquí hay algunas cosas divertidas hechas de manera fácil con Node gracias a su naturaleza de no-bloque:
-  
+
   - Control [volando quadcopters](http://nodecopter.com)
   - Escribir bots para chat IRC
   - Crear [robots bípedos](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
@@ -291,7 +291,7 @@ var chatClient = require('my-chat-client').connect()
 
 chatClient.on('connect', function() {
   // have the UI show we are connected
-}) 
+})
 
 chatClient.on('connectionError', function() {
   // show error to the user
@@ -326,7 +326,7 @@ MORE EVENTS CONTENT TODO
 
 ## Streams
 
-Early on in the project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
+Early on in the project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it.
 
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
 

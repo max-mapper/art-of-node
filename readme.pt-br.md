@@ -5,7 +5,7 @@
 Este documento é destinado à leitores que sabem no mínimo algumas das coisas abaixo:
 
 - Uma linguagem de script como JavaScript, Ruby, Python, Perl, etc. Se você ainda não é um programador então é, provavelmente, mais fácil começar a ler [JavaScript for Cats](http://jsforcats.com/). :cat2:
-- Git e Github. Estas são ferramentas de colaboração de código aberto que pessoas da comunidade Node usam para compartilhar módulos. Você só precisa saber o básico. Aqui estão três ótimos tutoriais de introdução. [1](http://skli.se/2012/09/22/introduction-to-git/), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/) (em inglês).
+- Git e Github. Estas são ferramentas de colaboração de código aberto que pessoas da comunidade Node usam para compartilhar módulos. Você só precisa saber o básico. Aqui estão três ótimos tutoriais de introdução. [1](https://github.com/jlord/git-it-electron#readme), [2](http://zachbruggeman.me/github-for-cats/), [3](http://opensourcerer.diy.org/) (em inglês).
 
 Este pequeno livro é um trabalho em progresso. Se você gostar deste livro considere **fazer uma doação** via [gittip](https://www.gittip.com/maxogden/) para que eu possa escrever muito mais.
 
