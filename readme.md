@@ -6,9 +6,9 @@ This document is intended for readers who know at least a little bit of a couple
 - a scripting language like JavaScript, Ruby, Python, Perl, etc. If you aren't a programmer yet then it is probably easier to start by reading [JavaScript for Cats](http://jsforcats.com/). :cat2:
 - git and github. These are the open source collaboration tools that people in the node community use to share modules. You just need to know the basics. Here are three great intro tutorials: [1](https://github.com/jlord/git-it-electron#readme), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
 
-This short book is a work in progress. If you like it then please **give me a dollar** via [gratipay](https://www.gratipay.com/maxogden/) so that I can justify taking the time to write more!
+This short book is a work in progress. If you like it then please **give me a dollar** via [gratipay](https://gratipay.com/~maxogden/) so that I can justify taking the time to write more!
 
-[![donate](donate.png)](https://www.gratipay.com/maxogden/)
+[![donate](donate.png)](https://gratipay.com/~maxogden/)
 
 ## Table of contents
 
@@ -83,13 +83,13 @@ What is an "I/O based program"? Here are some common I/O sources:
   - HTTP/WebSocket connections (from users of a web app)
   - Files (image resizer, video editor, internet radio)
 
-Node does I/O in a way that is [asynchronous](http://en.wikipedia.org/wiki/Asynchronous_I/O) which lets it handle lots of different things simultaneously. For example, if you go down to a fast food joint and order a cheeseburger they will immediately take your order and then make you wait around until the cheeseburger is ready. In the meantime they can take other orders and start cooking cheeseburgers for other people. Imagine if you had to wait at the register for your cheeseburger, blocking all other people in line from ordering while they cooked your burger! This is called **blocking I/O** because all I/O (cooking cheeseburgers) happens one at a time. Node, on the other hand, is **non-blocking**, which means it can cook many cheeseburgers at once.
+Node does I/O in a way that is [asynchronous](https://en.wikipedia.org/wiki/Asynchronous_I/O) which lets it handle lots of different things simultaneously. For example, if you go down to a fast food joint and order a cheeseburger they will immediately take your order and then make you wait around until the cheeseburger is ready. In the meantime they can take other orders and start cooking cheeseburgers for other people. Imagine if you had to wait at the register for your cheeseburger, blocking all other people in line from ordering while they cooked your burger! This is called **blocking I/O** because all I/O (cooking cheeseburgers) happens one at a time. Node, on the other hand, is **non-blocking**, which means it can cook many cheeseburgers at once.
 
 Here are some fun things made easy with node thanks to its non-blocking nature:
   
-  - Control [flying quadcopters](http://nodecopter.com)
+  - Control [flying quadcopters](http://www.nodecopter.com/)
   - Write IRC chat bots
-  - Create [walking biped robots](http://www.youtube.com/watch?v=jf-cEB3U2UQ)
+  - Create [walking biped robots](https://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
 ## Core modules
 
@@ -266,7 +266,7 @@ fs.readFile('movie.mp4', function finishedReading(error, movieData) {
 
 In node if you require the [events](http://nodejs.org/api/events.html) module you can use the so-called 'event emitter' that node itself uses for all of its APIs that emit things.
 
-Events are a common pattern in programming, known more widely as the ['observer pattern'](http://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
+Events are a common pattern in programming, known more widely as the ['observer pattern'](https://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
 
 The easiest way to think about events is that they let you subscribe to things. You can say 'when X do Y', whereas with plain callbacks it is 'do X then Y'.
 
@@ -365,7 +365,7 @@ Node core is made up of about two dozen modules, some lower level ones like `eve
 
 This design is intentional. Node core is supposed to be small, and the modules in core should be focused on providing tools for working with common I/O protocols and formats in a way that is cross-platform.
 
-For everything else there is [npm](https://npmjs.org/). Anyone can create a new node module that adds some functionality and publish it to npm. As of the time of this writing there are 34,000 modules on npm.
+For everything else there is [npm](https://www.npmjs.com/). Anyone can create a new node module that adds some functionality and publish it to npm. As of the time of this writing there are 34,000 modules on npm.
 
 ### How to find a module
 
@@ -377,12 +377,12 @@ There are a ton of results! npm is quite popular and you will usually be able to
 
 - [hummus](https://github.com/galkahana/HummusJS/wiki/Features) - c++ pdf manipulator
 - [mimeograph](https://github.com/steelThread/mimeograph) - api on a conglomeration of tools (poppler, tesseract, imagemagick etc)
-- [pdftotextjs](https://npmjs.org/package/pdftotextjs) - wrapper around [pdftotext](https://en.wikipedia.org/wiki/Pdftotext)
-- [pdf-text-extract](https://npmjs.org/package/pdf-text-extract) - another wrapper around pdftotext
-- [pdf-extract](https://npmjs.org/package/pdf-extract) - wrapper around pdftotext, pdftk, tesseract, ghostscript
-- [pdfutils](https://npmjs.org/package/pdfutils) - poppler wrapper
-- [scissors](https://npmjs.org/package/scissors) - pdftk, ghostscript wrapper w/ high level api
-- [textract](https://npmjs.org/package/textract) - pdftotext wrapper
+- [pdftotextjs](https://www.npmjs.com/package/pdftotextjs) - wrapper around [pdftotext](https://en.wikipedia.org/wiki/Pdftotext)
+- [pdf-text-extract](https://www.npmjs.com/package/pdf-text-extract) - another wrapper around pdftotext
+- [pdf-extract](https://www.npmjs.com/package/pdf-extract) - wrapper around pdftotext, pdftk, tesseract, ghostscript
+- [pdfutils](https://www.npmjs.com/package/pdfutils) - poppler wrapper
+- [scissors](https://www.npmjs.com/package/scissors) - pdftk, ghostscript wrapper w/ high level api
+- [textract](https://www.npmjs.com/package/textract) - pdftotext wrapper
 - [pdfiijs](https://github.com/fagbokforlaget/pdfiijs) - pdf to inverted index using textiijs and poppler
 - [pdf2json](https://github.com/modesty/pdf2json/blob/master/readme.md) - pure js pdf to json
 
@@ -527,7 +527,7 @@ A common misconception about npm is that since it has 'Node' in the name that it
 
 [browserify](http://browserify.org/) is a utility written in Node that tries to convert any node module into code that can be run in browsers. Not all modules work (browsers can't do things like host an HTTP server), but a lot of modules on NPM *will* work.
 
-To try out npm in the browser you can use [RequireBin](http://requirebin.com/), an app I made that takes advantage of [Browserify-CDN](https://github.com/jesusabdullah/browserify-cdn), which internally uses browserify but returns the output through HTTP (instead of the command line -- which is how browserify is usually used).
+To try out npm in the browser you can use [RequireBin](http://requirebin.com/), an app I made that takes advantage of [Browserify-CDN](https://github.com/jfhbrook/wzrd.in), which internally uses browserify but returns the output through HTTP (instead of the command line -- which is how browserify is usually used).
 
 Try putting this code into RequireBin and then hit the preview button:
 
@@ -560,7 +560,7 @@ Or check out a [more complicated example](http://requirebin.com/?gist=6031068) (
 
 ## Going with the grain
 
-Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](http://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
+Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](https://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
 
 ### What is outside of node's scope?
 
@@ -613,7 +613,7 @@ fs.readFile('movie.mp4', function(err, data) {
 
 Note: If you don't know what these things mean then you will likely have an easier time learning node, since unlearning things is just as much work as learning things.
 
-Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
+Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.io/uvbook/), the C++ I/O layer that node is built on top of.
 
 ## License
 
@@ -622,4 +622,4 @@ Node uses threads internally to make things fast but doesn't expose them to the 
 Creative Commons Attribution License (do whatever, just attribute me)
 http://creativecommons.org/licenses/by/2.0/
 
-Donate icon is from the [Noun Project](http://thenounproject.com/term/donate/285/)
+Donate icon is from the [Noun Project](https://thenounproject.com/term/donate/285/)
