@@ -550,9 +550,9 @@ setTimeout(function() {
 }, 500)
 ```
 
-Or check out a [more complicated example](http://requirebin.com/?gist=6031068) (feel free to change the code and see what happens):
+Or check out a [more complicated example](http://requirebin.com/?gist=679b58d4237eaca37173) (feel free to change the code and see what happens):
 
-[![requirebin](requirebin.png)](http://requirebin.com/embed?gist=6031068)
+[![requirebin](requirebin.png)](http://requirebin.com/embed?gist=679b58d4237eaca37173)
 
 ## Going with the grain
 
