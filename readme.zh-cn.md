@@ -490,7 +490,7 @@ npm install --save request
 ```
 这个命令会安装`request`模块到最近的`node_modules`文件夹中，并会把`package.json`改成这样：
 
-```
+```js
 {
   "name": "number-one",
   "version": "1.0.0",

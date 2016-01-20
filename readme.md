@@ -505,7 +505,7 @@ npm install --save request
 
 This installs a copy of `request` into the closest `node_modules` folder and makes our `package.json` look something like this:
 
-```
+```js
 {
   "name": "number-one",
   "version": "1.0.0",

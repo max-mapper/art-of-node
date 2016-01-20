@@ -524,7 +524,7 @@ npm install request --save
 
 Isto vai instalar uma cópia de `request` na pasta mais próxima do `node_modules` e fazer o nosso `package.json` se parecer assim:
 
-```
+```js
 {
   "name": "number-one",
   "version": "1.0.0",

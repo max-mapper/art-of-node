@@ -511,7 +511,7 @@ npm install --save request
 
 Cela installera une copie de `request` dans le `node_modules` le plus proche et notre `package.json` ressemblera ainsi à cela:
 
-```
+```js
 {
   "name": "number-one",
   "version": "1.0.0",
