@@ -464,7 +464,7 @@ module.exports = 1
 
 默认情况下，当你调用`require('module')`时node会试图加载`module/index.js`，除非你在`package.json`中设定了`main`一项内容指向你的代码，不然用的名称的文件无法被node识别。
 
-把这两个文件放到`number-one`目录下（`package.json`中的`id`一项必须和目录的名称相同），然后你就可以加载他们了。
+把这两个文件放到`number-one`目录下（`package.json`中的`name`一项必须和目录的名称相同），然后你就可以加载他们了。
 
 调用`require('number-one')` 这一命令会返回你在模块中`module.exports`输出的内容：
 
@@ -492,7 +492,7 @@ npm install --save request
 
 ```
 {
-  "id": "number-one",
+  "name": "number-one",
   "version": "1.0.0",
   "dependencies": {
     "request": "~2.22.0"

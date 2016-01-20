@@ -507,7 +507,7 @@ This installs a copy of `request` into the closest `node_modules` folder and mak
 
 ```
 {
-  "id": "number-one",
+  "name": "number-one",
   "version": "1.0.0",
   "dependencies": {
     "request": "~2.22.0"

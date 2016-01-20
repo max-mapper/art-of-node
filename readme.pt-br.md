@@ -496,7 +496,7 @@ module.exports = 1
 
 Por padrão, o Node tenta carregar `module/index.js` quando você faz um `require('module')`, qualquer outro nome de arquivo não vai funcionar a menos que você defina o campo `main` no `package.json` e aponte para ele.
 
-Coloque ambos os arquivos em uma pasta chamada `number-one` (o `id` em `package.json` deve coincidir com o nome da pasta) e você terá um módulo Node para trabalhar.
+Coloque ambos os arquivos em uma pasta chamada `number-one` (o `name` em `package.json` deve coincidir com o nome da pasta) e você terá um módulo Node para trabalhar.
 
 Chamando a função `require('number-one')` será retornado o valor de qualquer `module.exports` que estiver definido dentro do módulo:
 
@@ -526,7 +526,7 @@ Isto vai instalar uma cópia de `request` na pasta mais próxima do `node_module
 
 ```
 {
-  "id": "number-one",
+  "name": "number-one",
   "version": "1.0.0",
   "dependencies": {
     "request": "~2.22.0"
