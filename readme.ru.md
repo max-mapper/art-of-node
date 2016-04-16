@@ -308,20 +308,33 @@ fs.readFile('movie.mp4', function finishedReading(error, movieData) {
 })
 ```
 
-## Events
+## События (Эвенты\ИвЭнты) Events
 
+В Ноде, если тебе нужен модуль [events](https://nodejs.org/api/events.html) ты можешь использовать т.н. 'event emitter' (излучатель событий - гораздо лучше запонмить англ. название), к-ый сам используется Нодой для всех API, к-ые отправляют сигналы.
 In node if you require the [events](https://nodejs.org/api/events.html) module you can use the so-called 'event emitter' that node itself uses for all of its APIs that emit things.
+
+События - основной паттерн в программировании, более известный как "Наблюдатель" ['observer pattern'](https://en.wikipedia.org/wiki/Observer_pattern) или 'pub/sub' (publish/subscribe) издатель\подписчик. Посольку коллбэки реализуют модель один-к-одному (one-to-one) отношений между коллбэком тем кто его вызывает, события реализуют API для другого типа отношений - многие-ко-многим (many-to-many).
 
 Events are a common pattern in programming, known more widely as the ['observer pattern'](https://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
 
+Самый простой способ понять механику событий - позволить тебе "подписаться" на происходящие события. Ты можешь сказать "когда произойдет X сделать Y", в то время как с чистыми колбэками можно было разговаривать только "сделай X потом сделай Y". Т.е. подход событий более общий\универсальный.
 The easiest way to think about events is that they let you subscribe to things. You can say 'when X do Y', whereas with plain callbacks it is 'do X then Y'.
 
+РАссмотрим несколько случаев\юз-кейсов (use cases) где ивенты смогли бы заменить коллбэки:
 Here are few common use cases for using events instead of plain callbacks:
+
+- Чат-комнату (Chat room) где ты бы смог оповещать разных слушателей\участников\чатеров\лиснеров (listeners) своими сообщениями
+- Игровой сервер, к-му нужно знать когда игроки подключились, отключились, переместились (в игре), ударили, прыгнули и т.п.
+- Игровой движок где ты мог позволить рзработчикам подписаться на события вида `.on('jump', function() {})`
+- Низкоуровневый веб-сервер, к-ый хочет открыть API чтобы просто перехватывать в события, например так `.on('incomingRequest')` или так `.on('serverError')`
 
 - Chat room where you want to broadcast messages to many listeners
 - Game server that needs to know when new players connect, disconnect, move, shoot and jump
 - Game engine where you want to let game developers subscribe to events like `.on('jump', function() {})`
 - A low level web server that wants to expose an API to easily hook into events that happen like `.on('incomingRequest')` or `.on('serverError')`
+
+Если попробовать написать модуль, к-ый подключается к чат-серверу используя только колбэки, то это будет выглядеть примерно так:
+
 
 If we were trying to write a module that connects to a chat server using only callbacks it would look like this:
 
@@ -353,6 +366,8 @@ chatClient.connect(
 )
 ```
 
+Выглядит дейтсивтельно топрно\неуклюже, поскольку все ф-ии для вызова `.connect` надо передавать в заранее пор-ом порядке. Напишем то же самое, но с помощью ивентов:
+
 As you can see this is really cumbersome because of all of the functions that you have to pass in a specific order to the `.connect` function. Writing this with events would look like this:
 
 ```js
@@ -375,6 +390,8 @@ chatClient.on('message', function() {
 })
 ```
 
+Это похоже на вариант с колбэками, но привносит\добавляет метод `.on`, к-ый "подписывает" колбэк на событие, как человек подписывается на газету или новости с сайта. Это значит, что ты можешь выбрать на какие события ты хочешь подписаться из `chatClient`. Ты даже можешь подписаться на одно событие несколько раз разными колбэками.
+
 This approach is similar to the pure-callback approach but introduces the `.on` method, which subscribes a callback to an event. This means you can choose which events you want to subscribe to from the `chatClient`. You can also subscribe to the same event multiple times with different callbacks:
 
 ```js
@@ -391,7 +408,10 @@ function storeMessage(message) {
 }
 ```
 
-## Streams
+## Потоки (Стримы) Streams
+
+%%%%%,, Например, любой файл в ФС имеет свой укникальный файл-дескриптор ('file descriptor'), так что модуль `fs` имеет дополнитлеьную логику чтобы хранить следы
+
 
 Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
 
