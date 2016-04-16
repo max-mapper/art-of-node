@@ -269,7 +269,7 @@ var file = readFile()
 processFile(file)
 ```
 
-Такой тип линейного (последовательного, шаг-за-шагом) построения программ не работает\подходит\используется в Ноде.
+Такой тип линейного (последовательного, шаг-за-шагом) построения программ не работает\подходит\используется в Ноде. Если код начнет выполняться в таком виде, то `readFile` и `processFile` будут выполняться строго одновременно. Так мы не сделаем звисмость на коончание выполнения `readFile`. Вместо этого, тебе надо указать что `processFile` завязан (зависит от окончания) на окончание работы `readFile`. И это как раз то, для чего и нужны коллбэки! А поскольку это возможности JS ты можешь описывать такие зависимости разными способами:%%
 This kind of linear (step-by-step, in order) code isn't the way that node works. If this code were to get executed then `readFile` and `processFile` would both get executed at the same exact time. This doesn't make sense since `readFile` will take a while to complete. Instead you need to express that `processFile` depends on `readFile` finishing. This is exactly what callbacks are for! And because of the way that JavaScript works you can write this dependency many different ways:
 
 ```js
@@ -282,6 +282,7 @@ function finishedReading(error, movieData) {
 }
 ```
 
+Но ты также можешь написать код по-другому и он тоже сработает:
 But you could also structure your code like this and it would still work:
 
 ```js
@@ -295,6 +296,7 @@ function finishedReading(error, movieData) {
 fs.readFile('movie.mp4', finishedReading)
 ```
 
+Или даже так:
 Or even like this:
 
 ```js
