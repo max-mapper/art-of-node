@@ -561,38 +561,60 @@ It's not just Debian that does this. Most programming language package managers 
 
 With npm installing global modules is an anti-pattern. Just like how you shouldn't use global variables in your JavaScript programs you also shouldn't install global modules (unless you need a module with an executable binary to show up in your global `PATH`, but you don't always need to do this -- more on this later).
 
-#### How `require` works
+#### Как работает `require`  How `require` works
+
+Когда ты вызываешь `require('some_module')` в Ноде происходит следуюущее:
 
 When you call `require('some_module')` in node here is what happens:
+
+1. Если вызываемый файл `some_module.js` существует в текущей папке, то Нода его подгрузит, иначе
+2. Нода просмотрит в текущей папке папку с именем `node_modules` и в ней папку с именем `some_module`
+3. Если он и её не найдет, то он поднимется на 1 уровень вверх и повторит шаг 2
 
 1. if a file called `some_module.js` exists in the current folder node will load that, otherwise:
 2. node looks in the current folder for a `node_modules` folder with a `some_module` folder in it
 3. if it doesn't find it, it will go up one folder and repeat step 2
 
+Этот цикл повторится пока Нода не доберется до корневой папки ФС, оттуда он проверит все глобальные аппки модулей (такие как `/usr/local/node_modules` on Mac OS) и если всё ещё не найдет `some_module`, только тогда Нода выбросит эксепшн (throw an exception).
+
+
 This cycle repeats until node reaches the root folder of the filesystem, at which point it will then check any global module folders (e.g. `/usr/local/node_modules` on Mac OS) and if it still doesn't find `some_module` it will throw an exception.
 
+Здесь пример таког опоиска:
 Here's a visual example:
 
 ![mod-diagram-01](mod-diagram-01.png)
 
+Находясь в папке `subsubfolder` и вызвав `require('foo')`, Нода будет искать папку `subsubfolder/node_modules`. В этом случае он не найдет его -- папка здесь ошибочно названа `my_modules`. Тогда Нода поднимется вверх на 1 уровень и попробует исктаь снова, означая это тогда then looks for `subfolder_B/node_modules`, к-ой также не существует. Третья попытка - %%% 
+хотя как `folder/node_modules` существует *и* имеет внутри себя папку `foo`. Если `foo` здесь не будет - Нода продолжит поиск в родительской директории.
+
 When the current working directory is `subsubfolder` and `require('foo')` is called, node will look for the folder called `subsubfolder/node_modules`. In this case it won't find it -- the folder there is mistakenly called `my_modules`. Then node will go up one folder and try again, meaning it then looks for `subfolder_B/node_modules`, which also doesn't exist. Third try is a charm, though, as `folder/node_modules` does exist *and* has a folder called `foo` inside of it. If `foo` wasn't in there node would continue its search up the directory tree.
+
+Заметим, что если вызываемая из `subfolder_B` Нода не найдет `subfolder_A/node_modules`, то она может только увидеть `folder/node_modules` поднимаясь вверх по дереву папок.
 
 Note that if called from `subfolder_B` node will never find `subfolder_A/node_modules`, it can only see `folder/node_modules` on its way up the tree.
 
+Одно из преимуществ npm в том что модули могут установливать свои засисимые модули, причем версии, к-ые специфичны для них самих. В этом случае, модуль `foo` крайне популярен - 3 копии пакета, каждая внутри родительской папки самогО модуля. Причной этому можеть быть то, что каждый родительский модуль нуждается в разной версии пакета `foo`, т.е. 'folder'у нужен `foo@0.0.1`, `subfolder_A`у нужен `foo@0.2.1` и т.д.
+
 One of the benefits of npm's approach is that modules can install their dependent modules at specific known working versions. In this case the module `foo` is quite popular - there are three copies of it, each one inside its parent module folder. The reasoning for this could be that each parent module needed a different version of `foo`, e.g. 'folder' needs `foo@0.0.1`, `subfolder_A` needs `foo@0.2.1` etc.
 
+Здесь показано, что произойдет когда мы исправим ошибку имени директории, сменив его с `my_modules` на правильное  `node_modules`:
 Here's what happens when we fix the folder naming error by changing `my_modules` to the correct name `node_modules`:
 
 ![mod-diagram-02](mod-diagram-02.png)
 
+Чтобы протестить какой конкретно модуль загружен Нодой, ты можешь вызвать команду `require.resolve('some_module')`, к-ая покажет путь к модулю, к-ый Нода нашла как результат обхода по дереву директорий. `require.resolve` может быть полезной когда двойная проверка этого модуля то что ты *ожидаешь*  загрузить и фактически загруженной -- иногда это разные версии одного модуля %%, для твоей текущей рабочей директории чем одна%%%%%%%
+
 To test out which module actually gets loaded by node, you can use the `require.resolve('some_module')` command, which will show you the path to the module that node finds as a result of the tree climbing process. `require.resolve` can be useful when double-checking that the module that you *think* is getting loaded is *actually* getting loaded -- sometimes there is another version of the same module closer to your current working directory than the one you intend to load.
 
-### How to write a module
+### Как писать модуль  How to write a module
 
+После того, как ты узнал как искать модули и как загружать их в программу ты можешь начать писать свои модули.
 Now that you know how to find modules and require them you can start writing your own modules.
 
-#### The simplest possible module
+#### Самый простой из возможных модулей  The simplest possible module
 
+Модули Ноды крайне легковесны (lightweight). Один из самых простых модулей:
 Node modules are radically lightweight. Here is one of the simplest possible node modules:
 
 `package.json`:
@@ -608,13 +630,22 @@ Node modules are radically lightweight. Here is one of the simplest possible nod
 module.exports = 1
 ```
 
+По умолчанию (By default), когда ты вызываешь `require('module')`, то Нода пробует загрузить `module/index.js`. С любым другим именем файла это не сработает, пока ты не укажешь его явно в файле `package.json` в поле `main`.
+
+
 By default node tries to load `module/index.js` when you `require('module')`, any other file name won't work unless you set the `main` field of `package.json` to point to it.
 
+Положи оба этих файла в папку `number-one` (значение `name` в `package.json` должно совпадать с именем папки) и ты получишь готовый рабочий модуль.
+
 Put both of those files in a folder called `number-one` (the `name` in `package.json` must match the folder name) and you'll have a working node module.
+
+Вызывая функцию `require('number-one')` получшиь значение чего-то `module.exports` что установлено внутри модуля.
 
 Calling the function `require('number-one')` returns the value of whatever `module.exports` is set to inside the module:
 
 ![simple-module](simple-module.png)
+
+Есть способ даже более скорый, чтобы создать модуль, выполните эти команды:
 
 An even quicker way to create a module is to run these commands:
 
@@ -626,15 +657,23 @@ git remote add git@github.com:yourusername/my_module.git
 npm init
 ```
 
+Запуская `npm init` создастся валидный (valid) `package.json` и если запустить его в существующем `git` репе он установит поле `repositories` внутри `package.json` автоматически.
+
 Running `npm init` will create a valid `package.json` for you and if you run it in an existing `git` repo it will set the `repositories` field inside `package.json` automatically as well!
 
-#### Adding dependencies
+#### Добавление зависимостей Adding dependencies
+
+У модуля может быть список других модулей из npm или GitHub в поле `dependencies` в файле `package.json`. Чтобы установить
+модуль `request` как новую зависимость и сразу доавбить его в `package.json` выполните следующую команду в корневой папке модуля:
+
 
 A module can list any other modules from npm or GitHub in the `dependencies` field of `package.json`. To install the `request` module as a new dependency and automatically add it to `package.json` run this from your module root directory:
 
 ```sh
 npm install --save request
 ```
+
+Этим ты установишь копию `request` в закрытую извне папку `node_modules` и сделает наш `package.json` похожим на этот:
 
 This installs a copy of `request` into the closest `node_modules` folder and makes our `package.json` look something like this:
 
@@ -648,9 +687,13 @@ This installs a copy of `request` into the closest `node_modules` folder and mak
 }
 ```
 
+По умолчанию, `npm install` подтягивает последнюю опубликованную версию модуля.
+
 By default `npm install` will grab the latest published version of a module.
 
-## Client side development with npm
+## Разработка клиента с npm.  Client side development with npm
+
+Основное заблуждение о npm - то что  ___ в названии Ноду можно использовать только на сервере. Это совершенно не так. На самом деле, npm ставит?? для Ноды Packaged Modules, т.е., модули к-ые ::??? Модули сами по себе могут быть чем ты хочешь -- они просто аппка с файлами, собранная в архив и файлом `package.json`, к-й описывает версию модуля и сисок всех зависимостей (вместе с версиями этих модулей, так что рабочие вресии поставятся автоматически). Эта цепь оченьд линная, модули зависят од других модлуей, к-ые в свою очередь зависят от других и т.д.
 
 A common misconception about npm is that since it has 'Node' in the name that it must only be used for server side JS modules. This is completely untrue! npm actually stands for Node Packaged Modules, e.g. modules that Node packages together for you. The modules themselves can be whatever you want -- they are just a folder of files wrapped up in a .tar.gz, and a file called `package.json` that declares the module version and a list of all modules that are dependencies of the module (as well as their version numbers so the working versions get installed automatically). It's turtles all the way down - module dependencies are just modules, and those modules can have dependencies etc. etc. etc.
 
@@ -693,14 +736,19 @@ Like any good tool, node is best suited for a certain set of use cases. For exam
 
 ### What is outside of node's scope?
 
+Приципиально, Нода - лишь инструмент для управления I/O поверх ФС и сетью, и он не касается других более fancy возможностей для сторонних модулей. Здесь описаны несколько вещей к-ые лежат вне возможностей Ноды:
+
 Fundamentally node is just a tool used for managing I/O across file systems and networks, and it leaves other more fancy functionality up to third party modules. Here are some things that are outside the scope of node:
 
 #### Web frameworks
+
+Несколько %%%, но Нода - не веб-фреймворк. Веб-фреймворки, к-ые написаны используя Ноду не всегда делают те же вещи ??
 
 There are a number of web frameworks built on top of node (framework meaning a bundle of solutions that attempts to address some high level problem like modeling business logic), but node is not a web framework. Web frameworks that are written using node don't always make the same kind of decisions about adding complexity, abstractions and tradeoffs that node does and may have other priorities.
 
 #### Language syntax
 
+Нода использует JS и не собирается что-то менять. Felix Geisendörfer хорошо сказал по поводу стиля Ноды.
 Node uses JavaScript and doesn't change anything about it. Felix Geisendörfer has a pretty good write-up of the 'node style' [here](https://github.com/felixge/node-style-guide).
 
 #### Language abstraction
