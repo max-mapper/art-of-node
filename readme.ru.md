@@ -110,26 +110,31 @@ Node handles I/O with: callbacks, events, streams and modules. If you learn how 
 
 ## Коллбэки Callbacks
 
+Это, пожалуй, самая важная часть всего гайда, если ты хочешь разобраться в Ноде. Колбэки используются в Ноде почти везде \ повсеместно\повсюду. Они были придуманы ещё до создания Ноды, и вяляются чатью самого языка JavaScript.
 This is the most important topic to understand if you want to understand how to use node. Nearly everything in node uses callbacks. They weren't invented by node, they are just part of the JavaScript language.
 
+Коллбэки - функции, к-ые вызываются не сразу, а отложенно\асинхронно выполнению остального кода. В олчие от \ Если обычно код читается и выполняется посоедедоватьельно сверху вниз, асинк программы могут выполнять разные функции в разное время \ в другом порядке .... ????
 Callbacks are functions that are executed asynchronously, or at a later time. Instead of the code reading top to bottom procedurally, async programs may execute different functions at different times based on the order and speed that earlier functions like http requests or file system reads happen.
 
+Поначалу такое отличие сбиавет столку, если ф-ия асинк или не зависит от контекста. РАзберем простой пример синхронног овыполнения, где код выполняется последовательно сверху вниз.
 The difference can be confusing since determining if a function is asynchronous or not depends a lot on context. Here is a simple synchronous example, meaning you can read the code top to bottom just like a book:
 
 ```js
 var myNumber = 1
-function addOne() { myNumber++ } // define the function
-addOne() // run the function
+function addOne() { myNumber++ } // определяем функцию (define the function)
+addOne() // запускаем\выполняем её (run the function)
 console.log(myNumber) // logs out 2
 ```
 
+В коде определяется\объявляется ф-ия и на след строке идет её вызов, без задержек и пауз. Когда ф-я вызывается число сразу (!) увеличивается на 1, т.е. мы уверены, что после вызова ф-ии число станет равно 2. Это и есть предсказуемость синхр кода - он выполняется последовательно сверху вниз.
 The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2. This is the expectation of synchronous code - it sequentially runs top to bottom.
 
+Но Нода, часто использует асинк модель выполнения. С помощью Ноды прочитаем число из файла `number.txt` (файл - находится на диске, а значит будем исп-ть содуль `fs` - прим. переводчика)
 Node, however, uses mostly asynchronous code. Let's use node to read our number from a file called `number.txt`:
 
 ```js
-var fs = require('fs') // require is a special function provided by node
-var myNumber = undefined // we don't know what the number is yet since it is stored in a file
+var fs = require('fs') // подключение модуля для работы с ФС require is a special function provided by node
+var myNumber = undefined // сейчас мы не знаем какое число записано в файле (we don't know what the number is yet since it is stored in a file)
 
 function addOne() {
   fs.readFile('number.txt', function doneReading(err, fileContents) {
@@ -143,22 +148,33 @@ addOne()
 console.log(myNumber) // logs out undefined -- this line gets run before readFile is done
 ```
 
+Почему же после вызова ф-ии мы получили `undefined`? ОБратите внимание, в коде мы исп-ем асинк-метод `fs.readFile`. Обычно, для работы с операциями чтения-записи на диск или с сетью делают асинхр-ми. Если же им надо обратиться напрямую к памяти или заюзать возможности проца - то их делают синхр-ыми. Дело в том, что операции I/O слишком, даже слишком медленные (это важно, т.к. относится не только кНоде но и ко всем языкам\технологиям - прим. перев). Стоит сказать, что чтение с диска происходит медленнее чем из памяти (RAM) примерно в 100k раз.
 Why do we get `undefined` when we log out the number this time? In this code we use the `fs.readFile` method, which happens to be an asynchronous method. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. The reason for this is that I/O is reallyyy reallyyy sloowwww. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (e.g. RAM).
 
+Когда мы запустим программу, ф-ции определятся%%%% сразу, но выполнятся они не сразу. Это фундаментальная и ключевая вещь для понимания асинк-программирования. Если Ноде нечего выполнять, она будет просто висеть в ожидании окончания операций IO или сетевых операций или остановит свое выполнение.%%%%
 When we run this program all of the functions are immediately defined, but they don't all execute immediately. This is a fundamental thing to understand about async programming. When `addOne` is called it kicks off a `readFile` and then moves on to the next thing that is ready to execute. If there is nothing to execute node will either wait for pending fs/network operations to finish or it will stop running and exit to the command line.
 
+Когда `readFile` прочитает файл (это может занять некторое время (от несолкьких мс до неск-их минут), в зависимости от того как быстро происходит чтение с диска), следом будет выполняться ф-ия `doneReading` и выдаст содержимое файла (если чтение прошло успешно) или ошибку.
 When `readFile` is done reading the file (this may take anywhere from milliseconds to seconds to minutes depending on how fast the hard drive is) it will run the `doneReading` function and give it an error (if there was an error) and the file contents.
 
+Мы получили на выходе `undefined` потому что нигде в нашем коде нет указания выражению\ф-ии `console.log` дождаться окончания выполнения `readFile` до того как вывести число.
 The reason we got `undefined` above is that nowhere in our code exists logic that tells the `console.log` statement to wait until the `readFile` statement finishes before it prints out the number.
 
+%%% важно и непонятно
+Если ты хочешь чтобы код всегда выполнялся последовательно, почле прочтения файла тебе надо полжить код внутрь ф-ии-коллбэка. Тогда ты сможешь вызвать ф-ию откуда захочешь. Это подтолкнет тебя давать ф-ям описательные\точные названия\имена.
 If you have some code that you want to be able to execute over and over again, or at a later time, the first step is to put that code inside a function. Then you can call the function whenever you want to run your code. It helps to give your functions descriptive names.
 
+ВАЖНО!!
+Запомните, что коллбэки - просто функции, к-ые выполнются не сразу, по мере чтения кода. Ключ к пониманию мехниазма коллбэков в том, что ты никогда не узнаешь когда они выполнятся, но ты должен быть\будешь уверен в том, **когда** (после какого события) опреция закончится - на псоледней строке асинк-фии (т.е. коллбэка). Порядок объявления коллбэков не имеет никакого значения и евлияет на посдеоватльность вызовов, это говорит только на их логическую вложенность\иерархичность если хотите. Сперва ты разбиваешь свой код на функции (обособленные части кода) и только потом используешь коллбэки, чтобы описать зависмости между вызовами, посдеоватлеьность их вызовов\выполнения.
 Callbacks are just functions that get executed at some later time. The key to understanding callbacks is to realize that they are used when you don't know **when** some async operation will complete, but you do know **where** the operation will complete — the last line of the async function! The top-to-bottom order that you declare callbacks does not necessarily matter, only the logical/hierarchical nesting of them. First you split your code up into functions, and then use callbacks to declare if one function depends on another function finishing.
 
+%%Метод `fs.readFile` выполнится нодой асинхронно и требует много времени чтобы завершить своё выполнение. Рассмотрим происходящее детально: для выполнения ей надо оратиться к ОСи, к-ая затем обратится к ФС, к-ая сама живет на диске, к-ый совершает тысячи оборотов в минуту. Затем ему надо задействовать магнитную головку (а это уже физ уровень, между прочим) чтобы прочитать данные и отправить их обратно через все пройденные уровни обратно нашей программе. Ты передаешь методу `readFile` ф-ию - коллбэк к-ая и будет вызвана после того как данные будут получены от ФС. ФС вернет\положит данные в переменную и вызовет твою ф-ию-коллбэк уже со значением переменной. В этом случае переменная называлась `fileContents` т.к. содержит содержимое всего файла, к-ый был прочитан.
 The `fs.readFile` method is provided by node, is asynchronous, and happens to take a long time to finish. Consider what it does: it has to go to the operating system, which in turn has to go to the file system, which lives on a hard drive that may or may not be spinning at thousands of revolutions per minute. Then it has to use a magnetic head to read data and send it back up through the layers back into your javascript program. You give `readFile` a function (known as a callback) that it will call after it has retrieved the data from the file system. It puts the data it retrieved into a javascript variable and calls your function (callback) with that variable. In this case the variable is called `fileContents` because it contains the contents of the file that was read.
 
+Вспомните пример с рестораном %%%% в нчале туториала. Во многих ресторанах вам ставят на стол номер, пока вы ждете свой заказ. Это очень похоже на коллбэк. Эти номера говорят офииантам, что делать когда твой заказ будет готов.
 Think of the restaurant example at the beginning of this tutorial. At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your cheeseburger is done.
 
+Вернемся к нашему примеру и вынесем выражение `console.log` в отдельную ф-ию (обособленную\самостоятельную часть кода) и передадим её как коллбэк:
 Let's put our `console.log` statement into a function and pass it in as a callback:
 
 ```js
@@ -180,21 +196,32 @@ function logMyNumber() {
 addOne(logMyNumber)
 ```
 
+Теперь ф-ию `logMyNumber` можно передать как аргумент к-ый станет коллбэком\колбэчной переменной внутри ф-ии `addOne`. После окончания выполнения `readFile` будет вызвана `callback` переменная (именно вызвана как ф-ия: `callback()` ). Вызываться могут тлько фукнции, так что если ты передашь туда что-то другое, то это приведет к ошибке.
 Now the `logMyNumber` function can get passed in as an argument that will become the `callback` variable inside the `addOne` function. After `readFile` is done the `callback` variable will be invoked (`callback()`). Only functions can be invoked, so if you pass in anything other than a function it will cause an error.
 
+Когда ф-ия вызывается внутри другой ф-ии как `callback()`, то ф-я будет выполнена сразу. В этом случае наше выражение лога выполнится как `callback`, к-ая на самом деле подставится ф-ия `logMyNumber`. Запонмите важную вещь, когда вы объявляете\определяете\*define* функцию, это ещё ничего неговорит о порядке её выполнения. Чтобы она сработала её надо именно вызвать\сделать её вызов\*invoke*.
 When a function gets invoked in javascript the code inside that function will immediately get executed. In this case our log statement will execute since `callback` is actually `logMyNumber`. Remember, just because you *define* a function it doesn't mean it will execute. You have to *invoke* a function for that to happen.
 
+Чтобы окончательно закончить разбор нашег опример, выпишем все программные действия в тоё последовательности, в -кой они сработают при запуске программы:
 To break down this example even more, here is a timeline of events that happen when we run this program:
 
+- 1: Код "пропарсится", т.е.если в нем есть синтакс ошибки программа не запсутится. По мере парсинга будут определены переменные `fs` and `myNumber`, объявленные как переменные. Термы `addOne` и `logMyNumber` будут описаны как функции. Заметьте, что на этом этапе тоолько обявления\определения. Ни одна функция пока не вызвана (*invoked*).
+- 2: Когда выполнится последняя строка программы, будет вызвана ф-ия `addOne` с ф-ией `logMyNumber`, переданная её как коллбэк-аргумент. Вызов `addOne` сперва запустит асинк-фию `fs.readFile`. На этом часть программы закончит свое выполнение.
+- 3: Сейчас Нода будет бездействовать и ждать пока ф-ия `readFile` закончит выполнение. Если бы ноде надо было что-то сдлеать - в это время - она оставалсь доступной и была готова к работе.
+- 4: Как только `readFile` заканчивает работу, его ф-ия коллбэк `doneReading` (см. кишки readfile), к-ая парсит `fileContents` в поиске целого числа, вызванный `myNumber`-ом, увеличит его значение (`myNumber`) и затем сразу вызовет ф-ию `addOne` переданную в его коллбэк `logMyNumber`. ПЕРЕЧИТАТЬ И ПРОВЕРИТЬ!!
 - 1: The code is parsed, which means if there are any syntax errors they would make the program break. During this initial phase, `fs` and `myNumber` are declared as variables while `addOne` and `logMyNumber` are declared as functions. Note that these are just declarations. Neither function has been called nor invoked yet.
 - 2: When the last line of our program gets executed `addOne` is invoked with the `logMyNumber` function passed as its `callback` argument. Invoking `addOne` will first run the asynchronous `fs.readFile` function. This part of the program takes a while to finish.
 - 3: With nothing to do, node idles for a bit as it waits for `readFile` to finish. If there was anything else to do during this time, node would be available for work.
 - 4: As soon as `readFile` finishes it executes its callback, `doneReading`, which parses `fileContents` for an integer called `myNumber`, increments `myNumber` and then immediately invokes the function that `addOne` passed in (its callback), `logMyNumber`.
 
+
+Пожалуй, самая непривычная часть прогр-ия с коллбэками - это то каак ф-ии как обэекты могут храниться в перемнных и передаваться под разными именами. Давая простые и образные имена своим переменным - очень важное умение для программиста, когда он пишет код не только для себя. Как правило, если ты видишь переменную с именем `callback` или `cb` - скорее всего это будет ф-ия.
 Perhaps the most confusing part of programming with callbacks is how functions are just objects that can be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
 
+Ты наверняка слышал понятия событийно-ориентированное программирование ('evented programming') или "эвент луп" ('event loop' - переводить не имеет смысла). Они обзначают тот самый способ, к-ым реализована ф-ия `readFile`. Нода сперва %%%%  Пока операция выполняется, Нода проверяет на другие возможные события. Внутри Ноды есть список вещей, к-ые диспатчатся но ещё не возварщенные, так что петли Ноды через список снова и снова проверяет, закончились ли они. После того как они закончатся они примут статус 'обработан' ('processed'), т.е. начнут выполняться те ф-ии-коллбэки, к-ые были завязаны на их окончание.
 You may have heard the terms 'evented programming' or 'event loop'. They refer to the way that `readFile` is implemented. Node first dispatches the `readFile` operation and then waits for `readFile` to send it an event that it has completed. While it is waiting node can go check on other things. Inside node there is a list of things that are dispatched but haven't reported back yet, so node loops over the list again and again checking to see if they are finished. After they finished they get 'processed', e.g. any callbacks that depended on them finishing will get invoked.
 
+Небольшая иллюстрация описанного примера:
 Here is a pseudocode version of the above example:
 
 ```js
@@ -207,6 +234,7 @@ function addOne(thenRunThisFunction) {
 addOne(function thisGetsRunAfterAddOneFinishes() {})
 ```
 
+Предстаьте, что у етбя есть 3 асинк-ф-ции `a`, `b` и `c`. Каждая из них бурет 1 минуту для запуска и после заканчивает свой вызов коллбэком (к-ый передан епрвым аргументом) !!! Прим. коллбэк - муж. род, но под ним подразум-ся ф-ия - жен. род !!!. Если тебе понадобится вызвать их последоватльно сначла а, потом б, потом ц, можно написать так:
 Imagine you had 3 async functions `a`, `b` and `c`. Each one takes 1 minute to run and after it finishes it calls a callback (that gets passed in the first argument). If you wanted to tell node 'start running a, then run b after a finishes, and then run c after b finishes' it would look like this:
 
 ```js
@@ -217,15 +245,23 @@ a(function() {
 })
 ```
 
+Когда код начнет выполняться , а стартует сразу, затем через минуту она закончит выполнение и вызовется Б, затем, ещё через минуту она закончит и вызовется Ц и наконец, спустя 3 минуты, Нода остановит выполнеие, выполнять будет больше нечего. Есть гораздо более элегенатные выразительные способы чтобы описать приведенный пример, но суть в том что если у тебя есть код к-ый должен дождаться чтобы начать выполняь другой асинк-код, то тебе надо выразить свое намерение\зависимость через указаник в коде какую функцию передать в качестве колбэка%%%%
 When this code gets executed, `a` will immediately start running, then a minute later it will finish and call `b`, then a minute later it will finish and call `c` and finally 3 minutes later node will stop running since there would be nothing more to do. There are definitely more elegant ways to write the above example, but the point is that if you have code that has to wait for some other async code to finish then you express that dependency by putting your code in functions that get passed around as callbacks.
 
+Такой способ построения программ требует не-линейного мышления. Рассмотрим список\набор операций
 The design of node requires you to think non-linearly. Consider this list of operations:
+
+```
+прочитать файл
+обработать этот файл
+```
 
 ```
 read a file
 process that file
 ```
 
+Если переводить их в псевдокод, то получим:
 If you were to turn this into pseudocode you would end up with this:
 
 ```
@@ -233,6 +269,7 @@ var file = readFile()
 processFile(file)
 ```
 
+Такой тип линейного (последовательного, шаг-за-шагом) построения программ не работает\подходит\используется в Ноде.
 This kind of linear (step-by-step, in order) code isn't the way that node works. If this code were to get executed then `readFile` and `processFile` would both get executed at the same exact time. This doesn't make sense since `readFile` will take a while to complete. Instead you need to express that `processFile` depends on `readFile` finishing. This is exactly what callbacks are for! And because of the way that JavaScript works you can write this dependency many different ways:
 
 ```js
