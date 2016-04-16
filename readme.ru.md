@@ -410,34 +410,52 @@ function storeMessage(message) {
 
 ## Потоки (Стримы) Streams
 
-%%%%%,, Например, любой файл в ФС имеет свой укникальный файл-дескриптор ('file descriptor'), так что модуль `fs` имеет дополнитлеьную логику чтобы хранить следы
-
+%%%%%,, Например, любой файл в ФС имеет свой укникальный файл-дескриптор ('file descriptor'), так что модуль `fs` имеет дополнитлеьную логику чтобы хранить следы, тогда как сетевые модули такой возможности не имеют. Несмотря на важные отличия в семнтике подобной этой %%% , фундаментальный\базовый уровень обеих групп кода были продублированы в большинстве функциональностей%%%%, когда приходилось читать и писать данные. Совместаня работа на Ноде реализовалась так что это могло запутать, пока приходилось разобраться двух разных семантиках, чтобы по сути сдлеать одну и ту же вещь так что они сделали новый API и назвали `Stream` и написали весь сетевой код и код ФС используя уже новый АПИ.
 
 Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
 
+
+Главная задача Ноды - сделать простой и удобной работу с ФС и с сетями, так что сделано понятно чтобы иметь один образец\эталон\пример, к-ый бы использовался везде. Главный плюс заключается в том, что большинство паттернов похожих на этот  (здесь только несколько вариантов\путей) %%%%%%
+
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
+
+Есть 2 отличных ресурса, к-ые можно использовать для изучения стримов\потоков Ноды. Первый - stream-adventure (см. блок Learn Node Interactively) и другой - справочник, называемый (Stream Handbook).
 
 There are already two great resources that you can use to learn about node streams. One is the stream-adventure (see the Learn Node Interactively section) and the other is a reference called the Stream Handbook.
 
 ### Stream Handbook
 
+- гайд, похожий на этот, в к-ом есть справочник для всего что только тебе может понадобиться при изучении стримов.
 [stream-handbook](https://github.com/substack/stream-handbook#introduction) is a guide, similar to this one, that contains a reference for everything you could possibly need to know about streams.
 
 [![stream-handbook](stream-handbook.png)](https://github.com/substack/stream-handbook)
 
-## Modules
+## Модули Modules
+
+База Ноды (Node core) основана на дюжине модулей, несколько низкоуровневых, таких как `events` and `stream` и несколько высокоуровневых типа `http` and `crypto`.
 
 Node core is made up of about two dozen modules, some lower level ones like `events` and `stream` some higher level ones like `http` and `crypto`.
 
+Такой дизайн выбран неслучайно. Node core изначально предполагалось сделать маленьким, и модули в ядре\коре будут направлены на обеспечение инструментов (тулз) для работы с базовыми I/O протоколами и форматами и был бы кросс-платформенным (независимым от платформы).
+
 This design is intentional. Node core is supposed to be small, and the modules in core should be focused on providing tools for working with common I/O protocols and formats in a way that is cross-platform.
+
+
+Для всего остального есть npm. Любой может создать новый модуль для Ноды, к-ый внесет дополнительные возможности и опубликовать его для npm. На момент написания этих строк (в оригинале - прим. перев.) на npm было около 34k модулей.
 
 For everything else there is [npm](https://www.npmjs.com/). Anyone can create a new node module that adds some functionality and publish it to npm. As of the time of this writing there are 34,000 modules on npm.
 
-### How to find a module
+### Как найти нужный модуль  How to find a module
+
+Представьте, тебе надо сконвертить PDF файлы в текстовые. Начать стоит с ввода команды `npm search pdf`:
+
+![pdfsearch](npm-search.png)
 
 Imagine you are trying to convert PDF files into TXT files. The best place to start is by doing `npm search pdf`:
 
 ![pdfsearch](npm-search.png)
+
+Он выдаст кучу результатов. npm очень популярен и обычно позволяет найти много возможных решений. Если ты будешь обходить каждый модуль и спускаться по спику рзультатов то увидишь более специфичные пакеты, вроде этих
 
 There are a ton of results! npm is quite popular and you will usually be able to find multiple potential solutions. If you go through each module and whittle down the results into a more narrow set (filtering out things like PDF generation modules) you'll end up with these:
 
@@ -452,19 +470,44 @@ There are a ton of results! npm is quite popular and you will usually be able to
 - [pdfiijs](https://github.com/fagbokforlaget/pdfiijs) - pdf to inverted index using textiijs and poppler
 - [pdf2json](https://github.com/modesty/pdf2json/blob/master/readme.md) - pure js pdf to json
 
+
+Есть многомодулей, к-ые дублируют функц-ть но предоставляют разные API и большинство зависят от других модулей и даже сторонних утилит
+
 A lot of the modules have overlapping functionality but present alternate APIs and most of them require external dependencies (like `apt-get install poppler`).
+
+
+Пример разных способов к пониманию модулей через описание:
 
 Here are some different ways to interpret the modules:
 
+- `pdf2json` единственный кто написан на чистом js, что означает что он проще остальных в утсановке, особенно на низкозарядных устройствах типа raspberry pi или на Windows, где нативный (привязанный к утсройству. чувствительный к устройству, на к-ом выполняется код) код не может быть перенесен на другую платформу
+ 
+
 - `pdf2json` is the only one that is written in pure JavaScript, which means it is the easiest to install, especially on low power devices like the raspberry pi or on Windows where native code might not be cross platform.
+
+- модули типа `mimeograph`, `hummus` и `pdf-extract` объединяют в себе много разных низкоуровневых модулей чтобы представить высокоуровневый API
+
 - modules like `mimeograph`, `hummus` and `pdf-extract` each combine multiple lower level modules to expose a high level API
+
+- много модулей используют под собой никсовские тулзы `pdftotext`/`poppler`
+
 - a lot of modules seem to sit on top of the `pdftotext`/`poppler` unix command line tools
+
+Давайте сравним `pdftotextjs` и `pdf-text-extract`, обе являются обертками вокруг утилиты `pdftotext`
 
 Lets compare the differences between `pdftotextjs` and `pdf-text-extract`, both of which are are wrappers around the `pdftotext` utility.
 
 ![pdf-modules](pdf-modules.png)
 
+Сходства:
+
 Both of these:
+
+- обновлены относительно недавно
+- имеют свои репозитории на гитхабе (что очень важно)
+- имеют READMEs
+- каждую неделю устанавливают несколько новых пользователей
+- находятся под открытой лицензией (т.е. может воспользоваться любой)
 
 - were updated relatively recently
 - have github repositories linked (this is very important!)
@@ -472,13 +515,20 @@ Both of these:
 - have at least some number of people installing them every week
 - are liberally licensed (anyone can use them)
 
+
+Посмотрим на `package.json` + статистику модуле. Сделать правильный выбор в таком вопросе совсем непросто. Сравним READMEs:
+
 Just looking at the `package.json` + module statistics it's hard to get a feeling about which one might be the right choice. Let's compare the READMEs:
 
 ![pdf-readmes](pdf-readmes.png)
 
+Обе имеют простые понятные описания, значки CI, инструкции по установке, примеры использования, инструкции по запуску тестов. Отлично! Но какой же выбрать? Сравним код внутри:
+
 Both have simple descriptions, CI badges, installation instructions, clear examples and instructions for running the tests. Great! But which one do we use? Let's compare the code:
 
 ![pdf-code](pdf-code.png)
+
+В `pdftotextjs` примерно 110 строк кода, а в `pdf-text-extract` около 40, но у обеих всё сводится по сути к одной строке:
 
 `pdftotextjs` is around 110 lines of code, and `pdf-text-extract` is around 40, but both essentially boil down to this line:
 
@@ -486,7 +536,12 @@ Both have simple descriptions, CI badges, installation instructions, clear examp
 var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
 ```
 
+
+Делает ли это одну лучше другой? Трудно сказать! Здесь важно самому прочитать код и сделать свои выводы. Если найдешь модуль, к-ый тебе понравится, набери `npm star modulename` - так можно сказать npm, что тебе понравилось пользоваться этим модулем.
+
 Does this make one any better than the other? Hard to say! It's important to actually *read* the code and make your own conclusions. If you find a module you like, use `npm star modulename` to give npm feedback about modules that you had a positive experience with.
+
+
 
 ### Modular development workflow
 
