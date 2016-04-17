@@ -18,7 +18,7 @@ This document is intended for readers who know at least a little bit of a couple
 - [Колбэки] [Callbacks](#callbacks)
 - [События / Событийная модель](#events)
 - [Потоки в Ноде](#streams)
-- [Модули и npm](#modules)
+- [Модули и npm. Экосистема Ноды](#modules)
 - [Разработка клиентской части с npm](#client-side-development-with-npm)
 - [Going with the grain](#going-with-the-grain) !!!!!!!!
 
@@ -359,7 +359,7 @@ function storeMessage(message) {
 
 [![stream-handbook](stream-handbook.png)](https://github.com/substack/stream-handbook)
 
-## Модули и npm
+## Модули и npm. Экосистема Ноды
 
 Ядро Ноды (Node core) включает в себя более 20 модулей, которые делят на низкоуровневые, такие как `events` и `stream` и высокоуровневые типа `http` and `crypto`.
 
@@ -427,69 +427,46 @@ var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
 
 Делает ли это одну лучше другой? Трудно сказать! Здесь важно самому прочитать код и сделать свои выводы. Если найдешь модуль, который тебе понравится, набери `npm star modulename`. Так можно сказать npm, что тебе понравилось пользоваться этим модулем.
 
-### Модульный подход к разработке Modular development workflow
+### Модульный подход к разработке
 
 npm отличается от большинства пакетных менеджеров тем, что устанавливает модули в папку внутри других существующих модулей. Это может быть непонятно сразу, но это чуть ли не ключевой фактор успеха npm.
 
-Многие пакетные менеджеры (далее ПМ) устанавливают их глобально (т.е. пакеты доступны прямо из консоли - прим.). Например, Если набрать `apt-get install couchdb` на Debian Linux - он будет устанавливать последнюю стабильную версию (latest stable version) CouchDB. Теперь, если ты установишь CouchDB как зависмость от другого пакета\программы и эта программа требует более старой версии CouchDB, тотебе придется удалить свежую версию CouchDB и только после этого поставить более старую. У тебя не получится поставить две версии CouchDB потому что Debian ставит пакеты в одно место.
+Многие пакетные менеджеры (далее ПМ) устанавливают их глобально (т.е. к пакету можно обратиться прямо из консоли из любой директории). Например, Если набрать `apt-get install couchdb` на Debian Linux - он поставит последнюю стабильную версию (latest stable version) CouchDB. Теперь, если ты установишь CouchDB как зависмость от другого пакета или программы и эта программа требует более старой версии CouchDB, то тебе придется удалить свежую версию CouchDB и только после этого поставить более старую. У тебя не получится поставить две версии CouchDB потому что Debian устанавливает все пакеты в одно место.
 
-Many package managers install things globally. For instance, if you `apt-get install couchdb` on Debian Linux it will try to install the latest stable version of CouchDB. If you are trying to install CouchDB as a dependency of some other piece of software and that software needs an older version of CouchDB, you have to uninstall the newer version of CouchDB and then install the older version. You can't have two versions of CouchDB installed because Debian only knows how to install things into one place.
+Это относится не только к Debian. Многие ПМы языков программирования работают по тому же принципу. Чтобы избежать описанного выше конфликта зависимостей, было разработано виртуальное окружение (далее ВО) (virtual environment), похожее на [virtualenv](http://python-guide.readthedocs.org/en/latest/dev/virtualenvs/) у Python или [bundler](http://bundler.io/) из мира Ruby. Они разбивают твое привычное окружение на много виртуальных, по одному на каждый проект, но внутри каждое такое окружение ставит пакеты всё так же глобально для этого виртуального. Такие ВО не всегда решают проблему, иногда они только раздувают её, создавая новые уровни сложности.
 
-Это относится не только к Debian. Многие ПМы языков программирования работают по тому же принципу. Чтобы избежать конфликта зависимостей, описанного выше, есть виртуальное окружение (virtual environment), похожее на [virtualenv](http://python-guide.readthedocs.org/en/latest/dev/virtualenvs/) у Python или [bundler](http://bundler.io/) из мира Ruby. Они разбивают твое реальное\действительное окружение на мног овиртуальных, по одному на каждый проект, но внутри каждое из этих виртуальных окружений всё же установлены глобально %%% . Такие ВО не всегда решают проблему, иногда они только добавляют новых добавляя всё новые сложности.
+Для npm установка глобальных модулей - антипаттерн (плохой подход) (anti-pattern). 
 
-Для npm установка глобальных модулей - антипаттерн (плохой подход). 
+Также как в программах на JS ты не станешь использовать глобальные переменные, ты также не станешь устанавливать модули глобально (пока тебе не понадобится модуль с исполняемым файлом чтобы обратиться к нему твоем глобальном `PATH`, но тебе редко такое может понадобиться -- об этом позже).
 
-It's not just Debian that does this. Most programming language package managers work this way too. To address the global dependencies problem described above there have been virtual environment developed like [virtualenv](http://python-guide.readthedocs.org/en/latest/dev/virtualenvs/) for Python or [bundler](http://bundler.io/) for Ruby. These just split your environment up in to many virtual environments, one for each project, but inside each environment dependencies are still globally installed. Virtual environments don't always solve the problem, sometimes they just multiply it by adding additional layers of complexity. Также как ты не можешь использовать глобальные переменные в своих JS программах, ты также не сможешь установить модуль глобально (пока тебе не понадобится модуль с исполняемым файлом чтобы показать в твоем глобальном `PATH`, но тебе не всегда это пригодится -- больше об этом позже).
-
-With npm installing global modules is an anti-pattern. Just like how you shouldn't use global variables in your JavaScript programs you also shouldn't install global modules (unless you need a module with an executable binary to show up in your global `PATH`, but you don't always need to do this -- more on this later).
-
-#### Как работает `require`  How `require` works
-
-Когда ты вызываешь `require('some_module')` в Ноде происходит следуюущее:
+#### Как работает команда `require`
 
 When you call `require('some_module')` in node here is what happens:
 
-1. Если вызываемый файл `some_module.js` существует в текущей папке, то Нода его подгрузит, иначе
-2. Нода просмотрит в текущей папке папку с именем `node_modules` и в ней папку с именем `some_module`
-3. Если он и её не найдет, то он поднимется на 1 уровень вверх и повторит шаг 2
+1. Если вызываемый файл `some_module.js` существует в текущей папке, то Нода подгрузит его, иначе
+2. Нода поищет в текущей папке папку с именем `node_modules` и внутри неё папку с именем `some_module`
+3. Если она и её не найдет, то он поднимется на 1 уровень вверх и повторит шаг 2
 
-1. if a file called `some_module.js` exists in the current folder node will load that, otherwise:
-2. node looks in the current folder for a `node_modules` folder with a `some_module` folder in it
-3. if it doesn't find it, it will go up one folder and repeat step 2
+Этот цикл повторится пока Нода не доберется до корневой папки ФС, оттуда он проверит все папки глобальных модулей (такие как `/usr/local/node_modules` on Mac OS) и если так и не встретит `some_module`, только тогда Нода выбросит "эксепшн" (исключение) (throw an exception).
 
-Этот цикл повторится пока Нода не доберется до корневой папки ФС, оттуда он проверит все глобальные аппки модулей (такие как `/usr/local/node_modules` on Mac OS) и если всё ещё не найдет `some_module`, только тогда Нода выбросит эксепшн (throw an exception).
-
-
-This cycle repeats until node reaches the root folder of the filesystem, at which point it will then check any global module folders (e.g. `/usr/local/node_modules` on Mac OS) and if it still doesn't find `some_module` it will throw an exception.
-
-Здесь пример таког опоиска:
-Here's a visual example:
+Рассмотрим пример такого поиска:
 
 ![mod-diagram-01](mod-diagram-01.png)
 
-Находясь в папке `subsubfolder` и вызвав `require('foo')`, Нода будет искать папку `subsubfolder/node_modules`. В этом случае он не найдет его -- папка здесь ошибочно названа `my_modules`. Тогда Нода поднимется вверх на 1 уровень и попробует исктаь снова, означая это тогда then looks for `subfolder_B/node_modules`, к-ой также не существует. Третья попытка - %%% 
-хотя как `folder/node_modules` существует *и* имеет внутри себя папку `foo`. Если `foo` здесь не будет - Нода продолжит поиск в родительской директории.
+Находясь в папке `subsubfolder` и вызвав `require('foo')`, Нода будет искать папку `subsubfolder/node_modules`. Здесь он его не найдет -- папка здесь нарочно называется `my_modules`. Тогда Нода поднимется вверх на 1 уровень и попробует искать снова, - на картинке это выглядело бы как `subfolder_B/node_modules`, которой также не существует. Третья попытка окажется удачной - папка `folder/node_modules` существует *и* имеет внутри себя папку `foo`. Если бы `foo` и здесь не было - Нода продолжила бы поиск в родительской директории.
 
-When the current working directory is `subsubfolder` and `require('foo')` is called, node will look for the folder called `subsubfolder/node_modules`. In this case it won't find it -- the folder there is mistakenly called `my_modules`. Then node will go up one folder and try again, meaning it then looks for `subfolder_B/node_modules`, which also doesn't exist. Third try is a charm, though, as `folder/node_modules` does exist *and* has a folder called `foo` inside of it. If `foo` wasn't in there node would continue its search up the directory tree.
+Отметим, что если бы Нода была вызвана из `subfolder_B`, то она бы никогда не попала в папку `subfolder_A/node_modules`. Поднимаясь вверх по дереву папок она сможет попасть только в `folder/node_modules` .
 
-Заметим, что если вызываемая из `subfolder_B` Нода не найдет `subfolder_A/node_modules`, то она может только увидеть `folder/node_modules` поднимаясь вверх по дереву папок.
+Одно из преимуществ подхода npm в том, что модули сами могут устанавливать свои зависимости, причем тех версий, которые актуальны для них самих. В нашем примере, модуль `foo` оказался крайне популярен - 3 копии пакета, по одному на каждую родительскую папку самогО модуля. Причиной этому можеть быть то, что каждый родительский модуль нуждается в своей версии пакета `foo`, т.е. `folder`у нужен `foo@0.0.1`, `subfolder_A`у нужен `foo@0.2.1` и т.д.
 
-Note that if called from `subfolder_B` node will never find `subfolder_A/node_modules`, it can only see `folder/node_modules` on its way up the tree.
-
-Одно из преимуществ npm в том что модули могут установливать свои засисимые модули, причем версии, к-ые специфичны для них самих. В этом случае, модуль `foo` крайне популярен - 3 копии пакета, каждая внутри родительской папки самогО модуля. Причной этому можеть быть то, что каждый родительский модуль нуждается в разной версии пакета `foo`, т.е. 'folder'у нужен `foo@0.0.1`, `subfolder_A`у нужен `foo@0.2.1` и т.д.
-
-One of the benefits of npm's approach is that modules can install their dependent modules at specific known working versions. In this case the module `foo` is quite popular - there are three copies of it, each one inside its parent module folder. The reasoning for this could be that each parent module needed a different version of `foo`, e.g. 'folder' needs `foo@0.0.1`, `subfolder_A` needs `foo@0.2.1` etc.
-
-Здесь показано, что произойдет когда мы исправим ошибку имени директории, сменив его с `my_modules` на правильное  `node_modules`:
-Here's what happens when we fix the folder naming error by changing `my_modules` to the correct name `node_modules`:
+Посмотрим, что произойдет когда мы исправим ошибку имени директории, сменив его с `my_modules` на правильное  `node_modules`:
 
 ![mod-diagram-02](mod-diagram-02.png)
 
-Чтобы протестить какой конкретно модуль загружен Нодой, ты можешь вызвать команду `require.resolve('some_module')`, к-ая покажет путь к модулю, к-ый Нода нашла как результат обхода по дереву директорий. `require.resolve` может быть полезной когда двойная проверка этого модуля то что ты *ожидаешь*  загрузить и фактически загруженной -- иногда это разные версии одного модуля %%, для твоей текущей рабочей директории чем одна%%%%%%%
+Чтобы протестить какой модуль фактически загружен Нодой, вы можете вызвать команду `require.resolve('some_module')`, которая выведет путь к тому модулю, который Нода нашла при обходе директорий. `require.resolve` может оказаться полезной когда вам надо убедиться в том, что загружен именно тот модуль и той версии которую вы ожидаете -- бывает что версия подключенного модуля отличается от той, которую мы ожидаем увидеть - это значит, Нода нашла такой модуль быстрее, чем тот, который нам нужен.
 
-To test out which module actually gets loaded by node, you can use the `require.resolve('some_module')` command, which will show you the path to the module that node finds as a result of the tree climbing process. `require.resolve` can be useful when double-checking that the module that you *think* is getting loaded is *actually* getting loaded -- sometimes there is another version of the same module closer to your current working directory than the one you intend to load.
 
-### Как писать модуль  How to write a module
+### Как написать свой модуль
 
 После того, как ты узнал как искать модули и как загружать их в программу ты можешь начать писать свои модули.
 Now that you know how to find modules and require them you can start writing your own modules.
