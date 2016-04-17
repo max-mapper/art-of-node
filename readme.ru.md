@@ -1,9 +1,7 @@
-TODO Translate to Russian
 
-# Прелесть Ноды / The Art of Node
-## Введение в Node.js \ An introduction to Node.js
+# Поэзия Ноды
+## Введение в Node.js
 
-This document is intended for readers who know at least a little bit of a couple of things:
 Данный материал предназначен для читателей, которые уже имеют представление о:
 
 - скриптовых языках типа JavaScript, Ruby, Python, Perl и других. Если вы только начинаете программировать, то вам стоит начать с прочтения [JavaScript for Cats](http://jsforcats.com/). :cat2:
@@ -20,7 +18,8 @@ This document is intended for readers who know at least a little bit of a couple
 - [Потоки в Ноде](#streams)
 - [Модули и npm. Экосистема Ноды](#modules)
 - [Разработка клиентской части с npm](#client-side-development-with-npm)
-- [Going with the grain](#going-with-the-grain) !!!!!!!!
+- [Правильный выбор инструмента](#going-with-the-grain)
+
 
 ## Изучи Ноду интерактивно
 
@@ -361,11 +360,9 @@ function storeMessage(message) {
 
 ## Модули и npm. Экосистема Ноды
 
-Ядро Ноды (Node core) включает в себя более 20 модулей, которые делят на низкоуровневые, такие как `events` и `stream` и высокоуровневые типа `http` and `crypto`.
+Ядро Ноды (Node core) включает в себя более 20 модулей, которые делятся на низкоуровневые, такие как `events` и `stream` и высокоуровневые типа `http` and `crypto`.
 
-%%%%%Такой дизайн выбран неслучайно. Ядро изначально предполагалось сделать небольшим и независмым от платформы, а модули должны обеспечивать работу с основными I/O протоколами и форматами.
-
-This design is intentional. Node core is supposed to be small, and the modules in core should be focused on providing tools for working with common I/O protocols and formats in a way that is cross-platform.
+Такая структура выбрана неслучайно. Ядро изначально предполагалось сделать небольшим и независмым от платформы, а главная задача модулей - обеспечивать работу с основными I/O протоколами и форматами.
 
 Для всего остального есть пакетный менеджер Node [npm](https://www.npmjs.com/). Каждый может создать модуль и опубликовать его для npm. На момент написания этих строк на npm было около 34k модулей.
 
@@ -565,17 +562,17 @@ setTimeout(function() {
 
 [![requirebin](requirebin.png)](http://requirebin.com/embed?gist=679b58d4237eaca37173)
 
-## Going with the grain
+## Правильный выбор инструмента
 
-%%%%Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](https://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
+Как любой хороший инструмент, Нода как никто лучше справляется с тем кругом задач, для решения которых она была сделана. К примеру, фреймворк Rails отлично подходит для построения сложной бизнес-логики [business logic](https://en.wikipedia.org/wiki/Business_logic), где код используется для представления реальных бизнес-объектов. И хотя чисто технически такая задача Ноде под силу, но решая её вы у вас возникнут проблемы, потому что Нода создавалась для решения задач ввода/вывода, а не для написания 'бизнес-логики'. Каждый инструмент создается под свои задачи. Надеюсь, этот гайд (guide) поможет вам понять и прочувствовать сильные стороны Ноды, чтобы у вас выработалось понимание того, в каких случаях она будет вам полезна.
 
-### What is outside of node's scope?
+### Чем не является Нода?
 
 Приципиально, Нода - лишь инструмент для управления потоками ввода/вывода в ФС и сетях, сама Нода не затрагивает возможности других частей системы, это делают уже сторонние модули. Здесь описаны несколько вещей которые ошибочно приписывают Ноде:
 
-#### Web frameworks
+#### Веб-фреймворки
 
-Число фреймворков, основанных на Ноде (фреймворк здесь понимается как пакет для решения какой-то более высоскоуровневой задачи, например моделирование бизнес-логики), но сама Нода - не веб-фреймворк.
+Существуют фреймворки, построенные на Ноде (фреймворк здесь понимается как пакет для решения какой-то высоскоуровневой задачи, например моделирование бизнес-логики), но сама Нода не веб-фреймворк.
 Веб-фреймворки, написанные на Ноде не всегда соблюдают те принципы и правила, которые закладывались в архитектуру Ноды.
 
 #### Синтаксис языка
@@ -584,9 +581,7 @@ setTimeout(function() {
 
 #### Языковые абстракции
 
-%%%% Всегда когда это возможно, Нода будет использовать самый простой способ выполнения задачи, перед которой её поставили. The 'fancier' you make your JavaScript the more complexity and tradeoffs you introduce. Пограммирование вещь непростая, особенно в JS, где на каждую проблему найдется 1000 возможных решений! It is for this reason that node tries to always pick the simplest, most universal option. Если ты решаешь задачу которая приводит к запутанному решению и тебе не нравятся   ... ты в праве сам решать, какой модуль использовать в своем приложении, какие абстракции ты предпочитаешь.
-
-   If you are solving a problem that calls for a complex solution and you are unsatisfied with the 'vanilla JS solutions' that node implements, you are free to solve it inside your app or module using whichever abstractions you prefer.
+Всегда когда это возможно, Нода будет использовать самый простой способ для выполнения задачи, перед которой её поставили. Пограммирование вещь непростая, особенно в JS, где на каждую проблему найдется 1000 возможных решений! Эта та причина, по которой Нода старается всегда находить самое простое и универсальное решение. Но если ты сталкиваешься с задачей которая приводит к запутанному решению и тебе не нравятся те скорые решения, которые предлагает Нода, ты в праве самостоятельно решить её в своем приложении - выбрать модуль, который тебе понравится, или абстракции которые тебе подойдут.
 
 Хорошей иллюстрацией этих слов служит использование колбэков. В ранних версиях Ноды был популярен прием  с использованием промисов ('promises'), которые позволяли писать асинхронный код так, чтобы выглядел он как линейный. Но эту фичу исключили из ядра Ноды по нескольки причинам:
 
