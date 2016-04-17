@@ -18,7 +18,7 @@ This document is intended for readers who know at least a little bit of a couple
 - [Колбэки] [Callbacks](#callbacks)
 - [События / Событийная модель](#events)
 - [Потоки в Ноде](#streams)
-- [Модули и npm / Экосистема Ноды] [Modules and npm](#modules)
+- [Модули и npm. Экосистема Ноды](#modules)
 - [Разработка клиентской части с npm](#client-side-development-with-npm)
 - [Going with the grain](#going-with-the-grain) !!!!!!!!
 
@@ -261,35 +261,24 @@ fs.readFile('movie.mp4', function finishedReading(error, movieData) {
 })
 ```
 
-## События Events
+## События*
 
-В Ноде, если тебе нужен модуль [events](https://nodejs.org/api/events.html) ты можешь использовать т.н. 'event emitter' (излучатель событий - гораздо лучше запонмить англ. название), к-ый сам используется Нодой для всех API, к-ые отправляют сигналы.
-In node if you require the [events](https://nodejs.org/api/events.html) module you can use the so-called 'event emitter' that node itself uses for all of its APIs that emit things.
+*События (Events) они же 'ивенты' - суть одно и то же, просто термины употребляются разными людьми в разных контекстах по-своему. Поэтому призываю не привязываться к словам, а зреть в корень. - прим. перев.
 
-События - основной паттерн в программировании, более известный как "Наблюдатель" ['observer pattern'](https://en.wikipedia.org/wiki/Observer_pattern) или 'pub/sub' (publish/subscribe) издатель\подписчик. Посольку коллбэки реализуют модель один-к-одному (one-to-one) отношений между коллбэком тем кто его вызывает, события реализуют API для другого типа отношений - многие-ко-многим (many-to-many).
+В Ноде, если тебе нужен модуль [events](https://nodejs.org/api/events.html) ты можешь использовать т.н. "генератор событий" ('event emitter'), который сам используется Нодой для своих API, к-ые что-то генерируют.
 
-Events are a common pattern in programming, known more widely as the ['observer pattern'](https://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
+События - основной паттерн в программировании, более известный как "Наблюдатель" ['observer pattern'](https://en.wikipedia.org/wiki/Observer_pattern) или издатель\подписчик (publish/subscribe или совсем кратко 'pub/sub') . Поскольку колбэки реализуют модель отношений один-к-одному (one-to-one) между колбэком и тем кто его вызывает, события реализуют тот же паттерн для другого типа отношений - многие-ко-многим (many-to-many).
 
-Самый простой способ понять механику событий - позволить тебе "подписаться" на происходящие события. Ты можешь сказать "когда произойдет X сделать Y", в то время как с чистыми колбэками можно было разговаривать только "сделай X потом сделай Y". Т.е. подход событий более общий\универсальный.
-The easiest way to think about events is that they let you subscribe to things. You can say 'when X do Y', whereas with plain callbacks it is 'do X then Y'.
+Принципы работы событий проще понять как некую подписку, они позволяют тебе "подписаться" на что-то, на совершение какого-то действия и твое гарантированное уведомление о нем. Ты можешь сказать "когда произойдет X сделать Y", в то время как простые колбэки (plain callbacks) понимали только "сделай X потом сделай Y". Т.о., подход событий более универсальный чем подход колбэков.
 
-РАссмотрим несколько случаев\юз-кейсов (use cases) где ивенты смогли бы заменить коллбэки:
-Here are few common use cases for using events instead of plain callbacks:
+Несколько примеров использования (use cases) где события смогли бы заменить колбэки:
 
-- Чат-комнату (Chat room) где ты бы смог оповещать разных слушателей\участников\чатеров\лиснеров (listeners) своими сообщениями
-- Игровой сервер, к-му нужно знать когда игроки подключились, отключились, переместились (в игре), ударили, прыгнули и т.п.
-- Игровой движок где ты мог позволить рзработчикам подписаться на события вида `.on('jump', function() {})`
-- Низкоуровневый веб-сервер, к-ый хочет открыть API чтобы просто перехватывать в события, например так `.on('incomingRequest')` или так `.on('serverError')`
+- Чат-комната (Chat room) где ты бы смог оповещать разных слушателей (listeners) о своих сообщениях
+- Игровой сервер, которому нужно знать когда игроки подключились, отключились, переместились, ударили, прыгнули и т.п. (совершили игровые действия)
+- Игровой движок где ты можешь позволить разработчикам подписываться на события примерно так: `.on('jump', function() {})`
+- Низкоуровневый веб-сервер, для которого нужен открытый API, чтобы перехватывать события, например так `.on('incomingRequest')` или так `.on('serverError')`
 
-- Chat room where you want to broadcast messages to many listeners
-- Game server that needs to know when new players connect, disconnect, move, shoot and jump
-- Game engine where you want to let game developers subscribe to events like `.on('jump', function() {})`
-- A low level web server that wants to expose an API to easily hook into events that happen like `.on('incomingRequest')` or `.on('serverError')`
-
-Если попробовать написать модуль, к-ый подключается к чат-серверу используя только колбэки, то это будет выглядеть примерно так:
-
-
-If we were trying to write a module that connects to a chat server using only callbacks it would look like this:
+Если попробовать написать модуль, который подключается к чат-серверу используя только колбэки, то это будет выглядеть примерно так:
 
 ```js
 var chatClient = require('my-chat-client')
@@ -319,9 +308,7 @@ chatClient.connect(
 )
 ```
 
-Выглядит дейтсивтельно топрно\неуклюже, поскольку все ф-ии для вызова `.connect` надо передавать в заранее пор-ом порядке. Напишем то же самое, но с помощью ивентов:
-
-As you can see this is really cumbersome because of all of the functions that you have to pass in a specific order to the `.connect` function. Writing this with events would look like this:
+Выглядит довольно неуклюже, поскольку все функции для вызова `.connect` надо передавать в одном месте и в определенном порядке. Напишем то же самое, но с помощью событий:
 
 ```js
 var chatClient = require('my-chat-client').connect()
@@ -343,9 +330,7 @@ chatClient.on('message', function() {
 })
 ```
 
-Это похоже на вариант с колбэками, но привносит\добавляет метод `.on`, к-ый "подписывает" колбэк на событие, как человек подписывается на газету или новости с сайта. Это значит, что ты можешь выбрать на какие события ты хочешь подписаться из `chatClient`. Ты даже можешь подписаться на одно событие несколько раз разными колбэками.
-
-This approach is similar to the pure-callback approach but introduces the `.on` method, which subscribes a callback to an event. This means you can choose which events you want to subscribe to from the `chatClient`. You can also subscribe to the same event multiple times with different callbacks:
+Похоже на вариант с чистыми колбэками (pure-callbacks), но вводит новый метод `.on`, к-ый и *подписывает* функцию-колбэк на определенный тип событий. Это значит, что ты можешь выбирать на какие события ты хочешь подписаться из `chatClient`. Ты даже можешь подписать на одно событие несколько разных колбэков:
 
 ```js
 var chatClient = require('my-chat-client').connect()
@@ -361,31 +346,22 @@ function storeMessage(message) {
 }
 ```
 
-## Потоки (Стримы) Streams
+## Потоки
 
-%%%%%,, Например, любой файл в ФС имеет свой укникальный файл-дескриптор ('file descriptor'), так что модуль `fs` имеет дополнитлеьную логику чтобы хранить следы, тогда как сетевые модули такой возможности не имеют. Несмотря на важные отличия в семнтике подобной этой %%% , фундаментальный\базовый уровень обеих групп кода были продублированы в большинстве функциональностей%%%%, когда приходилось читать и писать данные. Совместаня работа на Ноде реализовалась так что это могло запутать, пока приходилось разобраться двух разных семантиках, чтобы по сути сдлеать одну и ту же вещь так что они сделали новый API и назвали `Stream` и написали весь сетевой код и код ФС используя уже новый АПИ.
+На ранних стадиях развития Ноды API для работы с ФС и сетью пользовались своими собственными приемами в работе с потоками ввода/вывода (streaming I/O). Например, для файлов в файловых системах применялись так называемые «файловые дескрипторы», соответственно, модуль fs был наделён дополнительной логикой, позволяющей их отслеживать, в то время, как для сетевых модулей такая концепция не использовалась. Несмотря на незначительные отличия в семантиках подобно этим, на самом низком уровне, где надо было считывать и записывать данные обе кодовые базы во многом повтряли друг друга.
+Команда, работающая над Нодой, осознала, что такое положение дел будет только путать разработчиков, которым придется изучать две группы семантик, чтобы сделать по сути одно и тоже. Они сделали новый API, который назвали `Потоком` (`Stream`) и переписали весь код для работы с ФС и сетью уже на нем. Главная задача Ноды - сделать работу с ФС и с сетями простой и удобной, поэтому было разумно иметь единый общий подход, который использовался бы повсюду. Главный плюс заключается в том, что большинство паттернов подобных этим на данный момент уже реализованы и маловероятно, что Нода в будущем сиьно изменится.
 
-Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
-
-
-Главная задача Ноды - сделать простой и удобной работу с ФС и с сетями, так что сделано понятно чтобы иметь один образец\эталон\пример, к-ый бы использовался везде. Главный плюс заключается в том, что большинство паттернов похожих на этот  (здесь только несколько вариантов\путей) %%%%%%
-
-The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
-
-Есть 2 отличных ресурса, к-ые можно использовать для изучения стримов\потоков Ноды. Первый - stream-adventure (см. блок Learn Node Interactively) и другой - справочник, называемый (Stream Handbook).
-
-There are already two great resources that you can use to learn about node streams. One is the stream-adventure (see the Learn Node Interactively section) and the other is a reference called the Stream Handbook.
+Есть 2 отличных ресурса, которые можно использовать для изучения потоков в Ноде. Первый - stream-adventure (см. раздел "Изучи Ноду интерактивно") и другой - справочник, называемый Stream Handbook.
 
 ### Stream Handbook
 
-- гайд, похожий на этот, в к-ом есть справочник для всего что только тебе может понадобиться при изучении стримов.
-[stream-handbook](https://github.com/substack/stream-handbook#introduction) is a guide, similar to this one, that contains a reference for everything you could possibly need to know about streams.
+[stream-handbook](https://github.com/substack/stream-handbook#introduction) - гайд, похожий на этот, в котором есть ссылки на всё, что только может понадобиться при изучении потоков.
 
 [![stream-handbook](stream-handbook.png)](https://github.com/substack/stream-handbook)
 
-## Модули Modules
+## Модули и npm. Экосистема Ноды
 
-База Ноды (Node core) основана на дюжине модулей, несколько низкоуровневых, таких как `events` and `stream` и несколько высокоуровневых типа `http` and `crypto`.
+Ядро Ноды (Node core) основана на дюжине модулей, несколько низкоуровневых, таких как `events` and `stream` и несколько высокоуровневых типа `http` and `crypto`.
 
 Node core is made up of about two dozen modules, some lower level ones like `events` and `stream` some higher level ones like `http` and `crypto`.
 
