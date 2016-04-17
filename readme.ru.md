@@ -18,7 +18,7 @@ This document is intended for readers who know at least a little bit of a couple
 - [Колбэки] [Callbacks](#callbacks)
 - [События / Событийная модель](#events)
 - [Потоки в Ноде](#streams)
-- [Модули и npm. Экосистема Ноды](#modules)
+- [Модули и npm](#modules)
 - [Разработка клиентской части с npm](#client-side-development-with-npm)
 - [Going with the grain](#going-with-the-grain) !!!!!!!!
 
@@ -359,34 +359,23 @@ function storeMessage(message) {
 
 [![stream-handbook](stream-handbook.png)](https://github.com/substack/stream-handbook)
 
-## Модули и npm. Экосистема Ноды
+## Модули и npm
 
-Ядро Ноды (Node core) основана на дюжине модулей, несколько низкоуровневых, таких как `events` and `stream` и несколько высокоуровневых типа `http` and `crypto`.
+Ядро Ноды (Node core) включает в себя более 20 модулей, которые делят на низкоуровневые, такие как `events` и `stream` и высокоуровневые типа `http` and `crypto`.
 
-Node core is made up of about two dozen modules, some lower level ones like `events` and `stream` some higher level ones like `http` and `crypto`.
-
-Такой дизайн выбран неслучайно. Node core изначально предполагалось сделать маленьким, и модули в ядре\коре будут направлены на обеспечение инструментов (тулз) для работы с базовыми I/O протоколами и форматами и был бы кросс-платформенным (независимым от платформы).
+%%%%%Такой дизайн выбран неслучайно. Ядро изначально предполагалось сделать небольшим и независмым от платформы, а модули должны обеспечивать работу с основными I/O протоколами и форматами.
 
 This design is intentional. Node core is supposed to be small, and the modules in core should be focused on providing tools for working with common I/O protocols and formats in a way that is cross-platform.
 
+Для всего остального есть пакетный менеджер Node [npm](https://www.npmjs.com/). Каждый может создать модуль и опубликовать его для npm. На момент написания этих строк на npm было около 34k модулей.
 
-Для всего остального есть npm. Любой может создать новый модуль для Ноды, к-ый внесет дополнительные возможности и опубликовать его для npm. На момент написания этих строк (в оригинале - прим. перев.) на npm было около 34k модулей.
+### Как найти нужный модуль
 
-For everything else there is [npm](https://www.npmjs.com/). Anyone can create a new node module that adds some functionality and publish it to npm. As of the time of this writing there are 34,000 modules on npm.
-
-### Как найти нужный модуль  How to find a module
-
-Представьте, тебе надо сконвертить PDF файлы в текстовые. Начать стоит с ввода команды `npm search pdf`:
+Представьте, вам надо сконвертить PDF файлы в текстовые. Начать стоит с команды `npm search pdf`:
 
 ![pdfsearch](npm-search.png)
 
-Imagine you are trying to convert PDF files into TXT files. The best place to start is by doing `npm search pdf`:
-
-![pdfsearch](npm-search.png)
-
-Он выдаст кучу результатов. npm очень популярен и обычно позволяет найти много возможных решений. Если ты будешь обходить каждый модуль и спускаться по спику рзультатов то увидишь более специфичные пакеты, вроде этих
-
-There are a ton of results! npm is quite popular and you will usually be able to find multiple potential solutions. If you go through each module and whittle down the results into a more narrow set (filtering out things like PDF generation modules) you'll end up with these:
+Он выдаст кучу результатов. npm, действительно, очень популярен и вы наверняка сможете найти здесь подходящее решение для своей задачи. Если внимательно рассматривать каждый модуль и фильтровать результаты поисков (убирая, например, модули PDF-генераторов) то в конце концов увидишь список:
 
 - [hummus](https://github.com/galkahana/HummusJS/wiki/Features) - c++ pdf manipulator
 - [mimeograph](https://github.com/steelThread/mimeograph) - api on a conglomeration of tools (poppler, tesseract, imagemagick etc)
@@ -400,83 +389,47 @@ There are a ton of results! npm is quite popular and you will usually be able to
 - [pdf2json](https://github.com/modesty/pdf2json/blob/master/readme.md) - pure js pdf to json
 
 
-Есть многомодулей, к-ые дублируют функц-ть но предоставляют разные API и большинство зависят от других модулей и даже сторонних утилит
+Есть много модулей, которые повторяют функционал друг друга, но предоставляют разные API и многие требует установки внешних зависимостей (как например, `apt-get install poppler`).
 
-A lot of the modules have overlapping functionality but present alternate APIs and most of them require external dependencies (like `apt-get install poppler`).
+Несколько примеров, на что стоит обращать внимание при выборе нужного модуля:
 
-
-Пример разных способов к пониманию модулей через описание:
-
-Here are some different ways to interpret the modules:
-
-- `pdf2json` единственный кто написан на чистом js, что означает что он проще остальных в утсановке, особенно на низкозарядных устройствах типа raspberry pi или на Windows, где нативный (привязанный к утсройству. чувствительный к устройству, на к-ом выполняется код) код не может быть перенесен на другую платформу
- 
-
-- `pdf2json` is the only one that is written in pure JavaScript, which means it is the easiest to install, especially on low power devices like the raspberry pi or on Windows where native code might not be cross platform.
-
-- модули типа `mimeograph`, `hummus` и `pdf-extract` объединяют в себе много разных низкоуровневых модулей чтобы представить высокоуровневый API
-
-- modules like `mimeograph`, `hummus` and `pdf-extract` each combine multiple lower level modules to expose a high level API
-
+- `pdf2json` единственный модуль, написанный на чистом js, что означает его легкость в установке, особенно на маломощных устройствах типа raspberry pi или на Windows, у которого нативный код не может быть перенесен на другую платформу
+- модули типа `mimeograph`, `hummus` и `pdf-extract` объединяют в себе несколько низкоуровневых модулей чтобы предоставить к ним высокоуровневый API
 - много модулей используют под собой никсовские тулзы `pdftotext`/`poppler`
 
-- a lot of modules seem to sit on top of the `pdftotext`/`poppler` unix command line tools
-
-Давайте сравним `pdftotextjs` и `pdf-text-extract`, обе являются обертками вокруг утилиты `pdftotext`
-
-Lets compare the differences between `pdftotextjs` and `pdf-text-extract`, both of which are are wrappers around the `pdftotext` utility.
+Давайте сравним `pdftotextjs` и `pdf-text-extract`, оба являются лишь оболочками вокруг утилиты `pdftotext`.
 
 ![pdf-modules](pdf-modules.png)
 
 Сходства:
 
-Both of these:
+Оба модуля:
 
 - обновлены относительно недавно
 - имеют свои репозитории на гитхабе (что очень важно)
-- имеют READMEs
-- каждую неделю устанавливают несколько новых пользователей
-- находятся под открытой лицензией (т.е. может воспользоваться любой)
+- имеют README файлы
+- каждую неделю скачиваются пользователями
+- имеют открытую лицензией (т.е. может воспользоваться любой)
 
-- were updated relatively recently
-- have github repositories linked (this is very important!)
-- have READMEs
-- have at least some number of people installing them every week
-- are liberally licensed (anyone can use them)
-
-
-Посмотрим на `package.json` + статистику модуле. Сделать правильный выбор в таком вопросе совсем непросто. Сравним READMEs:
-
-Just looking at the `package.json` + module statistics it's hard to get a feeling about which one might be the right choice. Let's compare the READMEs:
+По данным `package.json` и одной статистике модуля сделать правильный выбор совсем непросто. Давайте сравним файлы описаний README:
 
 ![pdf-readmes](pdf-readmes.png)
 
-Обе имеют простые понятные описания, значки CI, инструкции по установке, примеры использования, инструкции по запуску тестов. Отлично! Но какой же выбрать? Сравним код внутри:
-
-Both have simple descriptions, CI badges, installation instructions, clear examples and instructions for running the tests. Great! But which one do we use? Let's compare the code:
+Оба имеют простые понятные описания, значки CI, инструкции по установке, примеры использования, инструкции по запуску тестов. Отлично! Но какой же выбрать? Сравним код внутри:
 
 ![pdf-code](pdf-code.png)
 
-В `pdftotextjs` примерно 110 строк кода, а в `pdf-text-extract` около 40, но у обеих всё сводится по сути к одной строке:
-
-`pdftotextjs` is around 110 lines of code, and `pdf-text-extract` is around 40, but both essentially boil down to this line:
+В `pdftotextjs` примерно 110 строк кода, а в `pdf-text-extract` около 40, но у обоих всё сводится по сути к одной строке:
 
 ```
 var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
 ```
 
-
-Делает ли это одну лучше другой? Трудно сказать! Здесь важно самому прочитать код и сделать свои выводы. Если найдешь модуль, к-ый тебе понравится, набери `npm star modulename` - так можно сказать npm, что тебе понравилось пользоваться этим модулем.
-
-Does this make one any better than the other? Hard to say! It's important to actually *read* the code and make your own conclusions. If you find a module you like, use `npm star modulename` to give npm feedback about modules that you had a positive experience with.
-
-
+Делает ли это одну лучше другой? Трудно сказать! Здесь важно самому прочитать код и сделать свои выводы. Если найдешь модуль, который тебе понравится, набери `npm star modulename`. Так можно сказать npm, что тебе понравилось пользоваться этим модулем.
 
 ### Модульный подход к разработке Modular development workflow
 
 npm отличается от большинства пакетных менеджеров тем, что устанавливает модули в папку внутри других существующих модулей. Это может быть непонятно сразу, но это чуть ли не ключевой фактор успеха npm.
-
-npm is different from most package managers in that it installs modules into a folder inside of other existing modules. The previous sentence might not make sense right now but it is the key to npm's success.
 
 Многие пакетные менеджеры (далее ПМ) устанавливают их глобально (т.е. пакеты доступны прямо из консоли - прим.). Например, Если набрать `apt-get install couchdb` на Debian Linux - он будет устанавливать последнюю стабильную версию (latest stable version) CouchDB. Теперь, если ты установишь CouchDB как зависмость от другого пакета\программы и эта программа требует более старой версии CouchDB, тотебе придется удалить свежую версию CouchDB и только после этого поставить более старую. У тебя не получится поставить две версии CouchDB потому что Debian ставит пакеты в одно место.
 
