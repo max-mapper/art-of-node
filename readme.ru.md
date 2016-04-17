@@ -4,40 +4,37 @@ TODO Translate to Russian
 ## Введение в Node.js \ An introduction to Node.js
 
 This document is intended for readers who know at least a little bit of a couple of things:
-Этот материал предназначен для читателей, которые уже имеют представление о следующих вещах:
+Данный материал предназначен для читателей, которые уже имеют представление о:
 
-- a scripting language like JavaScript, Ruby, Python, Perl, etc. If you aren't a programmer yet then it is probably easier to start by reading [JavaScript for Cats](http://jsforcats.com/). :cat2:
-- скриптовые языки типа JavaScript, Ruby, Python, Perl и других. Если вы только начинаете программировать\обучение то выам стоит для начала прочитать [JavaScript for Cats](http://jsforcats.com/). :cat2:
-- git and github. These are the open source collaboration tools that people in the node community use to share modules. You just need to know the basics. Here are three great intro tutorials: [1](https://github.com/jlord/git-it-electron#readme), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
-- о git и github. Эти инструменты совместного труда\взаимодействия, к-ые используются в сообществе как способ поделиться своими наработками\модулями. Тебе надо знать хотя бы основы. Здесь есть отличные атериалы по ним для новичков:
+- скриптовых языках типа JavaScript, Ruby, Python, Perl и других. Если вы только начинаете программировать, то вам стоит начать с прочтения [JavaScript for Cats](http://jsforcats.com/). :cat2:
+- git и github. Эти инструменты для совместной работы широко используются в сообществе, чтобы делиться своими модулями. Вам достаточно знать хотя бы их основы. По ним есть отличные самоучители для новичков:
 [1](https://github.com/jlord/git-it-electron#readme), [2](http://ericsteinborn.com/github-for-cats/#/), [3](http://opensourcerer.diy.org/)
 
-## Оглавление Table of contents
+## Оглавление
 
-- [Учитесь с Нодой интерактивно] [Learn node interactively](#learn-node-interactively)
-- [Механика\Устройство\Понимание Ноды] [Understanding node](#understanding-node)
-- [Базовые модули] [Core modules](#core-modules)
-- [Коллбэки] [Callbacks](#callbacks)
-- [События\ Событийная модель] [Events](#events)
-- [Потоки в Ноде] [Streams](#streams)
-- [Модули и npm \ Экосистема Ноды] [Modules and npm](#modules)
-- [Разработка клиентской части с npm] [Client side development with npm](#client-side-development-with-npm)
-- [Going with the grain](#going-with-the-grain)
+- [Изучи Ноду интерактивно](#learn-node-interactively)
+- [Понимание Ноды](#understanding-node)
+- [Базовые модули](#core-modules)
+- [Колбэки] [Callbacks](#callbacks)
+- [События / Событийная модель](#events)
+- [Потоки в Ноде](#streams)
+- [Модули и npm / Экосистема Ноды] [Modules and npm](#modules)
+- [Разработка клиентской части с npm](#client-side-development-with-npm)
+- [Going with the grain](#going-with-the-grain) !!!!!!!!
 
-## Learn node interactively
+## Изучи Ноду интерактивно
 
-В дополнение к чтению этого гайда, очень важно параллеьно с чтением писать код для ноды. Так вы быстреее проникнетесь духом ноды. Читать код в книге важно и нужно, но обучение через написание кода - это ещё более лучший способ познания новых концептов\принципов программирования.
-In addition to reading this guide it's super important to also bust out your favorite text editor and actually write some node code. I always find that when I just read some code in a book it never really clicks, but learning by writing code is a good way to grasp new programming concepts.
+В дополнение к чтению, очень важно параллельно писать код. Так вы скорее проникнетесь духом ноды и вникнете в её суть. Читать код в книге важно и нужно, но обучение через само написание кода - это ещё более лучший способ познания новых принципов программирования.
 
 ### NodeSchool.io
 
-[NodeSchool.io](http://nodeschool.io/) is a series of free + open source interactive workshops that teach you the principles of Node.js and beyond.
+[NodeSchool.io](http://nodeschool.io/) серия открытых интерактивных воркшопов, по которым можно обучиться основным принципам Ноды.
 
-[Learn You The Node.js](https://github.com/workshopper/learnyounode#learn-you-the-nodejs-for-much-win) is the introductory NodeSchool.io workshop. It's a set of programming problems that introduce you to common node patterns. It comes packaged as a command line program.
+[Learn You The Node.js](https://github.com/workshopper/learnyounode#learn-you-the-nodejs-for-much-win) представляет собой вступительный воркшоп NodeSchool.io. Здесь собраны несколько задач, решение которых поможет тебе усвоить основные принципы построения программ для Ноды. Устанваливается как консольная утилита.
 
 [![learnyounode](https://github.com/rvagg/learnyounode/raw/master/learnyounode.png)](https://github.com/rvagg/learnyounode#learn-you-the-nodejs-for-much-win)
 
-You can install it with npm:
+Устанавливается через npm:
 
 ```
 # install
@@ -47,59 +44,65 @@ npm install learnyounode -g
 learnyounode
 ```
 
-## Understanding node
+## Понимание Ноды
 
-Node.js is an open source project designed to help you write JavaScript programs that talk to networks, file systems or other I/O (input/output, reading/writing) sources. That's it! It is just a simple and stable I/O platform that you are encouraged to build modules on top of.
+Node.js - опенсорсный проект, сделанный чтобы помочь тебе писать программы для работы с сетью, файловыми системами и другими I/O (input/output, reading/writing) на языке JavaScript. Вот и всё! Это простая и стабильная I/O платформа в которой удобно создавать свои модули.
 
-What are some examples of I/O? Here is a diagram of an application that I made with node that shows many I/O sources:
+Какие ещё есть примеры использования ввода/вывода (далее I/O)? Здесь показана схема приложения, к-ое я делал на Ноде; на ней видно какие могут быть I/O источники:
 
 ![server diagram](server-diagram.png)
 
-If you don't understand all of the different things in the diagram it is completely okay. The point is to show that a single node process (the hexagon in the middle) can act as the broker between all of the different I/O endpoints (orange and purple represent I/O).
+Если ты не знаешь все источники представленные на схеме, ничего страшного. Суть в том, чтобы показать, что один единственный процесс Ноды (шестигранник в центре) может выполнять роль брокера (диспетчера) между разными конечными пунктами (endpoints) I/O (оранжевым и фиолетовым обозначены каналы ввода/вывода).
 
-Usually building these kinds of systems is either:
+Обычно, построение систем такого вида складывается по одному из путей:
 
-- difficult to code but yields super fast results (like writing your web servers from scratch in C)
-- easy to code but not very speedy/robust (like when someone tries to upload a 5GB file and your server crashes)
+- сложно для написания, но в результате получается супер-быстрая система (подобно написанию своих веб-серверов на чистом C)
+- просты в написании но сильно страдает в скорости работы (особенно, когда кто-то пытается отправить на сервер 5Гб файл и твой сервер падает)
 
-Node's goal is to strike a balance between these two: relatively easy to understand and use and fast enough for most use cases.
+Задача Ноды - сохранить равновесие при достижении двух целей: быть достаточно простым для понимания и использования и настолько же быстрым для решения большинства задач.
 
-Node isn't either of the following:
+Нода не является:
+ - веб-фреймворком (вроде Rails или Django, хотя и может использоваться для создания подобных вещей)
+ - языком программирования (Нода использует JS, но сама Нода языком НЕ является)
 
-  - A web framework (like Rails or Django, though it can be used to make such things)
-  - A programming language (it uses JavaScript but node isn't its own language)
+Нода - нечто среднее, можно сказать, что Нода:
+
+  - Сделана чтобы быть простой для понимания и использования
+  - Удобной при создании I/O программ, которые должны работать быстро и оставаться устойчивой к высоким нагрузкам
   
-Instead, node is somewhere in the middle. It is:
+На более низком уровне, Ноду можно назвать инструментом для написания двух типов программ:
 
-  - Designed to be simple and therefore relatively easy to understand and use
-  - Useful for I/O based programs that need to be fast and/or handle lots of connections
-  
-At a lower level, node can be described as a tool for writing two major types of programs: 
+  - Сетевые программы, использующие протоколы веба: HTTP, TCP, UDP, DNS и SSL
+  - Программы, для чтения и записи данных в файловую систему (далее ФС) или локальные процессы/память
 
-  - Network programs using the protocols of the web: HTTP, TCP, UDP, DNS and SSL
-  - Programs that read and write data to the filesystem or local processes/memory
+Что означает "программы для I/O" ("I/O based program")? Рассмотрим несколько основых источников Ввода/Вывода (I/O sources):
 
-What is an "I/O based program"? Here are some common I/O sources:
+  - Базы данных (MySQL, PostgreSQL, MongoDB, Redis, CouchDB)
+  - Внешние API (Twitter, Facebook, Apple Push Notifications)
+  - HTTP/WebSocket соединения (от пользователей веб-приложений)
+  - Файлы (сжатие изображений, редактирование видео, интернет-радио)
 
-  - Databases (e.g. MySQL, PostgreSQL, MongoDB, Redis, CouchDB)
-  - APIs (e.g. Twitter, Facebook, Apple Push Notifications)
-  - HTTP/WebSocket connections (from users of a web app)
-  - Files (image resizer, video editor, internet radio)
+Нода выполняет операции ввода/вывода способом, к-ый называют асинхронным [asynchronous](https://en.wikipedia.org/wiki/Asynchronous_I/O). Такой способ позволяет ей выполнять много разных операций одновременно (simultaneously). Приведу небольшой пример для большего понимания. Например, зайдя в какой-нибудь фаст-фуд и заказав чизбургер, ваш заказ примут *сразу*, и после *небольшой задержки* заказ будет готов. Пока вы ждете, они могут принимать другие заказы и начать готовить чизбургеры для других людей. Представьте, что будет если вам придется ждать свой заказ, не давая остальным в очереди сделать заказ, пока они готовят ваш чизбургер! Такое поведение технически называется **блокирующая очередь**, ведь все операции ввода/вывода (по приготовлению чизбургеров) происходят по очереди. Нода же, наоборот, реализует механизм **неблокирующей очереди**, что позваоляет готовить мног очизбургеров одновременно.
 
 Node does I/O in a way that is [asynchronous](https://en.wikipedia.org/wiki/Asynchronous_I/O) which lets it handle lots of different things simultaneously. For example, if you go down to a fast food joint and order a cheeseburger they will immediately take your order and then make you wait around until the cheeseburger is ready. In the meantime they can take other orders and start cooking cheeseburgers for other people. Imagine if you had to wait at the register for your cheeseburger, blocking all other people in line from ordering while they cooked your burger! This is called **blocking I/O** because all I/O (cooking cheeseburgers) happens one at a time. Node, on the other hand, is **non-blocking**, which means it can cook many cheeseburgers at once.
 
+Эти вещи можно легко сделать с помощью Ноды, благодаря её неблокирующей природе\идее:
 Here are some fun things made easy with node thanks to its non-blocking nature:
   
+  - Механизм управления [летающими квадракоптерами]
+  - Написать IRC чат-ботов
+  - Создать [ходячих роботов]
+
   - Control [flying quadcopters](http://www.nodecopter.com/)
   - Write IRC chat bots
   - Create [walking biped robots](https://www.youtube.com/watch?v=jf-cEB3U2UQ)
 
-## Core modules
+## Базовые модули (Core modules)
 
-Во-первых, устаови Ноду себе на компьютер. Брать её лучше отсюда [nodejs.org](http://nodejs.org)
+Во-первых, установите Ноду себе на компьютер. Брать её лучше отсюда [nodejs.org](http://nodejs.org)
 Firstly I would recommend that you get node installed on your computer. The easiest way is to visit [nodejs.org](http://nodejs.org) and click `Install`.
 
-Нода сосоит из мелких базывых модулей (к-ые ещё называют 'node core') они предоставляют внешний API для написания программ. Каждый модуль предназначен для своих целей: для работы с файловой системой есть 'fs' модуль, для работы с сетями есть `net` (TCP), `http`, `dgram` (UDP).
+Нода сосоит из мелких базывых модулей (к-ые ещё называют одним термином 'Ядро Ноды' ('node core')) они предоставляют внешний API для написания программ. Каждый модуль предназначен для своих целей: для работы с файловой системой есть 'fs' модуль, для работы с сетями есть `net` (TCP), `http`, `dgram` (UDP).
 Node has a small core group of modules (commonly referred to as 'node core') that are presented as the public API that you are intended to write programs with. For working with file systems there is the `fs` module and for networks there are modules like `net` (TCP), `http`, `dgram` (UDP).
 
 Кроме модуля `fs` и сетевых модулей, есть и другие базовые модули. Для асинхронной работы с DNS-запросов есть модуль `dns`, для получения данных об ОСи есть `os`, для %%выделения бинарных фрагентов памяти%% есть `buffer`, модулия для парсинга урлов, путей к файлам и вообще парсинга (`url`, `querystring`, `path`) и др. Большинство, если не все базовые модули служат для одной главной\общей цели написание быстрых (!) программ через работу с ФС или сетью.
