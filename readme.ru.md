@@ -468,13 +468,11 @@ When you call `require('some_module')` in node here is what happens:
 
 ### Как написать свой модуль
 
-После того, как ты узнал как искать модули и как загружать их в программу ты можешь начать писать свои модули.
-Now that you know how to find modules and require them you can start writing your own modules.
+Теперь, когда мы узнали как искать модули и как подключать их в программу вы можете начать писать свои.
 
-#### Самый простой из возможных модулей  The simplest possible module
+#### Самый простой из возможных модулей
 
-Модули Ноды крайне легковесны (lightweight). Один из самых простых модулей:
-Node modules are radically lightweight. Here is one of the simplest possible node modules:
+Модули Ноды крайне легковесны (lightweight). Один из самых простых модулей выглядит так:
 
 `package.json`:
 ```js
@@ -489,24 +487,15 @@ Node modules are radically lightweight. Here is one of the simplest possible nod
 module.exports = 1
 ```
 
-По умолчанию (By default), когда ты вызываешь `require('module')`, то Нода пробует загрузить `module/index.js`. С любым другим именем файла это не сработает, пока ты не укажешь его явно в файле `package.json` в поле `main`.
+По умолчанию (By default), когда ты вызываешь `require('module')`, то Нода пробует загрузить `module/index.js`. С любым другим именем файла это не сработает, пока вы не укажете его явно в файле `package.json` в поле `main`.
 
+Положите оба этих файла в папку `number-one` (значение `name` в `package.json` должно совпадать с именем папки) и вы получите готовый рабочий модуль.
 
-By default node tries to load `module/index.js` when you `require('module')`, any other file name won't work unless you set the `main` field of `package.json` to point to it.
-
-Положи оба этих файла в папку `number-one` (значение `name` в `package.json` должно совпадать с именем папки) и ты получишь готовый рабочий модуль.
-
-Put both of those files in a folder called `number-one` (the `name` in `package.json` must match the folder name) and you'll have a working node module.
-
-Вызывая функцию `require('number-one')` получшиь значение чего-то `module.exports` что установлено внутри модуля.
-
-Calling the function `require('number-one')` returns the value of whatever `module.exports` is set to inside the module:
+Вызывая функцию `require('number-one')` вы получите то значение, которое установлено для `module.exports` внутри модуля.
 
 ![simple-module](simple-module.png)
 
-Есть способ даже более скорый, чтобы создать модуль, выполните эти команды:
-
-An even quicker way to create a module is to run these commands:
+Для создания модуля есть ещё способ, даже более быстрый. Выполните эти команды:
 
 ```sh
 mkdir my_module
@@ -516,25 +505,16 @@ git remote add git@github.com:yourusername/my_module.git
 npm init
 ```
 
-Запуская `npm init` создастся валидный (valid) `package.json` и если запустить его в существующем `git` репе он установит поле `repositories` внутри `package.json` автоматически.
+Выполнив в консоли `npm init` создастся валидный (valid) `package.json` и если запустить его в существующем `git` репозитории, то он автоматом проставит поле `repositories` внутри `package.json`.
 
-Running `npm init` will create a valid `package.json` for you and if you run it in an existing `git` repo it will set the `repositories` field inside `package.json` automatically as well!
+#### Добавляем зависимости
 
-#### Добавление зависимостей Adding dependencies
-
-У модуля может быть список других модулей из npm или GitHub в поле `dependencies` в файле `package.json`. Чтобы установить
-модуль `request` как новую зависимость и сразу доавбить его в `package.json` выполните следующую команду в корневой папке модуля:
-
-
-A module can list any other modules from npm or GitHub in the `dependencies` field of `package.json`. To install the `request` module as a new dependency and automatically add it to `package.json` run this from your module root directory:
+У модуля может быть список других модулей из npm или GitHub в поле `dependencies` в файле `package.json`. Чтобы установить модуль `request` как новую зависимость и сразу доавбить его в `package.json` выполните следующую команду в корневой папке модуля:
 
 ```sh
 npm install --save request
 ```
-
-Этим ты установишь копию `request` в закрытую извне папку `node_modules` и сделает наш `package.json` похожим на этот:
-
-This installs a copy of `request` into the closest `node_modules` folder and makes our `package.json` look something like this:
+Этим вы устанавливаете копию `request` в закрытую извне папку `node_modules`, и наш `package.json` будет похож на этот:
 
 ```
 {
@@ -548,9 +528,7 @@ This installs a copy of `request` into the closest `node_modules` folder and mak
 
 По умолчанию, `npm install` подтягивает последнюю опубликованную версию модуля.
 
-By default `npm install` will grab the latest published version of a module.
-
-## Разработка клиента с npm.  Client side development with npm
+## Разработка клиентской части с npm
 
 Основное заблуждение о npm - то что  ___ в названии Ноду можно использовать только на сервере. Это совершенно не так. На самом деле, npm ставит?? для Ноды Packaged Modules, т.е., модули к-ые ::??? Модули сами по себе могут быть чем ты хочешь -- они просто аппка с файлами, собранная в архив и файлом `package.json`, к-й описывает версию модуля и сисок всех зависимостей (вместе с версиями этих модулей, так что рабочие вресии поставятся автоматически). Эта цепь оченьд линная, модули зависят од других модлуей, к-ые в свою очередь зависят от других и т.д.
 
