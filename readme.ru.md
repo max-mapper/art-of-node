@@ -530,15 +530,13 @@ npm install --save request
 
 ## Разработка клиентской части с npm
 
-Основное заблуждение о npm - то что  ___ в названии Ноду можно использовать только на сервере. Это совершенно не так. На самом деле, npm ставит?? для Ноды Packaged Modules, т.е., модули к-ые ::??? Модули сами по себе могут быть чем ты хочешь -- они просто аппка с файлами, собранная в архив и файлом `package.json`, к-й описывает версию модуля и сисок всех зависимостей (вместе с версиями этих модулей, так что рабочие вресии поставятся автоматически). Эта цепь оченьд линная, модули зависят од других модлуей, к-ые в свою очередь зависят от других и т.д.
+Основное заблуждение о npm - то что если в названии встречается слово 'Node.js', то это будет использоваться только на сервере. Совсем нет. npm  - менеджер пакетов Ноды, он отвечает за те модули, которые Нода упаковывает. Сами же модули могут быть чем угодно -- это просто папка с файлами, собранная в архив и файлом `package.json`, который описывает версию модуля и список своих зависимостей (вместе с версиями тех модулей, от которых он сам зависит, так что рабочие версии всех модулей поставятся автоматически). Эта цепочка очень длинная - модуль зависят от других модлуей, к-ые в свою очередь зависят от других и т.д.
 
-A common misconception about npm is that since it has 'Node' in the name that it must only be used for server side JS modules. This is completely untrue! npm actually stands for Node Packaged Modules, e.g. modules that Node packages together for you. The modules themselves can be whatever you want -- they are just a folder of files wrapped up in a .tar.gz, and a file called `package.json` that declares the module version and a list of all modules that are dependencies of the module (as well as their version numbers so the working versions get installed automatically). It's turtles all the way down - module dependencies are just modules, and those modules can have dependencies etc. etc. etc.
+Утилита [browserify](http://browserify.org/), написанная на Ноде, создана чтобы сконвертить любой Нодовский модуль так, чтобы его код можно было выполнять в браузере. Не со всеми модулями такое получится сделать (браузер, например, не может выступать в качестве HTTP сервера), но со многими модулями такое проходит.
 
-[browserify](http://browserify.org/) is a utility written in Node that tries to convert any node module into code that can be run in browsers. Not all modules work (browsers can't do things like host an HTTP server), but a lot of modules on NPM *will* work.
+Чтобы попробовать возмоности Npm в браузере используйте модуль [RequireBin](http://requirebin.com/), это приложение, которое я сделал, вобрало в себя плюсы [Browserify-CDN](https://github.com/jfhbrook/wzrd.in), который сам внутри использует browserify, но результат выдает через HTTP (а не на консоль, как это делает browserify).
 
-To try out npm in the browser you can use [RequireBin](http://requirebin.com/), an app I made that takes advantage of [Browserify-CDN](https://github.com/jfhbrook/wzrd.in), which internally uses browserify but returns the output through HTTP (instead of the command line -- which is how browserify is usually used).
-
-Try putting this code into RequireBin and then hit the preview button:
+Скопируем этот код в окно RequireBin нажмем "Run Code":
 
 ```js
 var reverse = require('ascii-art-reverse')
@@ -563,41 +561,39 @@ setTimeout(function() {
 }, 500)
 ```
 
-Or check out a [more complicated example](http://requirebin.com/?gist=679b58d4237eaca37173) (feel free to change the code and see what happens):
+[Или другой пример](http://requirebin.com/?gist=679b58d4237eaca37173) (смело меняйте код, чтобы увидеть что будет):
 
 [![requirebin](requirebin.png)](http://requirebin.com/embed?gist=679b58d4237eaca37173)
 
 ## Going with the grain
 
-Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](https://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
+%%%%Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](https://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
 
 ### What is outside of node's scope?
 
-Приципиально, Нода - лишь инструмент для управления I/O поверх ФС и сетью, и он не касается других более fancy возможностей для сторонних модулей. Здесь описаны несколько вещей к-ые лежат вне возможностей Ноды:
-
-Fundamentally node is just a tool used for managing I/O across file systems and networks, and it leaves other more fancy functionality up to third party modules. Here are some things that are outside the scope of node:
+Приципиально, Нода - лишь инструмент для управления потоками ввода/вывода в ФС и сетях, сама Нода не затрагивает возможности других частей системы, это делают уже сторонние модули. Здесь описаны несколько вещей которые ошибочно приписывают Ноде:
 
 #### Web frameworks
 
-Несколько %%%, но Нода - не веб-фреймворк. Веб-фреймворки, к-ые написаны используя Ноду не всегда делают те же вещи ??
+Число фреймворков, основанных на Ноде (фреймворк здесь понимается как пакет для решения какой-то более высоскоуровневой задачи, например моделирование бизнес-логики), но сама Нода - не веб-фреймворк.
+Веб-фреймворки, написанные на Ноде не всегда соблюдают те принципы и правила, которые закладывались в архитектуру Ноды.
 
-There are a number of web frameworks built on top of node (framework meaning a bundle of solutions that attempts to address some high level problem like modeling business logic), but node is not a web framework. Web frameworks that are written using node don't always make the same kind of decisions about adding complexity, abstractions and tradeoffs that node does and may have other priorities.
+#### Синтаксис языка
 
-#### Language syntax
+Нода использует JS и не собирается что-то менять. У Felix Geisendörfer есть отличное описание своего видения стиля Ноды [here](https://github.com/felixge/node-style-guide).
 
-Нода использует JS и не собирается что-то менять. Felix Geisendörfer хорошо сказал по поводу стиля Ноды.
-Node uses JavaScript and doesn't change anything about it. Felix Geisendörfer has a pretty good write-up of the 'node style' [here](https://github.com/felixge/node-style-guide).
+#### Языковые абстракции
 
-#### Language abstraction
+%%%% Всегда когда это возможно, Нода будет использовать самый простой способ выполнения задачи, перед которой её поставили. The 'fancier' you make your JavaScript the more complexity and tradeoffs you introduce. Пограммирование вещь непростая, особенно в JS, где на каждую проблему найдется 1000 возможных решений! It is for this reason that node tries to always pick the simplest, most universal option. Если ты решаешь задачу которая приводит к запутанному решению и тебе не нравятся   ... ты в праве сам решать, какой модуль использовать в своем приложении, какие абстракции ты предпочитаешь.
 
-When possible node will use the simplest possible way of accomplishing something. The 'fancier' you make your JavaScript the more complexity and tradeoffs you introduce. Programming is hard, especially in JS where there are 1000 solutions to every problem! It is for this reason that node tries to always pick the simplest, most universal option. If you are solving a problem that calls for a complex solution and you are unsatisfied with the 'vanilla JS solutions' that node implements, you are free to solve it inside your app or module using whichever abstractions you prefer.
+   If you are solving a problem that calls for a complex solution and you are unsatisfied with the 'vanilla JS solutions' that node implements, you are free to solve it inside your app or module using whichever abstractions you prefer.
 
-A great example of this is node's use of callbacks. Early on node experimented with a feature called 'promises' that added a number of features to make async code appear more linear. It was taken out of node core for a few reasons:
+Хорошей иллюстрацией этих слов служит использование колбэков. В ранних версиях Ноды был популярен прием  с использованием промисов ('promises'), которые позволяли писать асинхронный код так, чтобы выглядел он как линейный. Но эту фичу исключили из ядра Ноды по нескольки причинам:
 
-- they are more complex than callbacks
-- they can be implemented in userland (distributed on npm as third party modules)
+- они гораздо сложнее в использовании чем колбэки
+- их можно использовать, установив специальный модуль
 
-Consider one of the most universal and basic things that node does: reading a file. When you read a file you want to know when errors happen, like when your hard drive dies in the middle of your read. If node had promises everyone would have to branch their code like this:
+Рассмотрим пример с чтением файла. Когда ты читаешь файл, тебе надо знать, какие ошибки произошли, например, отказал жесткий диск прямо во время чтения файла. Если бы Нода использовала промисы, то приходилось бы "ветвить" свой код почти как здесь:
 
 ```js
 fs.readFile('movie.mp4')
@@ -609,13 +605,13 @@ fs.readFile('movie.mp4')
   })
 ```
 
-This adds complexity, and not everyone wants that. Instead of two separate functions node just uses a single callback function. Here are the rules:
+Это добавляет ненужную сложность, что понравится не каждому. Вместо двух отдельных функций в Ноде используется единая колбэк-функция. Для неё действуют правила:
 
-- When there is no error pass null as the first argument
-- When there is an error, pass it as the first argument
-- The rest of the arguments can be used for anything (usually data or responses since most stuff in node is reading or writing things)
+- Когда ошибки нет, первым аргументом идет null
+- Когда ошибка есть, передавать её первым аргументом
+- Остальные аргументы могут использованы как угодно (обычно, это будут данные или ответы на запросы, ведь Нода по большей части работает с вводом/выводом)
 
-Hence, the node callback style:
+Отсюда и такой стиль написания колбэков:
 
 ```js
 fs.readFile('movie.mp4', function(err, data) {
@@ -625,11 +621,11 @@ fs.readFile('movie.mp4', function(err, data) {
 
 #### Threads/fibers/non-event-based concurrency solutions
 
-Note: If you don't know what these things mean then you will likely have an easier time learning node, since unlearning things is just as much work as learning things.
+Замечание: Если вы ещё не сталкивались с этими терминами, возможно, вам будет проще освоить Ноду, ведь забыть что-то так же сложно как и запомнить.
 
-Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.io/uvbook/), the C++ I/O layer that node is built on top of.
+Чтобы делать всё быстро Нода использует внутри себя потоки (threads), но сама скрывает их от пользователя. Если вы технарь, и вам интересно как устроена Нода внутри, вам совершенно точно надо прочитать об [архитектуре библиотеки libuv](http://nikhilm.github.io/uvbook/), C++ I/O слое, на котором держится сама Нода.
 
-## License
+## Лицензия
 
 ![CCBY](CCBY.png)
 
