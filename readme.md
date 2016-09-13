@@ -164,9 +164,11 @@ function addOne(callback) {
 
 function logMyNumber() {
   console.log(myNumber)
+  console.log("Done !");
 }
 
 addOne(logMyNumber)
+console.log("Doing some other stuff")
 ```
 
 Now the `logMyNumber` function can get passed in as an argument that will become the `callback` variable inside the `addOne` function. After `readFile` is done the `callback` variable will be invoked (`callback()`). Only functions can be invoked, so if you pass in anything other than a function it will cause an error.
