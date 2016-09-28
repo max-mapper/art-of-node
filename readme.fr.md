@@ -483,7 +483,7 @@ module.exports = 1
 
 Par défaut, node essaie de lancer `module/index.js` quand il lit `require('module')`. Aucun autre nom de fichier ne fonctionnera à moins que vous definissiez specifiez au champ `main` de `package.json` de pointer dessus.
 
-Placez les deux fichiers dans un dossier nommé `number-one` (l'`id` dans package.json doit matcher un nom de dossier) et vous aurez un module node fonctionnel.
+Placez les deux fichiers dans un dossier nommé `number-one` (l'`name` dans package.json doit matcher un nom de dossier) et vous aurez un module node fonctionnel.
 
 En appelant la fonction `require('number-one')` vous retournez la valeur qui est 'set' dans `module.exports`
 
@@ -511,9 +511,9 @@ npm install --save request
 
 Cela installera une copie de `request` dans le `node_modules` le plus proche et notre `package.json` ressemblera ainsi à cela:
 
-```
+```js
 {
-  "id": "number-one",
+  "name": "number-one",
   "version": "1.0.0",
   "dependencies": {
     "request": "~2.22.0"
