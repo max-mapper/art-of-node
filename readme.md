@@ -32,7 +32,7 @@ In addition to reading this guide it's super important to also bust out your fav
 
 You can install it with npm:
 
-```
+```sh
 # install
 npm install learnyounode -g
 
@@ -412,7 +412,7 @@ Both have simple descriptions, CI badges, installation instructions, clear examp
 
 `pdftotextjs` is around 110 lines of code, and `pdf-text-extract` is around 40, but both essentially boil down to this line:
 
-```
+```js
 var child = shell.exec('pdftotext ' + self.options.additional.join(' '));
 ```
 
@@ -463,7 +463,7 @@ Now that you know how to find modules and require them you can start writing you
 Node modules are radically lightweight. Here is one of the simplest possible node modules:
 
 `package.json`:
-```js
+```json
 {
   "name": "number-one",
   "version": "1.0.0"
@@ -505,7 +505,7 @@ npm install --save request
 
 This installs a copy of `request` into the closest `node_modules` folder and makes our `package.json` look something like this:
 
-```
+```json
 {
   "id": "number-one",
   "version": "1.0.0",
