@@ -390,7 +390,7 @@ Here are some different ways to interpret the modules:
 - modules like `mimeograph`, `hummus` and `pdf-extract` each combine multiple lower level modules to expose a high level API
 - a lot of modules seem to sit on top of the `pdftotext`/`poppler` unix command line tools
 
-Lets compare the differences between `pdftotextjs` and `pdf-text-extract`, both of which are are wrappers around the `pdftotext` utility.
+Lets compare the differences between `pdftotextjs` and `pdf-text-extract`, both of which are wrappers around the `pdftotext` utility.
 
 ![pdf-modules](pdf-modules.png)
 
