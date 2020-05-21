@@ -94,15 +94,13 @@ agregaUno() // ejecuta la  función
 console.log(miNumero) // registra 2
 ```
 
-++++++++++++++++++++++++Continue Translation+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+El código aquí define una función y luego en la siguiente línea llama a esa función, sin esperar nada. Cuando se llama a la función, inmediatamente agrega 1 al número, por lo que podemos esperar que después de llamar a la función el número sea 2.
 
-The code here defines a function and then on the next line calls that function, without waiting for anything. When the function is called it immediately adds 1 to the number, so we can expect that after we call the function the number should be 2.
-
-Let's suppose that we want to instead store our number in a file called `number.txt`:
+Supongamos que queremos almacenar nuestro número en un archivo llamado `number.txt`:
 
 ```js
-var fs = require('fs') // require is a special function provided by node
-var myNumber = undefined // we dont know what the number is yet since it is stored in a file
+var fs = require('fs') // require es una función especial proporcionada por node
+var myNumber = undefined // todavía no sabemos cuál es el número ya que está almacenado en un archivo
 
 function addOne() {
   fs.readFile('./number.txt', function doneReading(err, fileContents) {
@@ -113,26 +111,26 @@ function addOne() {
 
 addOne()
 
-console.log(myNumber) // logs out undefined
+console.log(myNumber) // registra undefined
 ```
 
-Why do we get `undefined` when we log out the number this time? In this code we use the `fs.readFile` method, which happens to be an asynchronous method. Usually things that have to talk to hard drives or networks will be asynchronous. If they just have to access things in memory or do some work on the CPU they will be synchronous. The reason for this is that I/O is reallyyy reallyyy sloowwww. A ballpark figure would be that talking to a hard drive is about 100,000 times slower than talking to memory (RAM).
+¿Por qué obtenemos 'undefined' cuando extraemos el número esta vez? En este código usamos el método `fs.readFile`, que resulta ser un método asincrónico. Por lo general, las interacciones entre las cosas y  los discos duros o redes, serán asíncronas. Si solo tienen que acceder a objetos en la memoria o hacer algún trabajo en la CPU, serán sincrónicas. La razón de esto es que I/O es realmente realmente muy lento. La cifra de interacción con un disco duro es aproximadamente 100,000 veces más lento que interactuar con la memoria (RAM).
 
-When we run this program all of the functions are immediately defined, but they don't all execute immediately. This is a fundamental thing to understand about async programming. When `addOne` is called it kicks off a `readFile` and then moves on to the next thing that is ready to execute. If there is nothing to execute node will either wait for pending fs/network operations to finish or it will stop running and exit to the command line.
+Cuando ejecutamos este programa, todas las funciones se definen de inmediato, pero no todas se ejecutan de inmediato. Esto es algo fundamental para entender la programación asíncrona. Cuando se llama a `addOne`, inicia un `readFile` y luego pasa al siguiente elemento que está listo para ejecutarse. Si no hay nada que ejecutar, node esperará a que finalicen las operaciones pendientes de fs/network o dejará de ejecutarse y saldrá a la línea de comando.
 
-When `readFile` is done reading the file (this may take anywhere from milliseconds to seconds to minutes depending on how fast the hard drive is) it will run the `doneReading` function and give it an error (if there was an error) and the file contents.
+Cuando `readFile` termine de leer el archivo (esto puede tomar desde milisegundos a segundos a minutos dependiendo de qué tan rápido sea el disco duro) ejecutará la función `doneReading` y le pasará un error (si hubo uno) y el contenido del archivo.
 
-The reason we got `undefined` above is that nowhere in our code exists logic that tells the `console.log` statement to wait until the `readFile` statement finishes before it prints out the number.
+La razón por la que obtuvimos `undefined` arriba es que en ninguna parte de nuestro código existe una lógica que le dice a la instrucción `console.log` que espere hasta que la instrucción `readFile` termine antes de que imprima el número.
 
-If you have some code that you want to be able to execute over and over again or at a later time the first step is to put that code inside a function. Then you can call the function whenever you want to run your code. It helps to give your functions descriptive names.
+Si tiene algún código que desea poder ejecutar una y otra vez o más adelante, el primer paso es poner ese código dentro de una función. Luego puede llamar a la función cuando quiera ejecutar su código. Esto le ayuda a elegir nombres descriptivos para sus funciones .
 
-Callbacks are just functions that get executed at some later time. The key to understanding callbacks is to realize that they are used when you don't know **when** some async operation will complete, but you do know **where** the operation will complete — the last line of the async function! The top-to-bottom order that you declare callbacks does not necessarily matter, only the logical/hierarchical nesting of them. First you split your code up into functions, and then use callbacks to declare if one function depends on another function finishing.
+Las retrollamadas son funciones que se ejecutan más adelante. La clave para comprender las retrollamadas es darse cuenta de cuando se usan:  no sabes **cuándo** se completará alguna operación asincrónica, pero sí sabes **dónde** se completará la operación: la última línea de la función asincrónica!. No necesariamente importa el orden de arriba a abajo que declara la retrollamada , solo el anidamiento lógico/jerárquico de ellos. Primero divide tu código en funciones, y luego usa retrollamadas para declarar si una función depende de que otra termine.
 
-The `fs.readFile` method is provided by node, is asynchronous and happens to take a long time to finish. Consider what it does: it has to go to the operating system, which in turn has to go to the file system, which lives on a hard drive that may or may not be spinning at thousands of revolutions per minute. Then it has to use a laser to read data and send it back up through the layers back into your javascript program. You give `readFile` a function (known as a callback) that it will call after it has retrieved the data from the file system. It puts the data it retrieved into a javascript variable and calls your function (callback) with that variable, in this case the variable is called `fileContents` because it contains the contents of the file that was read.
+El método `fs.readFile` lo proporciona node, es asíncrono y tarda mucho en terminar. Considere lo que hace: tiene que ir al sistema operativo, que a su vez tiene que ir al sistema de archivos, que se aloja en un disco duro que puede o no girar a miles de revoluciones por minuto. Luego tiene que usar un láser para leer datos y enviarlos de nuevo a través de las capas a su programa javascript. Usted le da a `readFile` una función (conocida como retrollamada) que llamará después de que haya recuperado los datos del sistema de archivos. Pone los datos que recuperó en una variable de JavaScript y llama a su función (retrollamada) con esa variable, en este caso la variable se llama `fileContents` porque contiene el contenido del archivo que se leyó.
 
-Think of the restaurant example at the beginning of this tutorial. At many restaurants you get a number to put on your table while you wait for your food. These are a lot like callbacks. They tell the server what to do after your cheeseburger is done.
+Piense en el ejemplo del restaurante al comienzo de este tutorial. En muchos restaurantes obtienes un número para poner sobre tu mesa mientras esperas tu comida. Esto es muy parecido a las retrollamadas. Le dice al despachador qué hacer después de que tu hamburguesa con queso esté lista.
 
-Let's put our `console.log` statement into a function and pass it in as a callback.
+Pongamos nuestra declaración `console.log` en una función y la pasamos como una devolución de llamada.
 
 ```js
 var fs = require('fs')
@@ -153,22 +151,22 @@ function logMyNumber() {
 addOne(logMyNumber)
 ```
 
-Now the `logMyNumber` function can get passed in an argument that will become the `callback` variable inside the `addOne` function. After `readFile` is done the `callback` variable will be invoked (`callback()`). Only functions can be invoked, so if you pass in anything other than a function it will cause an error.
+Ahora se puede pasar la función `logMyNumber` en un argumento que se convertirá en la variable `callback` dentro de la función `addOne`. Después de que se haga `readFile`, se invocará la variable `callback` (`callback()`). Solo se pueden invocar funciones, por lo que si pasa algo que no sea una función, se producirá un error.
 
-When a function get invoked in javascript the code inside that function will immediately get executed. In this case our log statement will execute since `callback` is actually `logMyNumber`. Remember, just because you *define* a function it doesn't mean it will execute. You have to *invoke* a function for that to happen.
+Cuando una función se invoca en javascript, el código dentro de esa función se ejecutará inmediatamente. En este caso, nuestra declaración de registro se ejecutará ya que `callback` es en realidad `logMyNumber`. Recuerde, solo porque *defines* una función no significa que se ejecutará. Tienes que *invocar* una función para que eso suceda.
 
-To break down this example even more, here is a timeline of events that happen when we run this program:
+Para desglosar aún más este ejemplo, aquí hay una línea de tiempo de eventos que suceden cuando ejecutamos este programa:
 
-- 1: the code is parsed, which means if there are any syntax errors they would make the program break.
-- 2: `addOne` gets invoked, getting passed in the `logMyNumber` function as `callback`, which is what we want to be called when `addOne` is complete. This immediately causes the asynchronous `fs.readFile` function to kick off. This part of the program takes a while to finish.
-- 3: with nothing to do, node idles for a bit as it waits for `readFile` to finish
-- 4: `readFile` finishes and calls its callback, `doneReading`, which then in turn increments the number and then immediately invokes the function that `addOne` passed in (its callback), `logMyNumber`.
+- 1: el código se analiza, lo que significa que si hay algún error de sintaxis, el programa se interrumpirá.
+- 2: `addOne` se invoca, pasando la función `logMyNumber` como `callback`, que es lo que queremos que se nos llame cuando se complete `addOne`. Esto hace que la función asincrónica `fs.readFile` se inicie inmediatamente. Esta parte del programa tarda un poco en terminar.
+- 3: sin nada que hacer, node permanece inactivo un poco mientras espera a que finalice `readFile`.
+- 4: `readFile` finaliza y llama a su retrollamada,` doneReading`, que luego incrementa el número y luego invoca inmediatamente la función que `addOne` pasó (su retrollamada), `logMyNumber`.
 
-Perhaps the most confusing part of programming with callbacks is how functions are just objects that be stored in variables and passed around with different names. Giving simple and descriptive names to your variables is important in making your code readable by others. Generally speaking in node programs when you see a variable like `callback` or `cb` you can assume it is a function.
+Quizás la parte más confusa de la programación con retrollamadas es: que las funciones son solo objetos que se almacenan en variables y se traspasan con diferentes nombres. Dar nombres simples y descriptivos a tus variables es importante para que otros puedan leer tu código. En términos generales, en los programas hechos en node cuando ves una variable como `callback` o `cb`, puedes asumir que es una función.
 
-You may have heard the terms 'evented programming' or 'event loop'. They refer to the way that `readFile` is implemented. Node first dispatches the `readFile` operation and then waits for `readFile` to send it an event that it has completed. While it is waiting node can go check on other things. Inside node there is a list of things that are dispatched but haven't reported back yet, so node loops over the list again and again checking to see if they are finished. After they finished they get 'processed', e.g. any callbacks that depended on them finishing will get invoked.
+Es posible que haya escuchado los términos 'programación de eventos' o 'bucle de eventos'. Se refieren a la forma en que se implementa `readFile`. Node primero despacha la operación `readFile` y luego espera a que` readFile` le envíe un evento que se ha completado. Mientras está esperando, node puede ir a ver otras cosas. Dentro node hay una lista de tareas que se envían pero que aún no se han reportado, por lo que node recorre la lista una y otra vez para ver si han terminado. Después de que terminan se 'procesan', p.ej. se invocarán todas las retrollamadas que dependen de estas finalizaciones.
 
-Here is a pseudocode version of the above example:
+Aquí hay una versión de pseudocódigo del ejemplo anterior:
 
 ```js
 function addOne(thenRunThisFunction) {
@@ -180,7 +178,7 @@ function addOne(thenRunThisFunction) {
 addOne(function thisGetsRunAfterAddOneFinishes() {})
 ```
 
-Imagine you had 3 async functions `a`, `b` and `c`. Each one takes 1 minute to run and after it finishes it calls a callback (that gets passed in the first argument). If you wanted to tell node 'start running a, then run b after a finishes, and then run c after b finishes' it would look like this:
+Imagine que tiene 3 funciones asíncronas `a`, `b` y `c`. Cada una tarda 1 minuto en ejecutarse y, una vez finalizadas, llaman a una retrollamada (que se pasa en el primer argumento). Si quisieras decirle a node 'comienza a ejecutar *a*, luego ejecuta *b* al finalizar *a* y luego ejecuta *c* al finalizar *b*' se vería así:
 
 ```js
 a(function() {
@@ -190,23 +188,23 @@ a(function() {
 })
 ```
 
-When this code gets executed, `a` will immediately start running, then a minute later it will finish and call `b`, then a minute later it will finish and call `c` and finally 3 minutes later node will stop running since there would be nothing more to do. There are definitely more elegant ways to write the above example, but the point is that if you have code that has to wait for some other async code to finish then you express that dependency by putting your code in functions that get passed around as callbacks.
+Cuando se ejecuta este código, `a` comenzará a ejecutarse inmediatamente, luego, un minuto más tarde, terminará y llamará a `b`, luego, un minuto más tarde, terminará y llamará a `c` y, finalmente, 3 minutos más tarde, node dejará de funcionar, ya que en ese momento no habría nada más que hacer. Definitivamente, hay formas más elegantes de escribir el ejemplo anterior, pero el punto es que si tienes un código que tiene que esperar a que termine algún otro código asíncrono, entonces expresas esa dependencia poniendo tu código en funciones que se pasan como retrollamadas.
 
-The design of node requires you to think non-linearly. Consider this list of operations:
+El diseño de node requiere que pienses de forma no lineal. Considera esta lista de operaciones:
 
 ```
-read a file
-process that file
+leer un archivo
+procesar ese archivo
 ```
 
-If you were to naively turn this into pseudocode you would end up with this:
+Si ingenuamente convirtieras esto en pseudocódigo, terminarías con esto:
 
 ```
 var file = readFile()
 processFile(file)
 ```
 
-This kind of linear (step-by-step, in order) code is isn't the way that node works. If this code were to get executed then `readFile` and `processFile` would both get executed at the same exact time. This doesn't make sense since `readFile` will take a while to complete. Instead you need to express that `processFile` depends on `readFile` finishing. This is exactly what callbacks are for! And because of the way that JavaScript works you can write this dependency many different ways:
+Este tipo de código lineal (paso a paso, en orden) no es la forma en que funciona node. Si este código se ejecutara, entonces `readFile` y `processFile` se ejecutarían al mismo tiempo. Esto no tiene sentido ya que `readFile` tardará un tiempo en completarse. En su lugar, debes expresar que `processFile` depende de la finalización de `readFile`. ¡Para eso son exactamente las retrollamadas! Y debido a la forma en que funciona JavaScript, puedes escribir esta dependencia de muchas maneras diferentes:
 
 ```js
 var fs = require('fs')
@@ -214,65 +212,65 @@ fs.readFile('movie.mp4', finishedReading)
 
 function finishedReading(error, movieData) {
   if (error) return console.error(error)
-  // do something with the movieData
+  // hacer algo con la película
 }
 ```
 
-But you could also structure your code like this and it would still work:
+Pero también podrías estructurar tu código de esta manera y aún funcionaría:
 
 ```js
 var fs = require('fs')
 
 function finishedReading(error, movieData) {
   if (error) return console.error(error)
-  // do something with the movieData
+  // hacer algo con la película
 }
 
 fs.readFile('movie.mp4', finishedReading)
 ```
 
-Or even like this:
+O incluso así:
 
 ```js
 var fs = require('fs')
 
 fs.readFile('movie.mp4', function finishedReading(error, movieData) {
   if (error) return console.error(error)
-  // do something with the movieData
+  // hacer algo con la película
 })
 ```
 
-## Events
+## Eventos
 
-In node if you require the [events](http://nodejs.org/api/events.html) module you can use the so-called 'event emitter' that node itself uses for all of its APIs that emit things.
+En node, si necesitas el módulo [events](http://nodejs.org/api/events.html), puedes usar el llamado 'emisor de eventos' que el propio node usa para todas sus API que emiten cosas.
 
-Events are a common pattern in programming, known more widely as the ['observer pattern'](http://en.wikipedia.org/wiki/Observer_pattern) or 'pub/sub' (publish/subscribe). Whereas callbacks are a one-to-one relationship between the thing waiting for the callback and the thing calling the callback, events are the same exact pattern except with a many-to-many API.
+Los eventos son un patrón común en la programación, conocido más ampliamente como el ['patrón de observador'](http://en.wikipedia.org/wiki/Observer_pattern) o 'pub/sub' (publicar/suscribirse). Mientras que las retrollamadas son una relación de uno a uno entre el elemento que espera la devolución de llamada y el elemento que llama a la retrollamada, los eventos son el mismo patrón exacto, excepto con una API de muchos a muchos.
 
-Here are few common use cases for using events instead of plain callbacks:
+Aquí hay algunos casos de uso comunes para usar eventos en lugar de retrollamadas simples:
 
-- Chat room where you want to broadcast messages to many listeners
-- Game server that needs to know when new players connect, disconnect, move, shoot and jump
-- Database connector that might need to know when the database connection opens, closes or sends an error
+- Sala de chat donde desea transmitir mensajes a muchos oyentes
+- Servidor de juegos que necesita saber cuándo los nuevos jugadores se conectan, desconectan, mueven, disparan y saltan
+- Conector de base de datos que puede necesitar saber cuándo se abre, cierra o envía un error la conexión a la base de datos
 
-If we were trying to write a module that connects to a chat server using only callbacks it would look like this:
+Si estuviéramos tratando de escribir un módulo que se conecta a un servidor de chat utilizando solo retrollamadas, se vería así:
 
 ```js
-var chatClient = require('my-chat-client')
+var chatClient = require('mi-cliente-de-chat')
 
 function onConnect() {
-  // have the UI show we are connected
+  // hacer que la interfaz de usuario muestre que estamos conectados
 }
 
 function onConnectionError(error) {
-  // show error to the user
+  // Mostrar error al usuario
 }
 
 function onDisconnect() {
- // tell user that they have been disconnected
+ // decirle al usuario que ha sido desconectado
 }
 
 function onMessage(message) {
- // show the chat room message in the UI
+ // muestra el mensaje de la sala de chat en la interfaz de usuario
 }
 
 chatClient.connect(
@@ -284,29 +282,29 @@ chatClient.connect(
 )
 ```
 
-As you can see this is really cumbersome because of all of the functions that you have to pass in a specific order to the `.connect` function. Writing this with events would look like this:
+Como puedes ver, esto es realmente engorroso: tienes que pasar todas las funciones en un orden específico a la función `.connect`. Escribir esto con eventos se vería así:
 
 ```js
 var chatClient = require('my-chat-client').connect()
 
 chatClient.on('connect', function() {
-  // have the UI show we are connected
+  // hacer que la interfaz de usuario muestre que estamos conectados
 })
 
 chatClient.on('connectionError', function() {
-  // show error to the user
+  // Mostrar error al usuario
 })
 
 chatClient.on('disconnect', function() {
-  // tell user that they have been disconnected
+  // decirle al usuario que ha sido desconectado
 })
 
 chatClient.on('message', function() {
-  // show the chat room message in the UI
+  // muestra el mensaje de la sala de chat en la interfaz de usuario
 })
 ```
 
-This approach is similar to the pure-callback approach but introduces the `.on` method, which subscribes a callback to an event. This means you can choose which events you want to subscribe to from the `chatClient`. You can also subscribe to the same event multiple times with different callbacks:
+Este enfoque es similar al enfoque de retrollamada pura pero introduce el método `.on`, que suscribe una retrollamada a un evento. Esto significa que puedes elegir a qué eventos deseas suscribirte desde el `chatClient`. También puedes suscribirte al mismo evento varias veces con diferentes retrollamadas:
 
 ```js
 var chatClient = require('my-chat-client').connect()
@@ -322,86 +320,86 @@ function storeMessage(message) {
 }
 ```
 
-MORE EVENTS CONTENT TODO
+ToDo: MÁS CONTENIDO DE EVENTOS
 
-## Streams
+## Transmisiones
 
-Early on in the project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it.
+En los inicios del proyecto el sistema de archivos y las API de red tenían sus propios patrones separados para lidiar con la transmisión de E/S. Por ejemplo, los archivos en un sistema de archivos tienen elementos llamados 'descriptores de archivo', por lo que el módulo 'fs' tenía que tener una lógica adicional para realizar un seguimiento de estos elementos, mientras que los módulos de red no tenían ese concepto. A pesar de las pequeñas diferencias en la semántica como estas, en un nivel fundamental, ambos grupos de código duplicaban mucha funcionalidad a la hora de leer datos dentro y fuera. El equipo de trabajo en node se dio cuenta de que sería confuso tener que aprender dos conjuntos de semántica para hacer esencialmente lo mismo, por lo que crearon una nueva API llamada 'Stream' e hicieron que todo el código de red y sistema de archivos la usara.
 
-The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
+El objetivo principal de node es facilitar el manejo de los sistemas de archivos y las redes, por lo que tenía sentido tener un patrón que se usara en todas partes. La buena noticia es que la mayoría de los patrones como estos (solo hay unos pocos de todos modos) se han descubierto en este punto y es muy poco probable que node cambie tanto en el futuro.
 
-THE REST IS TODO, in the meantime read the [streams handbook](https://github.com/substack/stream-handbook#introduction)
+EL RESTO ES ToDo (por hacer), mientras tanto, lea el [manual de transmisiones](https://github.com/substack/stream-handbook#introduction)
 
-## Modules
+## Módulos
 
-TODO
+ToDo (en desarrollo)
 
-## Going with the grain
+## Vamos al grano
 
-Like any good tool, node is best suited for a certain set of use cases. For example: Rails, the popular web framework, is great for modeling complex [business logic](http://en.wikipedia.org/wiki/Business_logic), e.g. using code to represent real life business objects like accounts, loan, itineraries, and inventories. While it is technically possible to do the same type of thing using node, there would be definite drawbacks since node is designed for solving I/O problems and it doesn't know much about 'business logic'. Each tool focuses on different problems. Hopefully this guide will help you gain an intuitive understanding of the strengths of node so that you know when it can be useful to you.
+Como cualquier buena herramienta, node es el más adecuado para un determinado conjunto de casos de uso. Por ejemplo: Rails, el popular marco web, es excelente para modelar [lógica de negocios](http://en.wikipedia.org/wiki/Business_logic) compleja, p. ej.: Usando código para representar objetos comerciales de la vida real como cuentas, préstamos, itinerarios e inventarios. Si bien es técnicamente posible hacer el mismo tipo de cosas usando node, habría inconvenientes definitivos ya que node está diseñado para resolver problemas de E/S y no sabe mucho sobre 'lógica de negocios'. Cada herramienta se enfoca en diferentes problemas. Esperemos que esta guía te ayude a obtener una comprensión intuitiva de las fortalezas de  node para que sepas cuándo puede serte útil.
 
-### What is outside of node's scope?
+### ¿Qué está fuera del alcance de node?
 
-Fundamentally node is just a tool used for managing I/O across file systems and networks, and it leaves other more fancy functionality up to third party modules. Here are some things that are outside the scope of node:
+Fundamentalmente, node es solo una herramienta utilizada para administrar E/S en sistemas de archivos y redes, y deja otras funcionalidades más sofisticadas a módulos de terceros. Aquí hay algunas cosas que están fuera del alcance de node:
 
-#### Web frameworks
+#### Marcos de trabajo Web
 
-There are a number of web frameworks built on top of node (framework meaning a bundle of solutions that attempts to address some high level problem like modeling business logic), but node is not a web framework. Web frameworks that are written using node don't always make the same kind of decisions about adding complexity, abstractions and tradeoffs that node does and may have other priorities.
+Hay una serie de marcos web integrados en la parte superior de node (marco que significa un paquete de soluciones que intenta abordar algún problema de alto nivel como el modelado de la lógica empresarial), pero node no es un marco web. Los marcos web que se escriben usando node no siempre toman el mismo tipo de decisiones sobre la adición de complejidad, abstracciones y compensaciones que node tiene y puede tener otras prioridades.
 
-#### Language syntax
+#### Sintaxis del lenguaje
 
-Node uses JavaScript and doesn't change anything about it. Felix Geisendörfer has a pretty good write-up of the 'node style' [here](https://github.com/felixge/node-style-guide).
+Node usa JavaScript y no cambia nada al respecto. Felix Geisendörfer tiene una muy buena descripción del 'estilo de nodo' [aquí](https://github.com/felixge/node-style-guide).
 
-#### Language abstraction
+#### Abstracción del lenguaje
 
-When possible node will use the simplest possible way of accomplishing something. The 'fancier' you make your JavaScript the more complexity and tradeoffs you introduce. Programming is hard, especially in JS where there are 1000 solutions to every problem! It is for this reason that node tries to always pick the simplest, most universal option. If you are solving a problem that calls for a complex solution and you are unsatisfied with the 'vanilla JS solutions' that node implements, you are free to solve it inside your app or module using whichever abstractions you prefer.
+Cuando sea posible, node utilizará la forma más simple posible de lograr algo. Cuanto más elegante sea tu JavaScript, más complejidad y desventajas introducirás. ¡La programación es difícil, especialmente en JS, donde hay 1000 soluciones para cada problema! Es por esta razón que node intenta elegir siempre la opción más simple y universal. Si estás resolviendo un problema que requiere una solución compleja y no estás satisfecho con las 'soluciones vanilla JS' que implementa node, puedes resolverlo dentro de tu aplicación o módulo utilizando las abstracciones que prefieras.
 
-A great example of this is node's use of callbacks. Early on node experimented with a feature called 'promises' that added a number of features to make async code appear more linear. It was taken out of node core for a few reasons:
+Un gran ejemplo de esto es el uso que hace node de las retrollamadas. Al principio, node experimentó con una característica llamada 'promesas' que agregó una serie de características para hacer que el código asincrónico parezca más lineal. Fue sacado del núcleo de node por algunas razones:
 
-- they are more complex than callbacks
-- they can be implemented in userland (distributed on npm as third party modules)
+- Ellas son más complejas que las retrollamadas
+- se pueden implementar por el usuario (distribuidas en npm como módulos de terceros)
 
-Consider one of the most universal and basic things that node does: reading a file. When you read a file you want to know when errors happen, like when your hard drive dies in the middle of your read. If node had promises everyone would have to branch their code like this:
+Considere una de las cosas más universales y básicas que hace node: leer un archivo. Cuando lees un archivo, quieres saber cuándo ocurren los errores, como cuando tu disco duro muere en medio de tu lectura. Si node tuviera promesas, todos tendrían que bifurcar su código así:
 
 ```js
 fs.readFile('movie.mp4')
   .then(function(data) {
-    // do stuff with data
+    // hacer cosas con datos
   })
   .error(function(error) {
-    // handle error
+    // manejar el error
   })
 ```
 
-This adds complexity, and not everyone wants that. Instead of two separate functions node just uses a single callback function. Here are the rules:
+Esto agrega complejidad, y no todos quieren eso. En lugar de dos funciones separadas, node solo usa una única función de retrollamada. Estas son las reglas:
 
-- When there is no error pass null as the first argument
-- When there is an error, pass it as the first argument
-- The rest of the arguments can be used for anything (usually data or responses since most stuff in node is reading or writing things)
+- Cuando no hay error, pasa nulo como primer argumento
+- Cuando hay un error, lo pasa como el primer argumento
+- El resto de los argumentos se pueden usar para cualquier cosa (generalmente datos o respuestas ya que la mayoría de funciones en node son leer o escribir cosas)
 
-Hence, the node callback style:
+Por lo tanto, el estilo de retrollamada node:
 
 ```js
 fs.readFile('movie.mp4', function(err, data) {
-  // handle error, do stuff with data
+  // maneja el error, procesar los datos
 })
 ```
 
-#### Threads/fibers/non-event-based concurrency solutions
+#### Soluciones de concurrencia basados en hilos/fibras/no-eventos
 
-Note: If you don't know what these things mean then you will likely have an easier time learning node, since unlearning things is just as much work as learning things.
+Nota: Si no sabe lo que significan estas cosas, es probable que se le haga más fácil estudiar node, ya que desaprender algo es tanto trabajo como aprenderlo.
 
-Node uses threads internally to make things fast but doesn't expose them to the user. If you are a technical user wondering why node is designed this way then you should 100% read about [the design of libuv](http://nikhilm.github.com/uvbook/), the C++ I/O layer that node is built on top of.
+Node utiliza internamente subprocesos  para acelerar las cosas, pero no los expone al usuario. Si usted es un usuario técnico que se pregunta por qué node está diseñado de esta manera, debería leer al 100% [el diseño de libuv](http://nikhilm.github.com/uvbook/), la capa de E/S de node construido sobre C++.
 
-## Real-time apps
+## Aplicaciones en tiempo real
 
-TODO - this section will have a non-contrived, functioning application with a web UI whose architecture will be dissected and discussed.
+TODO (por hacer): esta sección tendrá una aplicación funcional real, con una interfaz de usuario web cuya arquitectura será diseccionada y discutida.
 
-## License
+## Licencia
 
 ![CCBY](CCBY.png)
 
-Creative Commons Attribution License (do whatever, just attribute me)
+Licencia de atribución de Creative Commons (haz lo que sea, solo atribuyeme)
 http://creativecommons.org/licenses/by/2.0/
 
-Donate icon is from the [http://thenounproject.com/noun/donate/#icon-No285](Noun Project)
+El ícono donar es del [Proyecto Noun](http://thenounproject.com/noun/donate/#icon-No285)
