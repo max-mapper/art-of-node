@@ -61,13 +61,13 @@ Node isn't either of the following:
 
   - A web framework (like Rails or Django, though it can be used to make such things)
   - A programming language (it uses JavaScript but node isn't its own language)
-  
+
 Instead, node is somewhere in the middle. It is:
 
   - Designed to be simple and therefore relatively easy to understand and use
   - Useful for I/O based programs that need to be fast and/or handle lots of connections
-  
-At a lower level, node can be described as a tool for writing two major types of programs: 
+
+At a lower level, node can be described as a tool for writing two major types of programs:
 
   - Network programs using the protocols of the web: HTTP, TCP, UDP, DNS and SSL
   - Programs that read and write data to the filesystem or local processes/memory
@@ -82,7 +82,7 @@ What is an "I/O based program"? Here are some common I/O sources:
 Node does I/O in a way that is [asynchronous](https://en.wikipedia.org/wiki/Asynchronous_I/O) which lets it handle lots of different things simultaneously. For example, if you go down to a fast food joint and order a cheeseburger they will immediately take your order and then make you wait around until the cheeseburger is ready. In the meantime they can take other orders and start cooking cheeseburgers for other people. Imagine if you had to wait at the register for your cheeseburger, blocking all other people in line from ordering while they cooked your burger! This is called **blocking I/O** because all I/O (cooking cheeseburgers) happens one at a time. Node, on the other hand, is **non-blocking**, which means it can cook many cheeseburgers at once.
 
 Here are some fun things made easy with node thanks to its non-blocking nature:
-  
+
   - Control [flying quadcopters](http://www.nodecopter.com/)
   - Write IRC chat bots
   - Create [walking biped robots](https://www.youtube.com/watch?v=jf-cEB3U2UQ)
@@ -211,15 +211,15 @@ When this code gets executed, `a` will immediately start running, then a minute 
 The design of node requires you to think non-linearly. Consider this list of operations:
 
 ```
-read a file
-process that file
+var file = readFile()
+processFile(file)
 ```
 
 If you were to turn this into pseudocode you would end up with this:
 
 ```
-var file = readFile()
-processFile(file)
+read a file
+process that file
 ```
 
 This kind of linear (step-by-step, in order) code isn't the way that node works. If this code were to get executed then `readFile` and `processFile` would both get executed at the same exact time. This doesn't make sense since `readFile` will take a while to complete. Instead you need to express that `processFile` depends on `readFile` finishing. This is exactly what callbacks are for! And because of the way that JavaScript works you can write this dependency many different ways:
@@ -310,7 +310,7 @@ var chatClient = require('my-chat-client').connect()
 
 chatClient.on('connect', function() {
   // have the UI show we are connected
-}) 
+})
 
 chatClient.on('connectionError', function() {
   // show error to the user
@@ -343,7 +343,7 @@ function storeMessage(message) {
 
 ## Streams
 
-Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it. 
+Early on in the node project the file system and network APIs had their own separate patterns for dealing with streaming I/O. For example, files in a file system have things called 'file descriptors' so the `fs` module had to have extra logic to keep track of these things whereas the network modules didn't have such a concept. Despite minor differences in semantics like these, at a fundamental level both groups of code were duplicating a lot of functionality when it came to reading data in and out. The team working on node realized that it would be confusing to have to learn two sets of semantics to essentially do the same thing so they made a new API called the `Stream` and made all the network and file system code use it.
 
 The whole point of node is to make it easy to deal with file systems and networks so it made sense to have one pattern that was used everywhere. The good news is that most of the patterns like these (there are only a few anyway) have been figured out at this point and it is very unlikely that node will change that much in the future.
 
